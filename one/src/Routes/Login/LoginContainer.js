@@ -5,7 +5,7 @@ import axios from "axios";
 export default class extends React.Component {
 
     state={
-        message:undefined,
+        error:null,
         token:undefined
     }
 
@@ -16,18 +16,18 @@ export default class extends React.Component {
         api.post("/api/login",{
             username:id,
             password:pw
-        }).then((res)=>
-        console.log(res))
+        }).catch((error)=>{console.log(error.response.status)}).then((res)=>{if(res!== undefined){console.log(res)}} );
+        
+        
     }
     
      componentDidMount(){
         
-        this.login("admin","admin");
 
     }
 
 
     render(){
-        return(<LoginPresenter data="Login"></LoginPresenter>)
+        return(<LoginPresenter></LoginPresenter>)
     }    
 }
