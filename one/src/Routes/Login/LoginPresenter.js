@@ -1,7 +1,8 @@
-import React from  "react";
+import React, { useEffect, useState } from  "react";
 import styled from "styled-components";
 import {Link} from  "react-router-dom";
 import axios from 'axios';
+import GoogleFontLoader from 'react-google-font-loader';
 
 const Container = styled.div`
     display:flex;
@@ -24,6 +25,8 @@ const Back = styled.div`
     height: 250px;    
     background-position: center center;
     background-size:cover;
+    margin-top:10px;
+       
 `
 const Form = styled.form`
     display:flex;
@@ -34,51 +37,86 @@ const Form = styled.form`
 `
 const Input = styled.input`
     height:50px;
-    width:496px;
+    width:500px;
     
     margin:0 0 20px 0;
     padding:0;
+    border:1px solid RGB(74, 86, 94);
+    &:focus { border:2px solid RGB(246, 201, 14);}
+    outline:none;
+    border-radius: 5px;
     
 `
 const Submit = styled.input`
     height:60px;
     width:500px;
     padding:0;
+    background-color:RGB(246, 201, 14);
+    border:1px solid RGB(246, 201, 14);
+    cursor:pointer;
+    border-radius: 5px;
+    outline: none;
+    margin-top:20px;
+`
+
+const Warning = styled.p`
+
+    font-size:20px;
+    color:red;
+    display:${(props)=> props.status ? "block" : "none"};
 
 `
 
 const LoginPresenter = () => {
-    let id= undefined;
-    let pw= undefined;
+    const [Id ,setId] =useState(undefined);
+    const [pw ,setpw] =useState(undefined);
+    const [result ,setResult] =useState(undefined);
+    const [error ,setError] =useState(false);
+    const hey = () => console.log(error);
+    useEffect(hey , [error]);
 
-    
     const updateOne = (event) => {
         const {target} = event;
         if(target.name==="id"){
-            id=target.value;
+            setId(target.value);
         }
         else{
-            pw=target.value;
+            setpw(target.value);
         }
     
     }
     const handleSubmit = (event) =>{
         event.preventDefault();        
-        gopost(id,pw);
+        gopost(Id,pw);
     }
     
     const gopost= async(id,pw)=> {
         const api = await axios.create({
-        baseURL:"http://192.168.242.90:8080/"
+        baseURL:"http://192.168.228.90:8080/"
         });
         api.post('/api/login',{
           username:id,
           password:pw
         }).then((res)=>{
-          console.log(res)
-        })
+          setResult(res);
+        }).catch((e)=>setError(e.response.status))
       }
-    return(<Container>
+    return(
+    <>
+    <GoogleFontLoader
+      fonts={[
+        {
+          font: 'Roboto',
+          weights: [400, 600],
+        },
+        {
+          font: 'Roboto Mono',
+          weights: [400, 700],
+        },
+      ]}
+      subsets={['cyrillic-ext', 'greek']}
+    />
+    <Container>
     <Header>
         <Logo to ="/">
             <Back what={require("../../assets/logo_transparent.png").default} / >
@@ -87,8 +125,12 @@ const LoginPresenter = () => {
     <Form onChange={updateOne} onSubmit={handleSubmit}>
         <Input type="text" name="id" />
         <Input type="password" name="pw" />
-        <Submit type="submit"  value="Login"/>
+        <Warning status={error}>Login failed</Warning>
+        <Submit type="submit"  value="Login" style={{ fontFamily: 'Roboto Mono, monospaced', weights:"700"}}/>
     </Form>
 
-</Container>)}
+</Container>
+</>)}
+
 export default LoginPresenter;
+
