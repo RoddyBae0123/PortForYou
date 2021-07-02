@@ -2,44 +2,27 @@ import React, { useEffect, useState } from  "react";
 import SignupPresenter  from "./SignupPresenter";
 import axios from "axios";
 import wifi from "../../wifi";
+import { AnimatePresence,motion } from "framer-motion"
 
 
-const Signcontainer = (props) => {
+const SignupContainer = (props) => {
 
-    const [error,setError] = useState(undefined);
-    const [result ,setResult] =useState(undefined);
+    const errorMessage = "";
     const {history:{push}} = props;
-    const Iserror = () => {
-      if(error===401)
-      {
-        push("/signup");
-      }
-       setError(undefined);
-    };
-    useEffect(Iserror , [error]);
-    const Isresult = () => {if(result===200){
-      push("/dashboard");
-    }};
-    useEffect(Isresult , [result]);
+    
+   
     
 
     
-    const Signup= async(username,password,name)=> {
-        const api = await axios.create({
-        baseURL:`${wifi}`
-        });
-        api.post('/api/signup',{
-          username,
-          password,
-          name
-        }).then((res)=>{
-          console.log(res);
-        }).catch((e)=>console.log(e))
-      }
+    
 
 
-    return(<SignupPresenter Signup={Signup} error={error}></SignupPresenter>)
+    return(<motion.div exit={{opacity:0}} animate={{opacity:1}} initial = {{opacity:0}}>
+        <SignupPresenter push={push}></SignupPresenter>
+    </motion.div>
+    
+    )
 }
 
 
-export default Signcontainer;
+export default SignupContainer;

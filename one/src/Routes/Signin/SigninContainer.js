@@ -2,12 +2,15 @@ import React, { useEffect, useState } from  "react";
 import SigninPresenter  from "./SigninPresenter";
 import axios from "axios";
 import wifi from "../../wifi";
+import { AnimatePresence,motion } from "framer-motion"
+import auth from "../../Auth";
 
-
-const Signincontainer = (props) => {
+const SigninContainer = (props) => {
 
     const [error,setError] = useState(undefined);
     const [result ,setResult] =useState(undefined);
+    
+
     const {history:{push}} = props;
     const Iserror = () => {
       if(error===401)
@@ -17,7 +20,12 @@ const Signincontainer = (props) => {
        setError(undefined);
     };
     useEffect(Iserror , [error]);
-    const Isresult = () => {if(result===200){
+    const Isresult = () => {
+      console.log(result);
+
+      if(result &&result.status===200){
+        auth.setAccessTokenToCookie(result.data.message);
+        
       push("/dashboard");
     }};
     useEffect(Isresult , [result]);
@@ -32,13 +40,17 @@ const Signincontainer = (props) => {
           username:id,
           password:pw
         }).then((res)=>{
-          setResult(res.status);
+           setResult(res);
         }).catch((e)=>setError(e.response.status))
       }
 
+    
 
-    return(<SigninPresenter login={login} error={error}></SigninPresenter>)
+
+    return(<motion.div exit={{opacity:0}} animate={{opacity:1}} initial = {{opacity:0}}>
+    <SigninPresenter login={login} error={error}></SigninPresenter>
+    </motion.div>)
 }
 
 
-export default Signincontainer;
+export default SigninContainer;

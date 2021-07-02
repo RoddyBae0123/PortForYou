@@ -4,10 +4,7 @@ import {Link} from  "react-router-dom";
 import axios from 'axios';
 import GoogleFontLoader from 'react-google-font-loader';
 import wifi from "../../wifi";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import { faGoogle } from '@fortawesome/free-brands-svg-icons'
-
+import './style.css';
 const Back = styled.div`
     display:flex;
     flex-direction: column;
@@ -112,7 +109,7 @@ const Form  = styled.form`
 const Inputdef = styled.input`
     width:300px;
     height:56px;
-    margin:10px 0 ;
+    
     outline:none;
     background-color:RGB(238,238,238);;
     border:none;
@@ -121,13 +118,13 @@ const Inputdef = styled.input`
 
     }
     transition:all 300ms ease-in-out;
-    font-size:40px;
+    font-size:20px;
     padding:20px;
 `
 const Submitdef = styled.input`
     width:300px;
     height:56px;
-    margin:30px 0 10px 0  ;
+    margin:10px 0 10px 0  ;
     outline:none;
     background-color:white;
 
@@ -143,19 +140,125 @@ const Submitdef = styled.input`
 const A= styled.a`
     
 `
-const SignupPresenter = ({Signup,error}) => {
-    
-    var id = undefined;
-    var pw = undefined;
-    var name = undefined;
-    const handleSubmit = (event) =>{
+const Isiterror = styled.h3`
+    opacity:${(props)=> props.status ? 1 : 0};
+    color:#FF3030;
+    margin:5px 0 ;
+`
+
+
+const SignupPresenter = ({push}) => {
+    const [Errorid,setErrorid] =  useState(false);
+    const [Errorpw,setErrorpw] =  useState(false);
+    const [Errorusername,setErrorusername] =  useState(false);
+    const [id,setid] = useState("");
+    const [pw,setpw] = useState("");
+    const [username,setusername] = useState("");
+
+    var errormessage ="";
+    var pattern_num = /[0-9]/;
+    var pattern_eng = /[a-zA-Z]/;
+    var pattern_spc = /[~!@#$%^&*()_+|<>?:{}]/;
+    const email_check = (email) => {
+        var regex=/([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
+        if (email != '' && email != 'undefined' && regex.test(email)){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+    const password_check = (pw) => {
+        if( (pattern_num.test(pw)) && (pattern_eng.test(pw)) && (pattern_spc.test(pw))&&(pw.length>=8 && pw.length<=16)  ){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
+    const name_check = (name) => {
+        if((name.length>1)){
+            return true;
+        }
+        else{
+            return false;
+        }
+    } 
+    const Signup__submit= async(username,password,name)=> {
+        const api = await axios.create({
+        baseURL:`${wifi}`
+        });
+        api.post('/api/signup',{
+          username,
+          password,
+          name
+        }).then((res)=>{
+            push("/dashboard");
         
+        }).catch(async(e)=>{
+            errormessage= await e.response.status;
+            errorCatch(errormessage);
+        })
+      }
+    const errorCatch = (e)=> {
+        if(e===403){
+            setErrorid("dup");
+            pwnumcheck();
+
+        }
+        
+    }
+
+    const seterror = (event) => {
+
+        const {target:{name,value}} = event;
+        
+        if(name==="id"){
+            setid(value);
+        }
+        else if(name==="pw"){
+            setpw(value);
+        }
+        else if (name==="username") {
+            setusername(value);
+
+        }
+       
+
+    }
+    const pwnumcheck = () => {
+        if(!password_check(pw)){
+            setErrorpw(true);
+        }
+        else{
+            setErrorpw(false);
+        }
+        if(!name_check(username)){
+            setErrorusername(true);
+        }
+        else{
+            setErrorusername(false);
+        }
+    }
+
+    const handleSubmit = (event) =>{      
         event.preventDefault();
         
-        id=event.target[0].value;
-        pw=event.target[1].value;
-               
-        Signup(id,pw,name);
+        if(email_check(id)&& password_check(pw)&&name_check(username)){
+            Signup__submit(id,pw,username);
+        }
+        else{
+            
+
+            if(!email_check(id)){
+                setErrorid("normal");
+            }
+            else{
+                setErrorid(false);
+            }
+            pwnumcheck();
+        }
     }
     
     
@@ -191,10 +294,13 @@ const SignupPresenter = ({Signup,error}) => {
         <Righttitle>Create Account</Righttitle>
         <RightAdd>Please type the infomation</RightAdd>
         <Form onSubmit={handleSubmit}>
-            <Inputdef placeholder="Id" type="text" name="id" ></Inputdef>
-            <Inputdef placeholder="Password" type="password"  name="pw"></Inputdef>
-            <Inputdef placeholder="name" type="text"  name="name"></Inputdef>
-            <Submitdef type="submit" value="SIGN UP"></Submitdef>
+            <Inputdef placeholder="Email" type="text" name="id" onChange={seterror} ></Inputdef>
+            <Isiterror status={Errorid} data-type="id"  >{`${Errorid}`==="normal" ?"Please enter email correctly.":"Id is duplicated!"}</Isiterror>
+            <Inputdef placeholder="Password" type="password"  name="pw"  onChange={seterror}></Inputdef>
+            <Isiterror  status={Errorpw} data-type="password" className="error">Please enter password correctly.</Isiterror>
+            <Inputdef placeholder="name" type="text"  name="username"  onChange={seterror}></Inputdef>
+            <Isiterror  status={Errorusername} data-type="name" className="error">Please enter username correctly.</Isiterror>
+            <Submitdef  type="submit" value="SIGN UP"></Submitdef>
         </Form>
         
       </Signin>

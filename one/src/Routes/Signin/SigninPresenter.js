@@ -121,7 +121,7 @@ const Inputdef = styled.input`
 
     }
     transition:all 300ms ease-in-out;
-    font-size:40px;
+    font-size:20px;
     padding:20px;
 `
 const Submitdef = styled.input`
