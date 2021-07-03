@@ -13,7 +13,7 @@ export default () => (
                     <Route path="/" exact component={Home} />
                     <Route path="/signup" exact component={Signup} />
                     <Route path="/signin" exact component={Signin} />
-                    <Route path="/dashboard" exact component={Dashboard} />
+                    <Route path="/dashboard"  component={Dashboard} />
 
                 </Switch>
         </AnimatePresence>

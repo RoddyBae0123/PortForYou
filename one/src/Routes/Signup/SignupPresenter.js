@@ -161,29 +161,14 @@ const SignupPresenter = ({push}) => {
     var pattern_spc = /[~!@#$%^&*()_+|<>?:{}]/;
     const email_check = (email) => {
         var regex=/([\w-\.]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$/;
-        if (email != '' && email != 'undefined' && regex.test(email)){
-            return true;
-        }
-        else{
-            return false;
-        }
+        return (email != '' && email != 'undefined' && regex.test(email))
+        
     }
     const password_check = (pw) => {
-        if( (pattern_num.test(pw)) && (pattern_eng.test(pw)) && (pattern_spc.test(pw))&&(pw.length>=8 && pw.length<=16)  ){
-            return true;
-        }
-        else{
-            return false;
-        }
+        return ( (pattern_num.test(pw)) && (pattern_eng.test(pw)) && (pattern_spc.test(pw))&&(pw.length>=8 && pw.length<=16) )
     }
-
     const name_check = (name) => {
-        if((name.length>1)){
-            return true;
-        }
-        else{
-            return false;
-        }
+        return((name.length>1)) 
     } 
     const Signup__submit= async(username,password,name)=> {
         const api = await axios.create({
@@ -210,7 +195,7 @@ const SignupPresenter = ({push}) => {
         
     }
 
-    const seterror = (event) => {
+    const setvalue = (event) => {
 
         const {target:{name,value}} = event;
         
@@ -222,24 +207,13 @@ const SignupPresenter = ({push}) => {
         }
         else if (name==="username") {
             setusername(value);
-
         }
        
 
     }
     const pwnumcheck = () => {
-        if(!password_check(pw)){
-            setErrorpw(true);
-        }
-        else{
-            setErrorpw(false);
-        }
-        if(!name_check(username)){
-            setErrorusername(true);
-        }
-        else{
-            setErrorusername(false);
-        }
+        (!password_check(pw)) ? setErrorpw(true): setErrorpw(false);
+        (!name_check(username)) ? setErrorusername(true): setErrorusername(false);
     }
 
     const handleSubmit = (event) =>{      
@@ -249,8 +223,6 @@ const SignupPresenter = ({push}) => {
             Signup__submit(id,pw,username);
         }
         else{
-            
-
             if(!email_check(id)){
                 setErrorid("normal");
             }
@@ -294,11 +266,11 @@ const SignupPresenter = ({push}) => {
         <Righttitle>Create Account</Righttitle>
         <RightAdd>Please type the infomation</RightAdd>
         <Form onSubmit={handleSubmit}>
-            <Inputdef placeholder="Email" type="text" name="id" onChange={seterror} ></Inputdef>
+            <Inputdef placeholder="Email" type="text" name="id" onChange={setvalue} ></Inputdef>
             <Isiterror status={Errorid} data-type="id"  >{`${Errorid}`==="normal" ?"Please enter email correctly.":"Id is duplicated!"}</Isiterror>
-            <Inputdef placeholder="Password" type="password"  name="pw"  onChange={seterror}></Inputdef>
+            <Inputdef placeholder="Password" type="password"  name="pw"  onChange={setvalue}></Inputdef>
             <Isiterror  status={Errorpw} data-type="password" className="error">Please enter password correctly.</Isiterror>
-            <Inputdef placeholder="name" type="text"  name="username"  onChange={seterror}></Inputdef>
+            <Inputdef placeholder="name" type="text"  name="username"  onChange={setvalue}></Inputdef>
             <Isiterror  status={Errorusername} data-type="name" className="error">Please enter username correctly.</Isiterror>
             <Submitdef  type="submit" value="SIGN UP"></Submitdef>
         </Form>
