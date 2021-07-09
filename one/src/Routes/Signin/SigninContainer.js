@@ -9,7 +9,7 @@ const SigninContainer = (props) => {
 
     const [error,setError] = useState(undefined);
     const [result ,setResult] =useState(undefined);
-    
+  
 
     const {history:{push}} = props;
     const Iserror = () => {
@@ -26,7 +26,7 @@ const SigninContainer = (props) => {
       if(result &&result.status===200){
         auth.setAccessTokenToCookie(result.data.message);
         
-      push("/dashboard");
+      push("/dashboard/resume");
     }};
     useEffect(Isresult , [result]);
     
