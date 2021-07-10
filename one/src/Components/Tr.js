@@ -66,7 +66,7 @@ const SexyLink = styled(Link)`
 `
 const Tr = ({data}) => data ? ( data.map(e=> <TR key={`${e.idx}`}>
     
-<ResumeOne style={{padding:0}}>
+<ResumeOne key={`${e.idx}`} style={{padding:0}}>
     <DataList>
     <Document> <FontAwesomeIcon icon={faEnvelopeOpenText} size="2x" /></Document>
     <IntroduceCon>
