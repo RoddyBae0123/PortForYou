@@ -13,6 +13,8 @@ import Loader from "react-loader-spinner";
 import Select from '../../../Components/Select';
 import Project from '../../../Components/Project';
 import Stack from '../../../Components/Stack';
+import Education from '../../../Components/Education';
+
 const Makecenter = styled.div`
     display:flex;
     justify-content: center;
@@ -44,32 +46,50 @@ const TitleContent = styled.div`
 `
 const UserInfo  = styled.div`
     display:grid;
-    grid-template-columns: 0.6fr 0.4fr;
-    padding:10px;
+    grid-template-columns: 1fr 1fr;
+    margin:70px 0;
     width:100%;
-    height:100px;
+    height:150px;
 `
 const UserSection= styled.div`
     display:flex;
-    justify-content:${props=>props.data ? "flex-end": "flex-start"};
+    justify-content:${props=> props.data ? `flex-end` : `flex-start`};
     align-items: center;
     border-right:${props=> props.data ? `3.5px solid RGB(212, 212, 212)` : `none`};
-`
+    padding:${props=> props.data ? `0 95px 0 0` : `0 0 0 95px`};
 
+`
+const UserTitle = styled.div`
+    display:flex;
+    justify-content:space-between ;
+    flex-direction: column;
+    text-align:center;
+`
+const UserFace = styled.div`
+    width:130px;
+    height:130px;
+    border:7px solid black;
+    border-radius: 16px;
+`
 
 const ResumeDetail = ({match}) => {
 
+    useEffect(()=>{
+        let mounted = true;
+        if(mounted){
+            getResumeDetail(accessToken,Idx);
+            getStackList();
+            getPositionList();
+            getEducationList();
+        }
+        
+        return () => (mounted =false);
+        
+    },[])
     const Idx=match.params.idx;
     const accessToken = Auth.getAccessToken();
-    console.log(accessToken);
-    const [data,setData] = useState(false);
-    const [detail,setDetail]= useState(
-        
-    );
-    useEffect(()=>{
-        getResumeDetail(accessToken,Idx);
-
-    },[])
+    const [data,setData] = useState(false); //Entire Data
+    const [project,setProject]= useState(); //Entire Data.project Data
 
     const getResumeDetail = async(token,idx) => {
         const api = await axios.create({
@@ -82,19 +102,63 @@ const ResumeDetail = ({match}) => {
             }
         }).then((res)=>{
             setData(res);
+            console.log(res);
         }).catch((e)=>console.log(e))
       }
-      {data && console.log(data.data)}
+    const [stackData ,setStack] =useState(undefined);//project Data=>stack data of project
+    const getStackList= async() =>{
+            const api = await axios.create({
+                baseURL:`${wifi}`
+            });
+            api.get(`/api/user/portfolio/stacks`)
+            .then(res=>
+                setStack(res.data)) 
+            .catch(e=> console.log(e))
+    }
+    
+    const [positionData,setPositionData] = useState(undefined);//position Data=>position List
+    const getPositionList= async() =>{
+        const api = await axios.create({
+            baseURL:`${wifi}`
+        });
+        api.get(`/api/user/portfolio/positions`)
+        .then(res=>
+            setPositionData(res.data))
+        .catch(e=> console.log(e))
+        }
+    const [position,setPosition] = useState(undefined);
+
+    const [educationData,setEducationData] = useState(undefined);
+    const getEducationList =async()=>{
+        const api = await axios.create({
+            baseURL:`${wifi}`
+        });
+        api.get(`/api/user/portfolio/educations`)
+        .then(res=>
+            setEducationData(res.data))
+        .catch(e=>console.log(e))
+    }
+    const [education,setEducation] = useState(undefined);
+
+
+
     return(data ? (<div style={{marginTop:"60px"}}>
         <Container>
         <UserInfo>
-        <UserSection data={1}>Title</UserSection>
-        <UserSection data={0}>fuck</UserSection>
+        <UserSection data={1}>
+            <UserTitle>
+                <h1 style={{fontSize:"40px",fontWeight:"700",marginBottom:"20px"}}>{data.data.title}</h1>
+                <h5 style={{fontSize:"15px",fontWeight:"400"}}>"{data.data.content}"</h5>
+                </UserTitle>
+            </UserSection>
+        <UserSection ><UserFace /></UserSection>
         </UserInfo>
             <h1 style={{fontSize:30,margin:"30px 0"}}>Position</h1>
-            <Select data={data.data.positions} />
+            <Select data={data.data.positions} positionData={positionData} detail={position} setDetail={setPosition}/>
+            <h1 style={{fontSize:30,margin:"30px 0"}}>Education</h1>
+            <Education data={data.data.education} educationData={educationData} detail={education} setDetail={setEducation}/> 
             <h1 style={{fontSize:30,margin:"30px 0"}}>Project</h1>
-            <Project data={data.data.project} detail={detail} setDetail ={setDetail} />
+            <Project data={data.data.project} setDetail={setProject} detail={project}  stackData={stackData} />
             <h1 style={{fontSize:30,margin:"30px 0"}}>Stack</h1>
             <Stack data={data.data.content}/>
             

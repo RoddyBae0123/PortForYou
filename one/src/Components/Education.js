@@ -36,12 +36,12 @@ const SubTitle = styled.h1`
     font-weight: 500;
 `
 
-const Select = ({data,positionData,detail,setDetail}) => 
+const Education = ({data,educationData,detail,setDetail}) => 
     {   
         useEffect(()=>{
             {setDetail({
-                idx:data[0].idx,
-                name:data[0].name,
+                idx:data.idx,
+                name:data.name,
             
             })}
             
@@ -59,14 +59,15 @@ const Select = ({data,positionData,detail,setDetail}) =>
 
             }
             
+        {detail&&console.log(detail)}
 
         return(
         <Container>
-            <SubTitle>Select your Position</SubTitle>
-            {detail&&positionData&& positionData.map(e=><Makecenter key={e.idx}><Button onClick={selectBtnHandler} select={detail.name===e.name}
+            <SubTitle>Select your Education</SubTitle>
+            {detail&&educationData&& educationData.map(e=><Makecenter key={e.idx}><Button onClick={selectBtnHandler} select={detail.name===e.name}
             data-select={detail.name===e.name}type="button" id={e.idx}>{e.name}</Button></Makecenter>)}
             </Container>
         )
     }
 
-export default Select;
+export default Education;

@@ -1,6 +1,8 @@
+import axios from 'axios';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-
+import wifi from '../wifi';
+import stack from './Stack';
 const Container = styled.div`
     width:80%;
     border:3.5px solid #D4D4D4;
@@ -61,89 +63,111 @@ const Stacks = styled.div`
 
 
 const Button = styled.button`
+
     background-color: #EDEDED;
     width:100%;
     height:60px;
     border-radius: 20px;
+    opacity:${props=> props.select ? "1":"0.34"};
 `
 
 
-const Project = ({data,detail,setDetail}) => 
+const Project = ({data,setDetail,detail,stackData}) => 
     {   
         
+        var someStack = []
+        const deliVery=[];
         
-        
+
         useEffect(()=>{
-            data.map(e=>{
-                
-               setDetail(()=>(
-                   
-                [
-                    {
+                data.map(e=>{
+                    deliVery.unshift({
                         idx:e.idx,
-                        title:e.title,
                         content:e.content,
-                        stack:e.stack
-                    }
-                ]))
-                
-            })
+                        stack:e.stack,
+                        title:e.title
+                    })
+                })
+                setDetail(deliVery);
             return
         },[])
         
         
-        const heyme = (event) => {
-            if(event.target.name=="P_DESCRIPTION"){
-                setDetail(()=>([
-                    {   
-                        content:event.target.value
-                    }
-    
-                ]))
+        const onChange = (event) => {
+            
+            const {value,name,id} = event.target;
+            let copyDetail =[...detail];
+            if(name=="P_TITLE"){
+                copyDetail[id].title=value;
+            }
+            else if(name=="P_DESCRIPTION"){
+                copyDetail[id].content=value;
             }
             
-        }
+            setDetail(copyDetail);
+        };
 
+        const StackBtnHandler = (event) => {
+            const grandFather=event.target.parentElement.parentElement.id;
+            const selected = event.target.dataset.select;
+            const selectedId = event.target.id;
+            const value = event.target.innerHTML;
+            let copyDetail =[...detail];
+            console.log(copyDetail);
+            if(selected!="true"){
+                // copyDetail[grandFather].stack.push({       
+                // });
+                copyDetail[grandFather].stack.push({
+                    idx:parseInt(selectedId),
+                    name:value,
+                    content:value
+                });
+                setDetail(copyDetail);
+
+            }
+            else{
+                copyDetail[grandFather].stack=copyDetail[grandFather].stack.filter(e=>e.idx!=selectedId);
+                setDetail(copyDetail);
+            }
+            copyDetail.map(e=>
+                {
+                    if(e.stack.length===0){
+                        e.stack.push({
+                            idx:7,
+                            name:'etc',
+                            content:"etc"
+                        })
+                    }
+                    setDetail(copyDetail);
+                })
+            
+        }
         return(
         <>
-        {data&& detail!=undefined&& detail.map(e=>
+        {stackData&&detail&& detail.map((e,idx)=>
             <Container key={e.idx}>
                 
             <SubTitle>Project{e.idx}</SubTitle>
             <Section>Title</Section>
-            <Input value={e.title} type="text" name="P_TITLE" />
+            <Input value={e.title} type="text" name="P_TITLE" id={idx} onChange={onChange}/>
             <Section>Description</Section>
-            <Input value={e.content} type="text" name="P_DESCRIPTION" onChange={heyme}/>
+            <Input value={e.content} type="text" name="P_DESCRIPTION" id={idx} onChange={onChange}/>
             <Section>Stack</Section>
-            <Stacks>
-                <Makecenter>
-                    <Button type="button">React</Button>
+            <Stacks id ={idx}>
+                
+                {someStack=[],
+                e.stack.map(e=>{
+                    someStack.push(e.name);
+                })}
+                {stackData&&stackData.map(e=>
+                    <Makecenter key={e.idx}>
+                    <Button id ={e.idx} select={someStack.includes(`${e.name}`)} type="button" data-select={someStack.includes(`${e.name}`)} onClick={StackBtnHandler}>{e.name}</Button>
                 </Makecenter>
-                <Makecenter>
-                    <Button type="button">Js</Button>
-                </Makecenter>
-                <Makecenter>
-                    <Button type="button">Html</Button>
-                </Makecenter>
-                <Makecenter>
-                    <Button type="button">Css</Button>
-                </Makecenter>
-                <Makecenter>
-                    <Button type="button">Java</Button>
-                </Makecenter>
-                <Makecenter>
-                    <Button type="button">Spring</Button>
-                </Makecenter>
-                <Makecenter>
-                    <Button type="button">C</Button>
-                </Makecenter>
-                <Makecenter>
-                    <Button type="button">Java</Button>
-                </Makecenter>
-                <Makecenter>
-                    <Button type="button">Spring</Button>
-                </Makecenter>
+                    )}
+                
+                
             </Stacks>
+
         </Container>)}
         
         </>

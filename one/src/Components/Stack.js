@@ -1,8 +1,8 @@
 import styled from 'styled-components';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import { faGoogle } from '@fortawesome/free-brands-svg-icons'
 import wifi from '../wifi';
+import StarRatings from 'react-star-ratings';
+
+
 const Container = styled.div`
     width:80%;
     border:3.5px solid #D4D4D4;
@@ -104,12 +104,21 @@ const LogoName = styled.h3`
 
 const stack = ({data}) => 
     {   
-        
+        console.log(data)
 
 
 
         return(// data.map(e=><div>{e.name}</div>)
         <Container>
+            <StarRatings
+          rating={5}
+          starRatedColor="#FF8C94"
+          changeRating={4}
+          numberOfStars={5}
+          starDimension="25px"
+          starSpacing="10px"
+          name='rating'
+        />
             <StackInfo>
                 <StackSection data={1}>
                     <StackLogo><Logo src={`${wifi}api/img/default?name=python`}></Logo></StackLogo>

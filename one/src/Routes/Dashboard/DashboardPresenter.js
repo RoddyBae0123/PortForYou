@@ -29,6 +29,7 @@ const Left = styled.div`
     height:100%;
     width:220px;
     border-right:1.5px solid lightgray;
+    z-index:20;
 
 `
 const Right = styled.div`
@@ -246,7 +247,7 @@ const DashboardPresenter = ({match,data, method}) => {
             
         </Left>
         <div></div>
-        <Right>
+        <Right style={{minWidth:1200}}>
             <Navbar>
             <NabvarCenter position={true}>
                 <SearchForm>
