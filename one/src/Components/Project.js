@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash,faTrashAlt,faTrashRestore} from '@fortawesome/free-solid-svg-icons';
-import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
 
 const Container = styled.div`
     width:80%;

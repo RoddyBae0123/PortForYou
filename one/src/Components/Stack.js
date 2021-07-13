@@ -91,7 +91,7 @@ const Stack = ({data,stackData,detail,setDetail}) =>
             return
         },[])
         return(<>
-            {detail&&detail.map(e=> <Container>
+            {detail&&detail.map(e=> <Container key={e.idx}>
             <LogoStructure>
                 <Makecenter>
                     <Logo><FontAwesomeIcon icon={faPython} ></FontAwesomeIcon></Logo>
