@@ -1,10 +1,5 @@
-import { AnimatePresence,motion } from "framer-motion";
 import styled from 'styled-components';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUserCheck,faUsers,faPlusCircle} from '@fortawesome/free-solid-svg-icons';
-import { Table } from 'reactstrap';
-import {Route, Switch,Link} from "react-router-dom";
-import { faJava,faPython } from '@fortawesome/free-brands-svg-icons'
+
 import Auth from "../../../Auth";
 import axios from 'axios';
 import wifi from '../../../wifi';
@@ -71,6 +66,16 @@ const UserFace = styled.div`
     border:7px solid black;
     border-radius: 16px;
 `
+const SectionTitle = styled.div`
+    display:flex;
+    font-size:40px;
+    font-weight:600;
+    align-items:center;
+    width:80%;
+    margin:0 0  30px 0;
+`
+
+
 
 const ResumeDetail = ({match}) => {
 
@@ -140,6 +145,10 @@ const ResumeDetail = ({match}) => {
     }
     const [education,setEducation] = useState(undefined);
 
+    const [stackList,setStackList]= useState([]);
+    
+    const [stackNew,setStackNew] = useState(undefined);
+
 
 
     return(data ? (<div style={{marginTop:"60px"}}>
@@ -153,14 +162,14 @@ const ResumeDetail = ({match}) => {
             </UserSection>
         <UserSection ><UserFace /></UserSection>
         </UserInfo>
-            <h1 style={{fontSize:30,margin:"30px 0"}}>Position</h1>
+            <SectionTitle><h1 style={{margin:"30px 0"}}>Position</h1></SectionTitle> 
             <Select data={data.data.positions} positionData={positionData} detail={position} setDetail={setPosition}/>
-            <h1 style={{fontSize:30,margin:"30px 0"}}>Education</h1>
+            <SectionTitle><h1 style={{margin:"30px 0"}}>Education</h1></SectionTitle>
             <Education data={data.data.education} educationData={educationData} detail={education} setDetail={setEducation}/> 
-            <h1 style={{fontSize:30,margin:"30px 0"}}>Project</h1>
+            <SectionTitle><h1 style={{margin:"30px 0"}}>Project</h1></SectionTitle>
             <Project data={data.data.project} setDetail={setProject} detail={project}  stackData={stackData} />
-            <h1 style={{fontSize:30,margin:"30px 0"}}>Stack</h1>
-            <Stack data={data.data.content}/>
+            <SectionTitle><h1 style={{margin:"30px 0"}}>Stack</h1></SectionTitle>
+            <Stack data={data.data.tech} stackData = {stackData}detail={stackNew} setDetail={setStackNew}/>
             
         </Container>
     </div>) : <Makecenter>

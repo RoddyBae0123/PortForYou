@@ -1,8 +1,9 @@
-import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import styled from 'styled-components';
-import wifi from '../wifi';
-import stack from './Stack';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash,faTrashAlt,faTrashRestore} from '@fortawesome/free-solid-svg-icons';
+import CSSTransitionGroup from 'react-transition-group/CSSTransitionGroup';
+
 const Container = styled.div`
     width:80%;
     border:3.5px solid #D4D4D4;
@@ -69,6 +70,27 @@ const Button = styled.button`
     height:60px;
     border-radius: 20px;
     opacity:${props=> props.select ? "1":"0.34"};
+`
+
+const DeleteButton = styled.button`
+    position:absolute;
+    right:33px;
+    top:20px;
+    width:50px;
+    height:20px;
+    border-radius: 10px;
+    background-color:RGB(255, 140, 148);
+    font-size:15px;
+`   
+
+const AddBtn = styled.button`
+    width:230px;
+    height:60px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size:20px;
+    background-color:RGB(255, 140, 148);
+
 `
 
 
@@ -142,22 +164,48 @@ const Project = ({data,setDetail,detail,stackData}) =>
                 })
             
         }
+        const DeleteBtnHandler = (e)=> {
+            
+            const DelId = e.target.parentElement.id;
+            let copyDetail=[...detail];
+            copyDetail=copyDetail.filter(e=>e.idx!=DelId);
+            setDetail(copyDetail);
+
+        }
+
+        const AddBtnHandler= (e) => {
+            let copyDetail = [...detail];
+        
+            const newId = copyDetail.length !==0 ? copyDetail[copyDetail.length-1].idx+1 : 22;
+            copyDetail.push({
+                idx:newId,
+                title:"",
+                content:"",
+                stack:[]
+
+            })
+            setDetail(copyDetail);
+        }
+
+
         return(
         <>
         {stackData&&detail&& detail.map((e,idx)=>
-            <Container key={e.idx}>
+        
+            <Container key={e.idx} id={e.idx}>
                 
             <SubTitle>Project{e.idx}</SubTitle>
+            <DeleteButton id={e.idx} onClick={DeleteBtnHandler} type="button"><FontAwesomeIcon id={e.idx} icon={faTrash}></FontAwesomeIcon></DeleteButton>
             <Section>Title</Section>
             <Input value={e.title} type="text" name="P_TITLE" id={idx} onChange={onChange}/>
             <Section>Description</Section>
             <Input value={e.content} type="text" name="P_DESCRIPTION" id={idx} onChange={onChange}/>
             <Section>Stack</Section>
             <Stacks id ={idx}>
-                
                 {someStack=[],
                 e.stack.map(e=>{
                     someStack.push(e.name);
+
                 })}
                 {stackData&&stackData.map(e=>
                     <Makecenter key={e.idx}>
@@ -169,7 +217,7 @@ const Project = ({data,setDetail,detail,stackData}) =>
             </Stacks>
 
         </Container>)}
-        
+        <AddBtn type="button" onClick={AddBtnHandler}>Add Project</AddBtn>
         </>
         )
     }

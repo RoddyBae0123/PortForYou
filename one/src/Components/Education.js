@@ -10,6 +10,8 @@ const Container = styled.div`
     padding:10px;
     border-radius: 20px;
     position:relative;
+    margin-bottom:30px;
+
 `
 const Makecenter = styled.div`
     display:flex;
@@ -59,7 +61,6 @@ const Education = ({data,educationData,detail,setDetail}) =>
 
             }
             
-        {detail&&console.log(detail)}
 
         return(
         <Container>

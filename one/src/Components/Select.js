@@ -10,6 +10,7 @@ const Container = styled.div`
     padding:10px;
     border-radius: 20px;
     position:relative;
+    margin-bottom:30px;
 `
 const Makecenter = styled.div`
     display:flex;

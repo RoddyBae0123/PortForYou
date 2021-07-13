@@ -1,17 +1,21 @@
 import styled from 'styled-components';
-import wifi from '../wifi';
 import StarRatings from 'react-star-ratings';
-
+import { useEffect } from 'react';
+import { faPython } from '@fortawesome/free-brands-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const Container = styled.div`
     width:80%;
     border:3.5px solid #D4D4D4;
-    display:flex;
-    flex-direction: column;
-    justify-content: center;
+    display:grid;
+    grid-template-columns: 0.2fr 0.5fr 0.2fr 0.1fr;
     border-radius: 20px;
     position:relative;
-    padding:30px;
+    padding:10px;
+    height:130px;
+    margin-bottom: 50px;
+    column-gap: 10px;
+    
 `
 const Makecenter = styled.div`
     display:flex;
@@ -19,67 +23,13 @@ const Makecenter = styled.div`
     justify-content: center;
     align-items: center;
 `
-
-
-const SubTitle = styled.h1`
-    background-color:white;
-    position: absolute;
-    top:-0.5rem;
-    left:3.5rem;
-    padding:0 7px;
-    font-weight: 500;
-
-`
-
-const Section = styled.h1`
-    font-size:24px;
-    font-weight: 500;
-    margin-bottom:20px;
-`
-
-const Input= styled.input`
-    border:none;
-    border-radius: 10px;
-    width:100%;
-    height:50px;
-    outline: none;
-    background-color: #EDEDED;
-    padding:10px;
-    font-size:20px;
-    color:rgba(0,0,0,0.5);
-    font-weight:500;
-    margin-bottom:20px;
-
-`
-
-const Stacks = styled.div`
+const LogoStructure = styled.div`
     display:grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-auto-rows:1fr;
-    position:relative;
-    grid-gap: 15px;
+    grid-template-rows: 0.7fr 0.3fr;
+    border-right:3.5px solid RGB(212, 212, 212);
 `
 
 
-const Button = styled.button`
-    background-color: #EDEDED;
-    width:100%;
-    height:60px;
-    border-radius: 20px;
-`
-
-const StackInfo = styled.div`
-    padding:20px;
-    display: grid;
-    grid-template-columns:1fr 1fr;
-`
-
-const StackSection= styled.div`
-    display:flex;
-    justify-content:${props=>props.data ? "flex-end": "flex-start"};
-    align-items: center;
-    border-right:${props=> props.data ? `3.5px solid RGB(212, 212, 212)` : `none`};
-`
 const StackLogo = styled.div`
     width:100px;
     height:100px;
@@ -91,78 +41,85 @@ const StackLogo = styled.div`
     margin-right:40px;
 
 `
-const Logo = styled.img`
-    width:70%;
+const Logo = styled.div`
+    width:50px;
+    height:50px;
+    font-size:40px;
+    border-radius: 100%;
+    display:flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color:RGB(255, 140, 148);
+
 `
 
 const LogoName = styled.h3`
-    font-size:30px;
-    margin-left:40px;
-
+    font-size:25px;
+    font-weight: 600;
 
 `
+const Score = styled.h5`
+    font-size:50px;
+    font-weight:500;
+    margin:10px 0;
+`
 
-const stack = ({data}) => 
+const Input = styled.input`
+    width:100%;
+    height:100%;
+    outline: none;
+    background-color: white;
+    border:3.5px solid rgb(212, 212, 212);;
+`
+
+const Stack = ({data,stackData,detail,setDetail}) => 
     {   
-        console.log(data)
+        
+        var someStack = [];
+        const copyData =[];
 
-
-
-        return(// data.map(e=><div>{e.name}</div>)
-        <Container>
-            <StarRatings
-          rating={5}
-          starRatedColor="#FF8C94"
-          changeRating={4}
+        useEffect(()=>{
+            data.map(e=>{
+                copyData.unshift({
+                    idx:e.idx,
+                    content:e.content,
+                    stackIdx:e.stackIdx
+                })
+            })
+            setDetail(copyData);
+            return
+        },[])
+        return(<>
+            {detail&&detail.map(e=> <Container>
+            <LogoStructure>
+                <Makecenter>
+                    <Logo><FontAwesomeIcon icon={faPython} ></FontAwesomeIcon></Logo>
+                
+                </Makecenter>
+                <LogoName style={{textAlign:"center"}}>Python</LogoName>
+            </LogoStructure>
+            <Input type="text" />
+            <Makecenter><StarRatings
+          rating={e.idx}
+          starRatedColor="blue"
           numberOfStars={5}
-          starDimension="25px"
-          starSpacing="10px"
           name='rating'
+          starSpacing="3px"
+          starDimension="20px"
         />
-            <StackInfo>
-                <StackSection data={1}>
-                    <StackLogo><Logo src={`${wifi}api/img/default?name=python`}></Logo></StackLogo>
-                </StackSection>
-                <StackSection data={0}>
-                <LogoName>Python</LogoName>
-                </StackSection>
-            </StackInfo>
-           
-            <Section>Description</Section>
-            <Input value="sexy company" type="text" name="P_DESCRIPTION" />
-            <Section>Stack</Section>
-            <Stacks>
-                <Makecenter>
-                    <Button type="button">React</Button>
-                </Makecenter>
-                <Makecenter>
-                    <Button type="button">Js</Button>
-                </Makecenter>
-                <Makecenter>
-                    <Button type="button">Html</Button>
-                </Makecenter>
-                <Makecenter>
-                    <Button type="button">Css</Button>
-                </Makecenter>
-                <Makecenter>
-                    <Button type="button">Java</Button>
-                </Makecenter>
-                <Makecenter>
-                    <Button type="button">Spring</Button>
-                </Makecenter>
-                <Makecenter>
-                    <Button type="button">Spring</Button>
-                </Makecenter>
-                <Makecenter>
-                    <Button type="button">Spring</Button>
-                </Makecenter>
-                <Makecenter>
-                    <Button type="button">Spring</Button>
-                </Makecenter>
-            </Stacks>
-        </Container>
+        <Score>{`${e.idx}/5`}</Score>
+        </Makecenter>
+        
+            <div>{e.stackIdx}</div>
+
+        </Container>)}
+            
+        
+        
+        </>
         )
     }
 
 
-export default stack;
+export default Stack;
