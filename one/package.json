@@ -19,6 +19,7 @@
     "react-google-font-loader": "^1.1.0",
     "react-loader-spinner": "^4.0.0",
     "react-redux": "^7.2.4",
+    "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
     "react-star-ratings": "^2.3.0",
     "react-transition-group": "^1.2.1",
