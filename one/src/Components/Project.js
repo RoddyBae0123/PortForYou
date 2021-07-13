@@ -47,7 +47,7 @@ const Input= styled.input`
     background-color: #EDEDED;
     padding:10px;
     font-size:20px;
-    color:rgba(0,0,0,0.5);
+    color:black;
     font-weight:500;
     margin-bottom:20px;
 
@@ -196,9 +196,9 @@ const Project = ({data,setDetail,detail,stackData}) =>
             <SubTitle>Project{e.idx}</SubTitle>
             <DeleteButton id={e.idx} onClick={DeleteBtnHandler} type="button"><FontAwesomeIcon id={e.idx} icon={faTrash}></FontAwesomeIcon></DeleteButton>
             <Section>Title</Section>
-            <Input value={e.title} type="text" name="P_TITLE" id={idx} onChange={onChange}/>
+            <Input placeholder="Please enter Title of Project"value={e.title} type="text" name="P_TITLE" id={idx} onChange={onChange}/>
             <Section>Description</Section>
-            <Input value={e.content} type="text" name="P_DESCRIPTION" id={idx} onChange={onChange}/>
+            <Input placeholder="Please enter Description of Project" value={e.content} type="text" name="P_DESCRIPTION" id={idx} onChange={onChange}/>
             <Section>Stack</Section>
             <Stacks id ={idx}>
                 {someStack=[],
