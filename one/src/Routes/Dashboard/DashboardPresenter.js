@@ -59,9 +59,16 @@ const UserProfile = styled.div`
     justify-content: center;
     align-items: center;
 `
-const UserImage = styled.h1`
+const UserImage = styled.div`
     font-size:20px;
     font-weight: 600;
+    width: 100px;
+    height: 100px;
+    border-radius:9px;
+    text-align: center;
+    line-height: 100px;
+    background-image: url("${wifi}${(props) => props.profileImgUri}");
+    background-size: 100px 100px;
 `
 const UserId = styled.h3`
     font-size:18px;
@@ -74,7 +81,7 @@ const UserName = styled.h3`
     margin-top:25px ;
 
 `
-const UserProfileEdit = styled.button`
+const UserProfileEdit = styled.label`
     position:absolute;
     bottom:0;
     right:0;
@@ -84,6 +91,10 @@ const UserProfileEdit = styled.button`
     background-color:#FF8C94;
     border-radius:9px;
     font-size:15px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
 
 `
 const LinkList = styled.div`
@@ -156,7 +167,7 @@ const Submit = styled.input`
     background-color: rgba(232, 191, 191, 0.74);
 `
 
-const DashboardPresenter = ({match,data, method}) => {
+const DashboardPresenter = ({match,data, method, imageHandler, profileImgUri}) => {
 
      
     
@@ -183,9 +194,12 @@ const DashboardPresenter = ({match,data, method}) => {
             <UserContainer>
 
                 <UserProfile>
-                    <UserImage style={{ fontFamily: 'Roboto Mono, monospaced' }}>User</UserImage>
-                    <UserProfileEdit>
-                        <FontAwesomeIcon icon={faPencilAlt}  />
+                    <UserImage profileImgUri = {profileImgUri} style={{ fontFamily: 'Roboto Mono, monospaced' }}></UserImage>
+                    <UserProfileEdit for="image_input">
+                        <FontAwesomeIcon icon={faPencilAlt} />
+                        <form style={{display:"none"}} method="post" encType = "multipart/form-data" id="profile_image">
+                            <input type="file" id="image_input" onChange={imageHandler}></input>
+                        </form>
                     </UserProfileEdit>
                 </UserProfile>
                 <UserName>Roddy</UserName>
@@ -277,6 +291,7 @@ const DashboardPresenter = ({match,data, method}) => {
                 </AnimatePresence>
             
         </Right>
+
         
 
     </Back>
