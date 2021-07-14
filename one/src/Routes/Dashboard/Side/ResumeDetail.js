@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-
 import Auth from "../../../Auth";
 import axios from 'axios';
 import wifi from '../../../wifi';
@@ -25,20 +24,9 @@ const Container = styled.form`
     display:flex;
     align-items: center;
     flex-direction: column;
+    position:relative;
 `
 
-const BigTitle = styled.div`
-    display:grid;
-    grid-template-columns: 1fr 1fr;
-
-`
-const TitleContent = styled.div`
-    display:flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-
-`
 const UserInfo  = styled.div`
     display:grid;
     grid-template-columns: 1fr 1fr;
@@ -75,7 +63,17 @@ const SectionTitle = styled.div`
     margin:0 0  30px 0;
 `
 
-
+const SubmitBtnHandler = styled.button`
+    position:absolute;
+    top:20px;
+    right:20px;
+    width:60px;
+    height:30px;
+    background-color:white;
+    border:3.5px solid #D4D4D4;
+    border-radius: 5px;
+    font-size:5px;
+`
 
 const ResumeDetail = ({match}) => {
 
@@ -148,11 +146,42 @@ const ResumeDetail = ({match}) => {
     const [stackList,setStackList]= useState([]);
     
     const [stackNew,setStackNew] = useState(undefined);
-
-
+    const show = () => {
+        console.log(project,position,education,stackNew);
+        setResumeList(Auth.getAccessToken());
+    }
+    const setResumeList = async(token) => {
+        const api = await axios.create({
+        baseURL:`${wifi}`
+        });
+        api.post('/api/user/portfolio',{
+            headers:{
+                "Authorization":`Bearer ${token}`,
+                "title": 'test portfolio endpoint',
+                "content": "so boring tasks ever",
+                "project":[
+                    
+                        ...project
+                          
+                ],
+                "positions":[{
+                    "idx":position.idx
+                }],
+                "tech" :[
+                    ...stackNew
+                ],
+                "education": {
+                    "idx":education.idx
+                }
+            }
+        }).then((res)=>{
+            setData(res);
+        }).catch((e)=>console.log(e))
+      }
 
     return(data ? (<div style={{marginTop:"60px"}}>
         <Container>
+        <SubmitBtnHandler type="button" onClick={show}>Submit</SubmitBtnHandler>
         <UserInfo>
         <UserSection data={1}>
             <UserTitle>

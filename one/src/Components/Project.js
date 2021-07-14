@@ -13,6 +13,7 @@ const Container = styled.div`
     position:relative;
     padding:30px;
     margin-bottom:35px;
+    box-shadow:  0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -1px rgba(0,0,0,0.06);
 `
 const Makecenter = styled.div`
     display:flex;
@@ -44,12 +45,14 @@ const Input= styled.input`
     width:100%;
     height:50px;
     outline: none;
-    background-color: #EDEDED;
+    background-color: white;
     padding:10px;
     font-size:20px;
     color:black;
     font-weight:500;
     margin-bottom:20px;
+    text-align: start;
+    border:3.5px solid #D4D4D4;
 
 `
 
@@ -88,7 +91,12 @@ const AddBtn = styled.button`
     border-radius: 20px;
     font-weight: 600;
     font-size:20px;
-    background-color:RGB(255, 140, 148);
+    background-color:white;
+    &:hover{
+        background-color: RGB(255, 140, 148);
+    }
+    transition: all 300ms ease;
+    border:3.5px solid  RGB(255, 140, 148);
 
 `
 
@@ -175,17 +183,20 @@ const Project = ({data,setDetail,detail,stackData}) =>
         const AddBtnHandler= (e) => {
             let copyDetail = [...detail];
         
-            const newId = copyDetail.length !==0 ? copyDetail[copyDetail.length-1].idx+1 : 22;
+            const newId = copyDetail.length !==0 ? copyDetail[copyDetail.length-1].idx+1 : 1;
             copyDetail.push({
                 idx:newId,
                 title:"",
                 content:"",
-                stack:[]
+                stack:[{
+                    idx:7,
+                    name:'etc',
+                    content:"etc"
+                }]
 
             })
             setDetail(copyDetail);
         }
-
 
         return(
         <>
@@ -198,7 +209,7 @@ const Project = ({data,setDetail,detail,stackData}) =>
             <Section>Title</Section>
             <Input placeholder="Please enter Title of Project"value={e.title} type="text" name="P_TITLE" id={idx} onChange={onChange}/>
             <Section>Description</Section>
-            <Input placeholder="Please enter Description of Project" value={e.content} type="text" name="P_DESCRIPTION" id={idx} onChange={onChange}/>
+            <Input placeholder="Please enter Description of Project" value={e.content} type="text" name="P_DESCRIPTION" id={idx} onChange={onChange}></Input>
             <Section>Stack</Section>
             <Stacks id ={idx}>
                 {someStack=[],
