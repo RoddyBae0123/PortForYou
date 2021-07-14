@@ -8,6 +8,7 @@ import Select from '../../../Components/Select';
 import Project from '../../../Components/Project';
 import Stack from '../../../Components/Stack';
 import Education from '../../../Components/Education';
+import { motion } from "framer-motion";
 
 const Makecenter = styled.div`
     display:flex;
@@ -70,9 +71,11 @@ const SubmitBtnHandler = styled.button`
     width:60px;
     height:30px;
     background-color:white;
-    border:3.5px solid #D4D4D4;
+    border:1.8px solid #D4D4D4;
     border-radius: 5px;
     font-size:5px;
+    box-shadow:0 3px 6px rgba(149,157,165,0.15);
+
 `
 
 const ResumeDetail = ({match}) => {
@@ -179,7 +182,7 @@ const ResumeDetail = ({match}) => {
         }).catch((e)=>console.log(e))
       }
 
-    return(data ? (<div style={{marginTop:"60px"}}>
+    return(data ? (<motion.div exit={{opacity:0}} animate={{opacity:1}} initial = {{opacity:0}} style={{width:"100%"}}><div style={{marginTop:"60px"}}>
         <Container>
         <SubmitBtnHandler type="button" onClick={show}>Submit</SubmitBtnHandler>
         <UserInfo>
@@ -201,7 +204,7 @@ const ResumeDetail = ({match}) => {
             <Stack data={data.data.tech} stackData = {stackData}detail={stackNew} setDetail={setStackNew}/>
             
         </Container>
-    </div>) : <Makecenter>
+    </div></motion.div>) : <Makecenter>
         <Loader type="Rings"
     color="#FF8C94"
     height={300}

@@ -14,6 +14,8 @@ const Container = styled.div`
     padding:30px;
     margin-bottom:35px;
     box-shadow:  0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -1px rgba(0,0,0,0.06);
+    
+
 `
 const Makecenter = styled.div`
     display:flex;
@@ -97,6 +99,7 @@ const AddBtn = styled.button`
     }
     transition: all 300ms ease;
     border:3.5px solid  RGB(255, 140, 148);
+    margin-bottom:150px;
 
 `
 

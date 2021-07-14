@@ -51,6 +51,7 @@ const Logo = styled.div`
     justify-content: center;
     background-color:white;
     border:3.5px solid RGB(212, 212, 212);
+    box-shadow:0 3px 6px rgba(149,157,165,0.15);
 `
 
 const LogoName = styled.h3`
@@ -132,6 +133,8 @@ const AddBtn = styled.button`
         background-color: RGB(255, 140, 148);
     }
     transition: all 300ms ease;
+    margin: 30px 0 150px 0;
+
 `
 
 

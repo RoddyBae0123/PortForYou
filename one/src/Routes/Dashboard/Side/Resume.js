@@ -1,15 +1,14 @@
-import { AnimatePresence,motion } from "framer-motion";
+import { motion } from "framer-motion";
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUserCheck,faPlusCircle,faFileInvoice} from '@fortawesome/free-solid-svg-icons';
+import { faPlusCircle,faFileInvoice} from '@fortawesome/free-solid-svg-icons';
 import { Table } from 'reactstrap';
-import {Route, Switch,Link} from "react-router-dom";
-import { faJava,faPython } from '@fortawesome/free-brands-svg-icons'
+
 import Auth from "../../../Auth";
-import axios from 'axios';
-import wifi from '../../../wifi';
-import { useEffect, useState } from 'react';
+
+import { useEffect } from 'react';
 import Tr from '../../../Components/Tr';
+import Loader from "react-loader-spinner";
 
 const SubTitle = styled.h5`
     font-size:17px;
@@ -87,7 +86,13 @@ const Button = styled.button`
 `
 
 
-
+const Makecenter = styled.div`
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    width:100%;
+    height:100vh;
+`
 
 
 const Resume = ({data, method}) => {
@@ -97,7 +102,8 @@ const Resume = ({data, method}) => {
     },[])
     
     console.log(data)
-    return(<motion.div exit={{opacity:0}} animate={{opacity:1}} initial = {{opacity:0}} style={{width:"100%"}}>
+    return(
+    data? <motion.div exit={{opacity:0}} animate={{opacity:1}} initial = {{opacity:0}} style={{width:"100%"}}>
     
     <Container>
         <TopInfo>
@@ -116,7 +122,14 @@ const Resume = ({data, method}) => {
       </tbody>
     </Table>
     </Container>
-    </motion.div>)
+    </motion.div> : <Makecenter>
+        <Loader type="Rings"
+    color="#FF8C94"
+    height={300}
+    width={300}
+    timeout={10000}/>
+    </Makecenter>
+    )
 }
 
 

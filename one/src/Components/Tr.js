@@ -64,7 +64,7 @@ const TR = styled.tr`
 const SexyLink = styled(Link)`
     
 `
-const Tr = ({data}) => data ? ( data.map(e=> <TR key={`${e.idx}`}>
+const Tr = ({data}) => data.map(e=> <TR key={`${e.idx}`}>
     
 <ResumeOne key={`${e.idx}`} style={{padding:0}}>
     <DataList>
@@ -117,7 +117,7 @@ const Tr = ({data}) => data ? ( data.map(e=> <TR key={`${e.idx}`}>
     </Makecenter>
     </DataList>
 </ResumeOne>
-</TR> )) : <tr><td>Wait</td></tr> 
+</TR> )
     
 
 
