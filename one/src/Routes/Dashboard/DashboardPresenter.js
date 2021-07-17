@@ -1,18 +1,17 @@
 import React, { useEffect, useState } from  "react";
 import styled from "styled-components";
-import axios from 'axios';
 import GoogleFontLoader from 'react-google-font-loader';
 import wifi from "../../wifi";
 import {Route, Switch,Link} from "react-router-dom";
-import Apply from './Side/Apply';
+import Recruit from './Side/Recruit';
 import Resume from './Side/Resume';
-import Study from './Side/Study';
+import Room from './Side/Room';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTrashAlt , faPencilAlt,faHome,faFileInvoice,faUserCheck,faUsers,faCogs,faTable,faBell} from '@fortawesome/free-solid-svg-icons';
-import { faGoogle } from '@fortawesome/free-brands-svg-icons'
+import {  faPencilAlt,faHome,faFileInvoice,faUsers,faCogs,faTable,faBell} from '@fortawesome/free-solid-svg-icons';
+import {faCodepen} from "@fortawesome/free-brands-svg-icons";
 import { AnimatePresence,motion } from "framer-motion"
-import Auth from "../../Auth";
 import ResumeDetail from './Side/ResumeDetail';
+import { GroupAddSharp } from '@material-ui/icons';
 
 const Back = styled.div`
     display:grid;
@@ -33,7 +32,7 @@ const Left = styled.div`
 
 `
 const Right = styled.div`
-    background-color:RGB(254, 254, 254);
+    background-color:white;
     height:100%;
     `
 
@@ -70,11 +69,7 @@ const UserImage = styled.div`
     background-image: url("${wifi}${(props) => props.profileImgUri}");
     background-size: 100px 100px;
 `
-const UserId = styled.h3`
-    font-size:18px;
-    font-weight: 600;
-    margin:25px 0 ;
-`
+
 const UserName = styled.h3`
     font-size:23px;
     font-weight: 700;
@@ -132,7 +127,7 @@ const LinkCent = styled.div`
 `
 const Navbar = styled.div`
     height:60px;
-    background-color:#F1E2E2;
+    background-color:white;
     position: fixed;
     width: calc( 100% - 220px ); 
     border-bottom:1.5px solid lightgray;
@@ -156,15 +151,21 @@ const SearchForm = styled.form`
 `
 const Input = styled.input`
     
-    outline:none;
-    border:none;
-    background-color: rgba(232, 191, 191, 0.74);
-    font-size:20px;
+    border: 1px solid lightgray;
+    outline: none;
+    background-color: white;
+    font-size: 20px;
+    border-radius: 10px 0 0 10px;
+    border-right: none;
+    box-shadow: 1px 1px 5px lightgray;
+
 `
 const Submit = styled.input`    
-    border:none;
-    border-left:2px solid white;
-    background-color: rgba(232, 191, 191, 0.74);
+    border:1px solid lightgray;
+    border-radius: 0 10px 10px 0 ;
+    background-color: white;
+    box-shadow: 1px 1px 5px lightgray;
+
 `
 
 const DashboardPresenter = ({match,data, method, imageHandler, profileImgUri}) => {
@@ -226,25 +227,25 @@ const DashboardPresenter = ({match,data, method, imageHandler, profileImgUri}) =
                             <LinkTitle>Resume</LinkTitle>           
                         </LinkCent>
                     </LinkSexy>
-                <LinkSexy to ={`${match.path}/apply`}>
+                <LinkSexy to ={`${match.path}/Recruit`}>
                     <LinkCent>
                             <LinkIcon>
-                                <FontAwesomeIcon icon={faUserCheck} size="2x" />
+                                <GroupAddSharp />
                             </LinkIcon>
                     </LinkCent>
                     <LinkCent>
-                            <LinkTitle>Apply</LinkTitle>           
+                            <LinkTitle>Recruit</LinkTitle>           
                     </LinkCent>
                 </LinkSexy>
                 
-                <LinkSexy to ={`${match.path}/study`}>
+                <LinkSexy to ={`${match.path}/room`}>
                     <LinkCent>
                                 <LinkIcon>
-                                    <FontAwesomeIcon icon={faUsers} size="2x" />
+                                    <FontAwesomeIcon icon={faCodepen} size="2x" />
                                 </LinkIcon>
                         </LinkCent>
                         <LinkCent>
-                                <LinkTitle>Study</LinkTitle>           
+                                <LinkTitle>Room</LinkTitle>           
                         </LinkCent>
                 </LinkSexy>
                 <LinkSexy to ={`${match.path}/study`}>
@@ -266,8 +267,7 @@ const DashboardPresenter = ({match,data, method, imageHandler, profileImgUri}) =
             <NabvarCenter position={true}>
                 <SearchForm>
                         <Input type="text"></Input>
-                            <Submit type="submit" value="&#128269;">
-                        </Submit>
+                        <Submit type="submit" value="&#128269;"></Submit>
                     </SearchForm>
                 </NabvarCenter>
                 <NabvarCenter position={false}>
@@ -282,11 +282,11 @@ const DashboardPresenter = ({match,data, method, imageHandler, profileImgUri}) =
             </Navbar>
                 <AnimatePresence>
                     <Switch>
-                        <Route path={`${match.path}/apply`}  render={(history) => <Apply history ={history} />}></Route>
+                        <Route path={`${match.path}/recruit`}  component={Recruit}></Route>
                         
                         <Route exact path={`${match.path}/resume`}  render={() => <Resume data ={data} method = {method} />}></Route>
                         <Route path={`${match.path}/resume/:idx`}  component={ResumeDetail}></Route>
-                        <Route path={`${match.path}/study`} component={Study}></Route>
+                        <Route path={`${match.path}/room`} component={Room}></Route>
                     </Switch>
                 </AnimatePresence>
             

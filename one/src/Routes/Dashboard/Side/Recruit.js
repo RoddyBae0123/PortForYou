@@ -2,7 +2,8 @@ import { AnimatePresence,motion } from "framer-motion";
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCheck,faUsers,faPlusCircle} from '@fortawesome/free-solid-svg-icons';
-
+import SectionTitle from "../../../Components/SectionTitle";
+import RecruitList from "../../../Components/RecruitList";
 const DashTitle = styled.div`
     width:90%;
     height:70px;
@@ -44,25 +45,17 @@ const Button = styled.button`
     color:#A2A2A2;
 `
 
-const Apply = ({ }) => {
+const Recruit = () => {
     return(<motion.div exit={{opacity:0}} animate={{opacity:1}} initial = {{opacity:0}} style={{width:"100%"}}>
         <Container>
-            <DashTitle>
-                <div style={{display:"flex", flexDirection:'rows',alignItems:"center"}}>
-                    <FontAwesomeIcon icon={faUserCheck} size="2x" style={{margin:"0 30px"}} />
-                    <Title>Apply</Title>
-                    <SubTitle style={{transform:"translateY(50%)"}}>Manage your Applyment.</SubTitle>
-                </div>
-                <div style={{display:"flex", flexDirection:'rows',alignItems:"center",justifyContent:"flex-end"}}>
-                    <Button>
-                        <FontAwesomeIcon icon={faPlusCircle} size="2x" style={{margin:"0 30px"}} />
-                    </Button>
-                </div>
-            </DashTitle>
-            <DashContent><div>apply</div><div>apply</div><div>apply</div><div>apply</div><div>apply</div><div>apply</div></DashContent>
+           
+           <SectionTitle title={"Recruit"} message={"Let's team up and make your dreams come true."}></SectionTitle>
+           <RecruitList />
+
         </Container>
+
         </motion.div>)
 }
 
 
-export default Apply;
+export default Recruit;

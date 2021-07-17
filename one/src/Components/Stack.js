@@ -60,7 +60,7 @@ const LogoName = styled.h3`
 
 `
 
-const Input = styled.input`
+const Input = styled.textarea`
     width:100%;
     height:100%;
     outline: none;
@@ -68,8 +68,12 @@ const Input = styled.input`
     border-radius: 15px;
     font-weight: 500;
     border: 3.5px solid #D4D4D4;
+    padding:10px;
+    resize: none;
     
 `
+
+
 const Addul = styled.ul`
     width:80%;
     background-color: white;
@@ -195,7 +199,6 @@ const Stack = ({data,stackData,detail,setDetail}) =>
             copyDetail.push({
                 content:"",
                 stackIdx:parseInt(e.target.id),
-                name:e.target.innerHTML,
                 idx:copyDetail.length ? copyDetail.length+1 : 0,
                 ability:0
             })
@@ -224,7 +227,8 @@ const Stack = ({data,stackData,detail,setDetail}) =>
                 </Makecenter>
                 <LogoName style={{textAlign:"center"}}>{stackData[e.stackIdx-1].name}</LogoName>
             </LogoStructure>
-            <Input type="text" value={e.content} onChange={inputHandler} id={idx}/>
+            <Input type="text" value={e.content} onChange={inputHandler} id={idx} >
+            </Input>
             <Makecenter style={{borderLeft:"3.5px solid RGB(212, 212, 212)"}}><StarRatings
           rating={e.ability}
           starRatedColor="RGB(255, 140, 148)"

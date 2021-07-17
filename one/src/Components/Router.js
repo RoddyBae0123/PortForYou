@@ -5,7 +5,7 @@ import Signin from "../Routes/Signin";
 import Signup from "../Routes/Signup";
 import Dashboard from "../Routes/Dashboard";
 import { AnimatePresence,motion } from "framer-motion"
-
+import ErrorPage from "../Components/ErrorPage"
 export default () => (
     <Router>
         <>  <AnimatePresence>
@@ -14,6 +14,7 @@ export default () => (
                     <Route path="/signup" exact component={Signup} />
                     <Route path="/signin" exact component={Signin} />
                     <Route path="/dashboard"  component={Dashboard} />
+                    <Route path="/error401"  component={ErrorPage} />
 
                 </Switch>
         </AnimatePresence>

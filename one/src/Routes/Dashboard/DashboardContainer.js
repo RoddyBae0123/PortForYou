@@ -3,7 +3,8 @@ import Auth from "../../Auth";
 import DashboardPresenter from "./DashboardPresenter"
 import axios from "axios";
 import wifi from "../../wifi";
-const DashboardContainer = ({match}) => {
+import { Link } from 'react-router-dom';
+const DashboardContainer = ({match,history}) => {
     const [data , setData] = useState(undefined); //resume data
     const [profileImgUri , setProfileImgUri] = useState(undefined); //change profile
     const [userData , setUserData] = useState(undefined); //user information
@@ -21,7 +22,11 @@ const DashboardContainer = ({match}) => {
         }).then((res)=>{
             setUserData(res);
             setProfileImgUri("api/img/default?name="+res.data.uid+"_profile_img");
-        }).catch((e)=>console.log(e))
+        }).catch((e)=>{
+            if(e.response.status){
+                history.push("/error401");
+            }
+        })
     }    
 
     const getResumeList = async(token) => {
@@ -34,7 +39,7 @@ const DashboardContainer = ({match}) => {
             }
         }).then((res)=>{
             setData(res);
-        }).catch((e)=>console.log(e))
+        }).catch((e)=>console.log(e.status))
       }
       
       const setProfileImage = async(e) => {

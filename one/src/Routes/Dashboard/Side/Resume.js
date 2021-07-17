@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlusCircle,faFileInvoice} from '@fortawesome/free-solid-svg-icons';
+import { faPlusCircle,faFileInvoice,faFileAlt} from '@fortawesome/free-solid-svg-icons';
 import { Table } from 'reactstrap';
 
 import Auth from "../../../Auth";
@@ -9,7 +9,7 @@ import Auth from "../../../Auth";
 import { useEffect } from 'react';
 import Tr from '../../../Components/Tr';
 import Loader from "react-loader-spinner";
-
+import SectionTitle from "../../../Components/SectionTitle"
 const SubTitle = styled.h5`
     font-size:17px;
     font-weight:400;
@@ -106,21 +106,12 @@ const Resume = ({data, method}) => {
     data? <motion.div exit={{opacity:0}} animate={{opacity:1}} initial = {{opacity:0}} style={{width:"100%"}}>
     
     <Container>
-        <TopInfo>
-            <div style={{display:"flex",flexDirection:"rows",alignItems:"center",fontSize:30}}>
-                    <FontAwesomeIcon icon={faFileInvoice} size="1x" style={{margin:"0 20px 0 0"}} />
-                    <Title>Resume</Title>
-                    <SubTitle>Manage your Resume.</SubTitle>
-            </div>
-            <Button>
-                        <FontAwesomeIcon icon={faPlusCircle} size="2x"  />
-            </Button>
-        </TopInfo>
-    <Table  style={{minWidth:700}}>
-      <tbody>
-            <Tr data={data &&data.data}/>
-      </tbody>
-    </Table>
+        <SectionTitle title={"Resume"} message={"I like it when money makes a difference"} />
+        <Table  style={{minWidth:700}}>
+            <tbody>
+                <Tr data={data &&data.data}/>
+            </tbody>
+        </Table>
     </Container>
     </motion.div> : <Makecenter>
         <Loader type="Rings"

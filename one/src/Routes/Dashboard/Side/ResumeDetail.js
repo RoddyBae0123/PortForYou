@@ -48,6 +48,7 @@ const UserTitle = styled.div`
     justify-content:space-between ;
     flex-direction: column;
     text-align:center;
+    align-items: center;
 `
 const UserFace = styled.div`
     width:130px;
@@ -77,9 +78,40 @@ const SubmitBtnHandler = styled.button`
     box-shadow:0 3px 6px rgba(149,157,165,0.15);
 
 `
+const TitleInput = styled.input`
+    outline: none;
+    border: 3.5px solid white;
+    width:400px;
+    height:60px;
+    border-radius: 10px;
+    font-size:40px;
+    font-weight:700;
+    margin-bottom:20px;
+    transition: border 300ms ease-out;
+    &:focus{
+        border-color: lightgreen;
+    }
+    text-align:center;
+`
+const ContentInput = styled.input`
+    outline: none;
+    border: 3.5px solid white;
+    width:300px;
+    height:60px;
+    border-radius: 5px;
+    font-size:20px;
+    font-weight:700;
+    margin-bottom:20px;
+    transition: border 300ms ease-out;
+    &:focus{
+        border-color: lightgreen;
+    }
+    text-align:center;
+
+`
 
 const ResumeDetail = ({match}) => {
-
+    
     useEffect(()=>{
         let mounted = true;
         if(mounted){
@@ -91,12 +123,15 @@ const ResumeDetail = ({match}) => {
         
         return () => (mounted =false);
         
-    },[])
+    },[]);
+
+    const [main,setMain] = useState();
+   
     const Idx=match.params.idx;
     const accessToken = Auth.getAccessToken();
     const [data,setData] = useState(false); //Entire Data
     const [project,setProject]= useState(); //Entire Data.project Data
-
+    
     const getResumeDetail = async(token,idx) => {
         const api = await axios.create({
         baseURL:`${wifi}`
@@ -108,7 +143,10 @@ const ResumeDetail = ({match}) => {
             }
         }).then((res)=>{
             setData(res);
-            console.log(res);
+            setMain({
+                title:res.data.title,
+                content:res.data.content
+            })
         }).catch((e)=>console.log(e))
       }
     const [stackData ,setStack] =useState(undefined);//project Data=>stack data of project
@@ -182,14 +220,27 @@ const ResumeDetail = ({match}) => {
         }).catch((e)=>console.log(e))
       }
 
-    return(data ? (<motion.div exit={{opacity:0}} animate={{opacity:1}} initial = {{opacity:0}} style={{width:"100%"}}><div style={{marginTop:"60px"}}>
+    const mainHandler = (e) => {
+        const {target,target:{value,name}} = e;
+        {name==="title" ? setMain({
+            title:value,
+            content:main.content
+        }):setMain({
+            title:main.title,
+            content:value
+        })}
+        
+        
+    }
+
+    return(data&&main ? (<motion.div exit={{opacity:0}} animate={{opacity:1}} initial = {{opacity:0}} style={{width:"100%"}}><div style={{marginTop:"60px"}}>
         <Container>
         <SubmitBtnHandler type="button" onClick={show}>Submit</SubmitBtnHandler>
         <UserInfo>
         <UserSection data={1}>
             <UserTitle>
-                <h1 style={{fontSize:"40px",fontWeight:"700",marginBottom:"20px"}}>{data.data.title}</h1>
-                <h5 style={{fontSize:"15px",fontWeight:"400"}}>"{data.data.content}"</h5>
+                <TitleInput placeholder="Plz Enter Title (2-15)" name="title" value={main.title} onChange={mainHandler} />
+                <ContentInput placeholder="Plz Enter Content (2-10)" style={{fontWeight:"400"}} name="content" value={`${main.content}`} onChange={mainHandler} />
                 </UserTitle>
             </UserSection>
         <UserSection ><UserFace /></UserSection>

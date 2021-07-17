@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faJava,faPython,faKorvue,faCuttlefish } from '@fortawesome/free-brands-svg-icons'
-import { faHome,faBell,faEnvelopeOpenText,faPlusSquare,faPenNib,faTrash} from '@fortawesome/free-solid-svg-icons';
+import { faHome,faBell,faEnvelopeOpenText,faFileAlt,faPenNib,faTrash} from '@fortawesome/free-solid-svg-icons';
 import {Route, Switch,Link} from "react-router-dom";
 
 
@@ -9,7 +9,6 @@ const ResumeOne = styled.td`
     display:flex;
     justify-content: center;
     align-items: center;
-    padding:0;
     
 `
 const Document = styled.div`
@@ -27,6 +26,8 @@ const DataList = styled.div`
     grid-template-columns:0.1fr 0.7fr 0.3fr 0.1fr;
     column-gap: 10px;
     width:90%;
+    padding:20px 0 ;
+
 `
 const IntroduceCon = styled.div`
     display:grid;
@@ -48,12 +49,17 @@ const DelEdit= styled.button`
     background-color: transparent;
     cursor: pointer;
     border:none;
-    font-size:10px;
-    color:gray;
+    font-size:17px;
+    color:RGB(74, 86, 94);
     width:30%;
     display:flex;
     align-items: center;
     justify-content: flex-end;
+    transition: all 300ms ease-in-out;
+    &:hover{
+        color:red;
+        transform:rotate(15deg);
+    }
     
 `
 const TR = styled.tr`
@@ -68,7 +74,7 @@ const Tr = ({data}) => data.map(e=> <TR key={`${e.idx}`}>
     
 <ResumeOne key={`${e.idx}`} style={{padding:0}}>
     <DataList>
-    <Document> <FontAwesomeIcon icon={faEnvelopeOpenText} size="2x" /></Document>
+    <Document> <FontAwesomeIcon icon={faFileAlt} size="2x" style={{color:"RGB(74, 86, 94)"}}/></Document>
     <IntroduceCon>
         <Makecenter>
             <SexyLink to={`resume/${e.idx}`}>
@@ -107,10 +113,7 @@ const Tr = ({data}) => data.map(e=> <TR key={`${e.idx}`}>
             <h5>{e.position.map(e=>`${e.name}/`)}</h5>
         </Makecenter> 
     </IntroduceCon>
-    <Makecenter style={{justifyContent:"flex-end",alignItems:"flex-start"}}>
-        <DelEdit>
-            <FontAwesomeIcon icon={faPenNib} size="2x" />
-        </DelEdit>
+    <Makecenter style={{justifyContent:"center",alignItems:"center"}}>
         <DelEdit>
             <FontAwesomeIcon icon={faTrash} size="2x" />
         </DelEdit>
