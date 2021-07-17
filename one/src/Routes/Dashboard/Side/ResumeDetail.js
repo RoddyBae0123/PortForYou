@@ -198,6 +198,9 @@ const ResumeDetail = ({match}) => {
         api.post('/api/user/portfolio',{
             headers:{
                 "Authorization":`Bearer ${token}`,
+            
+            },
+            data:{
                 "title": 'test portfolio endpoint',
                 "content": "so boring tasks ever",
                 "project":[
