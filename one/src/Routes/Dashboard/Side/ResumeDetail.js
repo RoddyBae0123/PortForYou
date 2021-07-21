@@ -110,7 +110,7 @@ const ContentInput = styled.input`
 
 `
 
-const ResumeDetail = ({match}) => {
+const ResumeDetail = ({match,history}) => {
     
     useEffect(()=>{
         let mounted = true;
@@ -126,7 +126,7 @@ const ResumeDetail = ({match}) => {
     },[]);
 
     const [main,setMain] = useState();
-   
+    const [haveto, setHaveto] = useState(undefined);
     const Idx=match.params.idx;
     const accessToken = Auth.getAccessToken();
     const [data,setData] = useState(false); //Entire Data
@@ -149,7 +149,7 @@ const ResumeDetail = ({match}) => {
             })
         }).catch((e)=>console.log(e))
       }
-    const [stackData ,setStack] =useState(undefined);//project Data=>stack data of project
+    const [stackData ,setStack] =useState([]);//project Data=>stack data of project
     const getStackList= async() =>{
             const api = await axios.create({
                 baseURL:`${wifi}`
@@ -188,25 +188,23 @@ const ResumeDetail = ({match}) => {
     
     const [stackNew,setStackNew] = useState(undefined);
     const show = () => {
-        console.log(project,position,education,stackNew);
         setResumeList(Auth.getAccessToken());
     }
     const setResumeList = async(token) => {
+        console.log(project,stackNew);
         const api = await axios.create({
-        baseURL:`${wifi}`
+        baseURL:`${wifi}`,
+        headers:{
+            "Authorization":`Bearer ${token}`
+        
+        }
         });
         api.post('/api/user/portfolio',{
-            headers:{
-                "Authorization":`Bearer ${token}`,
-            
-            },
-            data:{
-                "title": 'test portfolio endpoint',
-                "content": "so boring tasks ever",
+                "idx":Idx,
+                "title": main.title,
+                "content": main.content,
                 "project":[
-                    
                         ...project
-                          
                 ],
                 "positions":[{
                     "idx":position.idx
@@ -217,10 +215,14 @@ const ResumeDetail = ({match}) => {
                 "education": {
                     "idx":education.idx
                 }
-            }
+           
         }).then((res)=>{
             setData(res);
-        }).catch((e)=>console.log(e))
+            console.log(data);
+            console.log(res.status);
+        }).catch((e)=>console.log(e.response.status))
+        setHaveto(true);
+        history.goBack();
       }
 
     const mainHandler = (e) => {

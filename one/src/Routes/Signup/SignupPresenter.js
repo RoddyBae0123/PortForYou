@@ -174,7 +174,7 @@ const SignupPresenter = ({push}) => {
         const api = await axios.create({
         baseURL:`${wifi}`
         });
-        api.post('/api/signup',{
+        api.post('/api/user',{
           username,
           password,
           name

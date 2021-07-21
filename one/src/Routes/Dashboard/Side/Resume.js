@@ -10,6 +10,8 @@ import { useEffect } from 'react';
 import Tr from '../../../Components/Tr';
 import Loader from "react-loader-spinner";
 import SectionTitle from "../../../Components/SectionTitle"
+import wifi from "../../../wifi";
+import axios from "axios";
 const SubTitle = styled.h5`
     font-size:17px;
     font-weight:400;
@@ -84,8 +86,6 @@ const Button = styled.button`
     
     
 `
-
-
 const Makecenter = styled.div`
     display:flex;
     justify-content: center;
@@ -93,23 +93,76 @@ const Makecenter = styled.div`
     width:100%;
     height:100vh;
 `
+const AddBtn = styled.button`
+    width:70px;
+    height:30px;
+    border:2px solid RGB(74, 86, 94);
+    border-radius:10px;
+    color:RGB(74, 86, 94);
+    font-weight:500;
+    font-size:12px;
+    margin-bottom:20px;
+    &:hover{
+        color:white;
+        background:RGB(74, 86, 94);
+    }
+    transition:all 300ms ease-in-out;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+`
 
 
-const Resume = ({data, method}) => {
+
+const Resume = ({data, method,setData,DelResumeBtn}) => {
     
     useEffect(() => {
         method(Auth.getAccessToken());
+       
     },[])
+
+    const AddBtnHandler = async(token) => {
+        const api = await axios.create({
+        baseURL:`${wifi}`,
+        headers:{
+            "Authorization":`Bearer ${token}`
+        
+        }
+        });
+        api.post('/api/user/portfolio',{
+                "title": "New shit",
+                "content":"New content",
+                "project":[
+                        
+                ],
+                "positions":[{
+                    "idx":7
+                }],
+                "tech" :[
+                ],
+                "education": {
+                    "idx":5
+                }
+           
+        }).then((res)=>{
+            console.log(res);
+            method(Auth.getAccessToken());
+
+        }).catch((e)=>console.log(e))
+      }
     
-    console.log(data)
     return(
     data? <motion.div exit={{opacity:0}} animate={{opacity:1}} initial = {{opacity:0}} style={{width:"100%"}}>
     
     <Container>
-        <SectionTitle title={"Resume"} message={"I like it when money makes a difference"} />
+        <SectionTitle title={"Resume"} message={"I like it when money makes a difference"} nav={false} />
+        <div style={{width:"90%",display:"flex",justifyContent:"flex-end"}}>
+            <AddBtn onClick={()=>AddBtnHandler(Auth.getAccessToken())}><h5>ADD</h5></AddBtn>
+        </div>
         <Table  style={{minWidth:700}}>
             <tbody>
-                <Tr data={data &&data.data}/>
+                <Tr data={data &&data.data} DelResumeBtn={DelResumeBtn}/>
             </tbody>
         </Table>
     </Container>

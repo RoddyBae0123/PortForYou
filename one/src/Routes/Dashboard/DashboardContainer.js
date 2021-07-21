@@ -4,18 +4,18 @@ import DashboardPresenter from "./DashboardPresenter"
 import axios from "axios";
 import wifi from "../../wifi";
 import { Link } from 'react-router-dom';
+import {useAsync} from "react-async";
 const DashboardContainer = ({match,history}) => {
     const [data , setData] = useState(undefined); //resume data
     const [profileImgUri , setProfileImgUri] = useState(undefined); //change profile
     const [userData , setUserData] = useState(undefined); //user information
-    
-    
+    const [study,setStudy] = useState(undefined);
     const getUserInfo = async() => {
         const api = await axios.create({
             baseURL:`${wifi}`
             });
     
-        api.get('/api/user',{
+        api.get('/api/userInfo',{
             headers:{
                 "Authorization":`Bearer ${Auth.getAccessToken()}`
             }
@@ -23,7 +23,7 @@ const DashboardContainer = ({match,history}) => {
             setUserData(res);
             setProfileImgUri("api/img/default?name="+res.data.uid+"_profile_img");
         }).catch((e)=>{
-            if(e.response.status){
+            if(e.response.status===401){
                 history.push("/error401");
             }
         })
@@ -39,7 +39,12 @@ const DashboardContainer = ({match,history}) => {
             }
         }).then((res)=>{
             setData(res);
-        }).catch((e)=>console.log(e.status))
+        }).catch((e)=>{
+            if(e.response.status===401){
+                history.push("/error401")
+            }
+        })
+        
       }
       
       const setProfileImage = async(e) => {
@@ -64,7 +69,36 @@ const DashboardContainer = ({match,history}) => {
             }).catch((t)=>console.log(t))
       }
 
-    
+      const DelResumeBtn = async(e) => {
+        const api = await axios.create({
+            baseURL:`${wifi}`,
+            headers:{
+                "Authorization":`Bearer ${Auth.getAccessToken()}`
+            }
+            });
+        api.delete(`/api/user/portfolio?portfolio_idx=${e.target.parentElement.id}`).then(
+            ()=>{ getResumeList(Auth.getAccessToken());
+            }
+        );
+      }
+
+
+      const getStudyList = async ()=>{
+          try{
+            const api = await axios.create({
+                baseURL:`${wifi}`,
+                headers:{
+                    "Authorization":`Bearer ${Auth.getAccessToken()}`
+                }
+            });
+            api.get("/api/user/studies")
+            .then((e)=>setStudy(e.data))
+          }
+        catch(error){
+            console.log(error);
+        }
+
+      }
 
     useEffect(()=>{
         getUserInfo();
@@ -80,7 +114,15 @@ const DashboardContainer = ({match,history}) => {
                 data={data} 
                 method={getResumeList} 
                 profileImgUri = {profileImgUri} 
-                imageHandler = {setProfileImage}>
+                imageHandler = {setProfileImage}
+                setData={setData}
+                DelResumeBtn={DelResumeBtn}
+                getStudyList={getStudyList}
+                history={history}
+                setStudy={setStudy}
+                study={study}
+                >
+                    
             </DashboardPresenter>
         </>
     )

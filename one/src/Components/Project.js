@@ -112,15 +112,19 @@ const Project = ({data,setDetail,detail,stackData}) =>
         
 
         useEffect(()=>{
-                data.map(e=>{
+            
+                data.map((e,idx)=>{
                     deliVery.unshift({
                         idx:e.idx,
                         content:e.content,
                         stack:e.stack,
-                        title:e.title
+                        title:e.title,
+                        id:idx
                     })
                 })
+            
                 setDetail(deliVery);
+                
             return
         },[])
         
@@ -172,43 +176,41 @@ const Project = ({data,setDetail,detail,stackData}) =>
                     }
                     setDetail(copyDetail);
                 })
-            
         }
         const DeleteBtnHandler = (e)=> {
             
             const DelId = e.target.parentElement.id;
+            console.log(DelId);
             let copyDetail=[...detail];
-            copyDetail=copyDetail.filter(e=>e.idx!=DelId);
+            copyDetail=copyDetail.filter(e=>e.id!=DelId);
             setDetail(copyDetail);
 
         }
 
         const AddBtnHandler= (e) => {
             let copyDetail = [...detail];
-        
-            const newId = copyDetail.length !==0 ? copyDetail[copyDetail.length-1].idx+1 : 1;
             copyDetail.push({
-                idx:newId,
                 title:"",
                 content:"",
                 stack:[{
                     idx:7,
                     name:'etc',
-                    content:"etc"
-                }]
+                    content:"etc",
+                }],
+                id: copyDetail.length>0 ? copyDetail.length : 0
 
             })
             setDetail(copyDetail);
+            console.log(detail);
         }
-
         return(
         <>
         {stackData&&detail&& detail.map((e,idx)=>
         
-            <Container key={e.idx} id={e.idx}>
+            <Container key={e.idx} id={idx}>
                 
-            <SubTitle>Project{e.idx}</SubTitle>
-            <DeleteButton id={e.idx} onClick={DeleteBtnHandler} type="button"><FontAwesomeIcon id={e.idx} icon={faTrash}></FontAwesomeIcon></DeleteButton>
+            <SubTitle >Project{idx+1}</SubTitle>
+            <DeleteButton id={idx} onClick={DeleteBtnHandler} type="button"><FontAwesomeIcon id={idx} icon={faTrash}></FontAwesomeIcon></DeleteButton>
             <Section>Title</Section>
             <Input placeholder="Please enter Title of Project"value={e.title} type="text" name="P_TITLE" id={idx} onChange={onChange}/>
             <Section>Description</Section>

@@ -7,11 +7,12 @@ import Recruit from './Side/Recruit';
 import Resume from './Side/Resume';
 import Room from './Side/Room';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {  faPencilAlt,faHome,faFileInvoice,faUsers,faCogs,faTable,faBell} from '@fortawesome/free-solid-svg-icons';
+import {  faPencilAlt,faHome,faFileInvoice,faSignOutAlt,faCogs,faTable,faBell,faUser,faTimes} from '@fortawesome/free-solid-svg-icons';
 import {faCodepen} from "@fortawesome/free-brands-svg-icons";
 import { AnimatePresence,motion } from "framer-motion"
 import ResumeDetail from './Side/ResumeDetail';
 import { GroupAddSharp } from '@material-ui/icons';
+import Auth from "../../Auth";
 
 const Back = styled.div`
     display:grid;
@@ -53,7 +54,7 @@ const UserProfile = styled.div`
     height:100px;
     position:relative;
     border-radius:25px;
-    background-color:#F3F3F3;
+    background-color:white;
     display:flex;
     justify-content: center;
     align-items: center;
@@ -67,7 +68,9 @@ const UserImage = styled.div`
     text-align: center;
     line-height: 100px;
     background-image: url("${wifi}${(props) => props.profileImgUri}");
-    background-size: 100px 100px;
+    background-size: 100% auto;
+    background-position: center center;
+    background-repeat: no-repeat;
 `
 
 const UserName = styled.h3`
@@ -168,10 +171,98 @@ const Submit = styled.input`
 
 `
 
-const DashboardPresenter = ({match,data, method, imageHandler, profileImgUri}) => {
+const PopupBkg = styled.div`
+    position:fixed;
+    height:100vh;
+    top:0;
+    left:0;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width:100%;
+    z-index:300;
+    background-color: rgba(0,0,0,0.1);
+    display:${props => props.status ? "flex" : "none"};
+`
+const PopupUser = styled.div`
+    width:500px;
+    height:450px;
+    background-color: white;    
+    border-radius:25px;
+    box-shadow: 0px 3px 6px rgba(0,0,0,0.16) ;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position:relative;
 
-     
-    
+`
+const PopupBtns =styled.button`
+    width:40%;
+    height:50px;
+    background-color: white;
+    color:#FF8484;
+    border-radius:13px;
+    font-size:20px;
+    font-weight: 800;
+    border:3.5px solid #FF8484;
+    transition: all 300ms ease-in-out;
+    &:hover{
+        background-color: #FF8484;
+        color:white;
+    }
+    margin-bottom:15px;
+    display:grid;
+    grid-template-columns: 0.3fr 0.7fr;
+`
+
+const Makecenter = styled.div`
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height:100%;
+`
+const DelpopupBtn = styled.button`
+    background-color: transparent;
+    position:absolute;
+    right:15px;
+    top:15px;
+    font-size:20px;
+    color:lightgray;
+    &:hover{
+        color:black;
+    }
+    transition: all 200ms ease-in-out;
+
+`
+
+const UserInfoBtn = styled.button`
+    font-size:10px;
+    margin:0 10px;
+    color:#4a565e;
+    &:hover{
+        color:blue;
+    }
+`
+
+
+
+const DashboardPresenter = ({match,data, method, imageHandler, profileImgUri,setData,DelResumeBtn,history,getStudyList,setStudy,study}) => {
+
+
+     const [popup,setPopup] = useState(false);
+     const delBtnHandler = () => {
+        setPopup(false);
+     }
+     const UserInfoBtnHandler = () => {
+         setPopup(true);
+     }
+     const LogoutBtnHandler = () => {
+        Auth.logout();
+        history.push("/signin");
+     }
 
     return(<>
     <GoogleFontLoader
@@ -187,6 +278,26 @@ const DashboardPresenter = ({match,data, method, imageHandler, profileImgUri}) =
       ]}
       subsets={['cyrillic-ext', 'greek']}
     />
+    <PopupBkg status= {popup}>
+        
+        <PopupUser>
+        <DelpopupBtn onClick={delBtnHandler}>
+            <FontAwesomeIcon style={{fontSize:35}} icon={faTimes} />
+        </DelpopupBtn>
+            <PopupBtns>
+                <Makecenter>
+                    <FontAwesomeIcon style={{fontSize:35}} icon={faUser} />
+                </Makecenter>
+                <Makecenter><p>USER INFO</p></Makecenter>
+            </PopupBtns>
+            <PopupBtns onClick = {LogoutBtnHandler}>
+                <Makecenter>
+                    <FontAwesomeIcon style={{fontSize:35}} icon={faSignOutAlt} />
+                </Makecenter>
+                <Makecenter><p>LOG OUT</p></Makecenter>
+            </PopupBtns>
+        </PopupUser>
+    </PopupBkg>
     <Back>
         <Left>
             
@@ -271,10 +382,13 @@ const DashboardPresenter = ({match,data, method, imageHandler, profileImgUri}) =
                     </SearchForm>
                 </NabvarCenter>
                 <NabvarCenter position={false}>
-                    <Link to ="/" style={{fontSize:"10px",margin:"0 5px"}}>
+                    <UserInfoBtn onClick={UserInfoBtnHandler}>
+                        <FontAwesomeIcon icon={faUser} size="2x" />
+                    </UserInfoBtn>
+                    <Link to ="/" style={{fontSize:"10px",margin:"0 10px"}}>
                         <FontAwesomeIcon icon={faBell} size="2x" />
                     </Link>
-                    <Link to ="/" style={{fontSize:"10px",margin:"0 20px"}}>
+                    <Link to ="/" style={{fontSize:"10px",margin:"0 10px"}}>
                         <FontAwesomeIcon icon={faHome} size="2x" />
                     </Link>
                 </NabvarCenter>
@@ -284,9 +398,9 @@ const DashboardPresenter = ({match,data, method, imageHandler, profileImgUri}) =
                     <Switch>
                         <Route path={`${match.path}/recruit`}  component={Recruit}></Route>
                         
-                        <Route exact path={`${match.path}/resume`}  render={() => <Resume data ={data} method = {method} />}></Route>
+                        <Route exact path={`${match.path}/resume`}  render={() => <Resume data ={data} method = {method} setData={setData} DelResumeBtn={DelResumeBtn}/>}></Route>
                         <Route path={`${match.path}/resume/:idx`}  component={ResumeDetail}></Route>
-                        <Route path={`${match.path}/room`} component={Room}></Route>
+                        <Route path={`${match.path}/room`} render={()=> <Room getStudyList={getStudyList} setStudy={setStudy} study={study}></Room>}></Route>
                     </Switch>
                 </AnimatePresence>
             
