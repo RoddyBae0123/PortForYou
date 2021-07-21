@@ -12,7 +12,7 @@ const Container = styled.div`
     background-color: white;
     border-radius: 50px;
     width:85%;
-    border: 1px solid lightgray;
+    border: ${props=> props.status ? "1px solid lightgray":"none"};
     position:relative;
     padding:10px 0;
     margin-top:45px;
@@ -47,16 +47,15 @@ const ListWrapper = ({status,kind,study}) => {
                 break;
         
             case "RoomOne":
-                {study&&study.map(e =>
-                    {return( <><RoomOne study={e}/></>)}
-                )}
+            
+                return( <><RoomOne study={study}/></>)
                 break;
         }
     }
     
     return(
     
-    <Container>
+    <Container status={status}>
         <Title status={status}>AD</Title>
         {oneReturn(kind)}
 

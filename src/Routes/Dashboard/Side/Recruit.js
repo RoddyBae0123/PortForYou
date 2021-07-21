@@ -54,7 +54,7 @@ const  Title2 = styled.div`
 const Recruit = () => {
     return(<motion.div exit={{opacity:0}} animate={{opacity:1}} initial = {{opacity:0}} style={{width:"100%"}}>
         <Container>
-            <SectionTitle title={"Recruit"} message={"Let's team up and make your dreams come true."} nav={true}></SectionTitle>
+            <SectionTitle title={"Recruit"} message={"Let's team up and make your dreams come true."} nav={true} connect={"Recruit"}></SectionTitle>
             <ListWrapper status={true} kind={"RecruitOne"} />
             <NewCgry>
                 <Title2 status={true}>New</Title2>

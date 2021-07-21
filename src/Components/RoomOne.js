@@ -22,7 +22,7 @@ transition: all 300ms ease-in-out;
 const Bkg = styled.div`
     background-repeat: no-repeat;
     background-size:100% auto;
-    background-position: top center;
+    background-position: center center;
     background-image: url(${props=> props.src});
     border-radius: 37px 34px 0 0 ;
     position:relative;
@@ -57,29 +57,39 @@ const Number = styled.div`
     align-items: center;
 `
 
-
+const CateGory = styled.h5`
+    color:black;
+    opacity:0.3;
+    font-weight:600;
+    font-size:15px;
+`
 
 
 const RoomOne = ({study}) => {
 
     const src = ["https://blog.kakaocdn.net/dn/DxPyJ/btqQwmsj2wr/a4k4hul2q1rnQ3HLbxTdek/img.gif","https://blog.kakaocdn.net/dn/cGtqnJ/btquvkcb0ZQ/QVKrushncK5UguLKlnyGb0/img.gif,","https://lh3.googleusercontent.com/proxy/jgjtmL3uNQNqztIHOScJoTa2-DjeLVvg-Xst5dZcDXkxYbpF3ROQKGs-Dp4spKBv1VizwodEyUVtMiTB5yBAGpb5Oi1mPruQE2VJHu-QmDvXxspB8b2cuSj7gg","https://blog.kakaocdn.net/dn/MqO89/btq1YlgVBdP/H6Phqzfc3WwlpUr6lzWBk0/img.gif","https://static-storychat.pstatic.net/316316_13956031/89g2af1idkj6c0.gif"];
-
-    {study && console.log(study)}
-
-    const returnData = () => src.map(e => <Container>
-        <Bkg src={e}>
-            <Number>
-                <FontAwesomeIcon icon={faUsers}></FontAwesomeIcon>
-                <div style={{fontSize:15}}>{5}</div>
-            </Number>
-        </Bkg>
-        <Info>
-            <Title>BossName</Title>
-            <Introducing></Introducing>
-        </Info>
-    </Container>)
     
-    return (returnData())
+
+    const returnData = () => {
+
+        return(study.map(e => <Container to={`/dashboard/roomdetail/${e.idx}`} >
+            <Bkg src={"https://blog.kakaocdn.net/dn/cEJqbx/btqXKwaZTjt/y1OZYzoLZ8bKcpxpAeZ49K/img.gif"}>
+            {/* http://3.37.208.251:8080/api/img/default?name=youtube_profile_image */}
+                <Number>
+                    <FontAwesomeIcon icon={faUsers}></FontAwesomeIcon>
+                    <div style={{fontSize:15}}>{e.members}</div>
+                </Number>
+            </Bkg>
+            <Info>
+                <Title>{e.title}</Title>
+                <CateGory>{e.studyCategory["title"]}</CateGory>
+                <Introducing>{e.content}</Introducing>
+            </Info>
+        </Container>)
+    )
+        }
+    return(study ? returnData():<div>None</div>);
+    
 }
 
 export default RoomOne;

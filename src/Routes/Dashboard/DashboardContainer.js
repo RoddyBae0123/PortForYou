@@ -83,7 +83,7 @@ const DashboardContainer = ({match,history}) => {
       }
 
 
-      const getStudyList = async ()=>{
+      const getStudyList = async (apply)=>{
           try{
             const api = await axios.create({
                 baseURL:`${wifi}`,
@@ -91,7 +91,7 @@ const DashboardContainer = ({match,history}) => {
                     "Authorization":`Bearer ${Auth.getAccessToken()}`
                 }
             });
-            api.get("/api/user/studies")
+            api.get(`/api/user/studies?applied=${apply}`)
             .then((e)=>setStudy(e.data))
           }
         catch(error){

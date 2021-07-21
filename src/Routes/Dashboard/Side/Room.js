@@ -2,7 +2,7 @@ import { AnimatePresence,motion } from "framer-motion"
 import styled from "styled-components";
 import SectionTitle from '../../../Components/SectionTitle';
 import ListWrapper from "../../../Components/ListWrapper";
-import { useEffect } from 'react';
+import { useEffect,useState } from 'react';
 
 const Container = styled.div`
     display:flex;
@@ -19,7 +19,7 @@ const NewCgry = styled.div`
 
 `
 const  Title2 = styled.div`
-    width:90px;
+    width:${props=>props.name==="Manage" ? "90px":"60px"};
     height:20px;
     background-color: white;
     font-size:20px;
@@ -34,17 +34,19 @@ const  Title2 = styled.div`
 
 const Room = ({ match, history,getStudyList,setStudy,study }) => {
     
+    const [name,setName] = useState("Manage");
+
     useEffect(()=>{
-        getStudyList();
-    },[])
-    {study&& console.log(study)}
+        getStudyList(false);
+    },[]);
+    
 
     return(<motion.div exit={{opacity:0}} animate={{opacity:1}} initial = {{opacity:0}}>
         <Container>
-            <SectionTitle title={"Room"} message={"Make your dreams come true with your team members."} nav={true}></SectionTitle>
+            <SectionTitle title={"Room"} message={"Make your dreams come true with your team members."} nav={true} connect={"Room"} study={study} setStudy={setStudy} getStudyList={getStudyList} setName={setName}></SectionTitle>
             <NewCgry>
-                <Title2 status={true}>Manage</Title2>
-            </NewCgry>
+                <Title2 status={true} name={name}>{name}</Title2>
+            </NewCgry> 
             <ListWrapper status={false} kind={"RoomOne"} study={study} ></ListWrapper>
         </Container>
     </motion.div>)

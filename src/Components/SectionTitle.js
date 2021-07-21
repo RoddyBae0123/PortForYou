@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileInvoice,faPlusCircle} from '@fortawesome/free-solid-svg-icons';
@@ -48,12 +48,12 @@ const NavBtn = styled.button`
     opacity: ${props=> props.picked ? 1 :0.3};
     font-weight:500;
     font-size:20px;
-
+    transition:all 300ms ease-in-out;
 `
 
 const SearchForm = styled.form`
     margin-right : 20px;
-    display:grid;
+    display:${props=>props.connect==="Recruit"?"grid":"none"};
     grid-template-columns: 230px 40px;
     height:40px;
     border-radius: 4px;
@@ -78,7 +78,16 @@ const Submit = styled.input`
 
 `
 
-const SectionTitle = ({title,message,nav}) => {
+
+
+
+const SectionTitle = ({title,message,nav,connect,study,setStudy,getStudyList,setName}) => {
+
+    const [picked,setPicked] = useState({
+        first:true,
+        second:false,
+        third:false
+    })
 
     const d = ()=>{switch (title) {
         case "Recruit":
@@ -95,6 +104,38 @@ const SectionTitle = ({title,message,nav}) => {
             break;
     }}
 
+    const GobtnHandler = (e) => {
+
+
+
+        if(e.target.dataset.connect!=="Recruit" &&e.target.dataset.number==2){
+            getStudyList(true);
+            setPicked({
+                first:false,
+                second:true,
+                third:false
+            })
+            setName("Join");
+
+        }
+        else if(e.target.dataset.connect!=="Recruit" &&e.target.dataset.number==1){
+            getStudyList(false);
+            setPicked({
+                first:true,
+                second:false,
+                third:false
+            })
+            setName("Manage");
+
+        }
+        else{
+        }
+
+    }
+
+
+
+
 
     return(<Container nav={nav}>
         <Title>       
@@ -104,12 +145,12 @@ const SectionTitle = ({title,message,nav}) => {
         <Add>{message}</Add>
         <Navbar nav={nav}>
             <div>
-            <NavBtn picked={true}>Recommend</NavBtn>
-            <NavBtn picked={false}>New</NavBtn>
-            <NavBtn picked={false}>Imminent</NavBtn>
+            <NavBtn picked={picked["first"]} onClick={GobtnHandler} data-connect={connect} data-number={1}>{connect==="Recruit" ? "Recommend" : "Manage"}</NavBtn>
+            <NavBtn onClick={GobtnHandler} data-connect={connect} data-number={2} picked={picked["second"]}>{connect==="Recruit" ? "New" : "Joined"}</NavBtn>
+            <NavBtn picked={picked["third"]} >{connect==="Recruit" ? "Imminent" : "Status"}</NavBtn>
             </div>
             <div style={{display:"flex", justifyContent:"flex-end",alignItems:"center"}}>
-                <SearchForm>
+                <SearchForm connect={connect}>
                     <Input type="text"></Input>
                     <Submit type="submit" value="&#128269;"></Submit>
                 </SearchForm>
