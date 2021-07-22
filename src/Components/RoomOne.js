@@ -67,13 +67,13 @@ const CateGory = styled.h5`
 
 const RoomOne = ({study}) => {
 
-    const src = ["https://blog.kakaocdn.net/dn/DxPyJ/btqQwmsj2wr/a4k4hul2q1rnQ3HLbxTdek/img.gif","https://blog.kakaocdn.net/dn/cGtqnJ/btquvkcb0ZQ/QVKrushncK5UguLKlnyGb0/img.gif,","https://lh3.googleusercontent.com/proxy/jgjtmL3uNQNqztIHOScJoTa2-DjeLVvg-Xst5dZcDXkxYbpF3ROQKGs-Dp4spKBv1VizwodEyUVtMiTB5yBAGpb5Oi1mPruQE2VJHu-QmDvXxspB8b2cuSj7gg","https://blog.kakaocdn.net/dn/MqO89/btq1YlgVBdP/H6Phqzfc3WwlpUr6lzWBk0/img.gif","https://static-storychat.pstatic.net/316316_13956031/89g2af1idkj6c0.gif"];
+    const src = ["https://blog.kakaocdn.net/dn/DxPyJ/btqQwmsj2wr/a4k4hul2q1rnQ3HLbxTdek/img.gif","https://blog.kakaocdn.net/dn/cGtqnJ/btquvkcb0ZQ/QVKrushncK5UguLKlnyGb0/img.gif,","https://thumbs.gfycat.com/AnguishedPleasantDormouse-size_restricted.gif","https://4.bp.blogspot.com/-SMhgPXD3dI0/XK76cyEwo2I/AAAAAAAAAtM/dHPqpjRaHGIFvSvEwqZCsMYUmTnVO7W6ACLcBGAs/s1600/99F1663C5CAEEFC627D758.gif","https://static-storychat.pstatic.net/316316_13956031/89g2af1idkj6c0.gif"];
     
 
     const returnData = () => {
-
+        var i =0;
         return(study.map(e => <Container to={`/dashboard/roomdetail/${e.idx}`} >
-            <Bkg src={"https://blog.kakaocdn.net/dn/cEJqbx/btqXKwaZTjt/y1OZYzoLZ8bKcpxpAeZ49K/img.gif"}>
+            <Bkg src={src[i++]}>
             {/* http://3.37.208.251:8080/api/img/default?name=youtube_profile_image */}
                 <Number>
                     <FontAwesomeIcon icon={faUsers}></FontAwesomeIcon>

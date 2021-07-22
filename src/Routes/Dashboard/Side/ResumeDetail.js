@@ -217,12 +217,8 @@ const ResumeDetail = ({match,history}) => {
                 }
            
         }).then((res)=>{
-            setData(res);
-            console.log(data);
-            console.log(res.status);
+            {res.status===200&& history.goBack()}
         }).catch((e)=>console.log(e.response.status))
-        setHaveto(true);
-        history.goBack();
       }
 
     const mainHandler = (e) => {

@@ -400,7 +400,7 @@ const DashboardPresenter = ({match,data, method, imageHandler, profileImgUri,set
                         
                         <Route exact path={`${match.path}/resume`}  render={() => <Resume data ={data} method = {method} setData={setData} DelResumeBtn={DelResumeBtn}/>}></Route>
                         <Route path={`${match.path}/resume/:idx`}  component={ResumeDetail}></Route>
-                        <Route path={`${match.path}/room`} render={()=> <Room getStudyList={getStudyList} setStudy={setStudy} study={study}></Room>}></Route>
+                        <Route path={`${match.path}/room`} render={()=> <Room getStudyList={getStudyList} setStudy={setStudy} study={study} history={history}></Room>}></Route>
                     </Switch>
                 </AnimatePresence>
             

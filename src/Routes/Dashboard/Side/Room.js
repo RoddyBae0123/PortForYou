@@ -40,10 +40,10 @@ const Room = ({ match, history,getStudyList,setStudy,study }) => {
         getStudyList(false);
     },[]);
     
-
+    console.log(history);
     return(<motion.div exit={{opacity:0}} animate={{opacity:1}} initial = {{opacity:0}}>
         <Container>
-            <SectionTitle title={"Room"} message={"Make your dreams come true with your team members."} nav={true} connect={"Room"} study={study} setStudy={setStudy} getStudyList={getStudyList} setName={setName}></SectionTitle>
+            <SectionTitle title={"Room"} message={"Make your dreams come true with your team members."} nav={true} connect={"Room"} study={study} setStudy={setStudy} getStudyList={getStudyList} setName={setName} getStudyList={getStudyList} ></SectionTitle>
             <NewCgry>
                 <Title2 status={true} name={name}>{name}</Title2>
             </NewCgry> 

@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFileInvoice,faPlusCircle} from '@fortawesome/free-solid-svg-icons';
+import { faFileInvoice,faTimes} from '@fortawesome/free-solid-svg-icons';
 import { GroupAddSharp } from '@material-ui/icons';
 import {faCodepen} from "@fortawesome/free-brands-svg-icons";
-
+import axios from "axios";
+import wifi from "../wifi";
+import Auth from "../Auth";
 const Container = styled.div`
     display:flex;
     justify-content: center;
@@ -32,7 +34,7 @@ const Add = styled.h4`
     font-size:22px;
     font-weight:400;
     opacity:0.5;
-    margin-bottom:35px;
+    margin-bottom:50px;
 `
 const Navbar = styled.div`
     height:70px;
@@ -77,19 +79,138 @@ const Submit = styled.input`
     box-shadow: 1px 1px 5px lightgray;
 
 `
+const CreateRoomBtn = styled.button`
+    width:70px;
+    height:30px;
+    border:1px solid #B6B6B6;;
+    border-radius:10px;
+    color:#B6B6B6;;
+    font-weight:500;
+    font-size:12px;
+    &:hover{
+        color:white;
+        background:#B6B6B6;;
+    }
+    transition:all 300ms ease-in-out;
+    display:${props=>props.connect==="Recruit"?"none":"flex"};    
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin-right:30px;
+`
+const PopupBkg = styled.div`
+    position:fixed;
+    height:100vh;
+    top:0;
+    left:0;
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width:100%;
+    z-index:300;
+    background-color: rgba(0,0,0,0.1);
+    display:${props => props.status ? "flex" : "none"};
+  
+`
+const PopupUser = styled.form`
+    width:800px;
+    height:650px;
+    background-color: white;    
+    border-radius:25px;
+    box-shadow: 0px 3px 6px rgba(0,0,0,0.16) ;
+    display:flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    position:relative;
+`
+const DelpopupBtn = styled.button`
+    background-color: transparent;
+    position:absolute;
+    right:15px;
+    top:15px;
+    font-size:20px;
+    color:lightgray;
+    &:hover{
+        color:black;
+    }
+    transition: all 200ms ease-in-out;
+
+`
+const CreateRoomTitle = styled.h1`
+    font-size:50px;
+    font-weight:700;
+
+`
 
 
 
 
-const SectionTitle = ({title,message,nav,connect,study,setStudy,getStudyList,setName}) => {
+const RoomInput = styled.textarea`
+    width:100%;
+    height: 50px;
+    background-color:RGB(238,238,238);;
+    border:none;
+    outline:none;
+    font-size:17px;
+    font-weight:500;
+    padding:10px;
+    &:focus{
+        background-color:RGB(244, 248, 247);
+    }
+    transition: all 300ms ease-out;
+    resize: none;
 
+`
+const Select = styled.select`
+    width:100%;
+    height: 50px;
+    background-color:RGB(238,238,238);;
+    border:none;
+    outline:none;
+    font-size:35px;
+    font-weight:500;
+    padding:10px;
+    &:focus{
+        background-color:RGB(244, 248, 247);
+    }
+    transition: all 300ms ease-out;
+    font-size:17px;
+
+` 
+const SubmitButton =styled.button`
+    width:25%;
+    height:50px;
+    border-radius:20px;
+    &:hover{
+        background-color:#4a565e;
+        color:white;
+    }
+    border: 5px solid #4a565e;
+    font-weight:500;
+    transition: all 300ms ease-out;
+    color:#4a565e;
+`
+
+const SectionTitle = ({title,message,nav,connect,getStudyList,setName}) => {
     const [picked,setPicked] = useState({
         first:true,
         second:false,
         third:false
     })
+    const [popup,setPopup] = useState(false);
+    const [room, setRoom] = useState({
+        title:undefined,
+        content:undefined,
+        studyCategory:{
+            idx:undefined
+        }
+    })
+    const [catgry ,setCatgry] =useState();
+    const body = document.querySelector("body");
 
-    const d = ()=>{switch (title) {
+    const changeTitle = ()=>{switch (title) {
         case "Recruit":
             return(<GroupAddSharp style={{fontSize:150}}></GroupAddSharp>)
             break;
@@ -128,18 +249,82 @@ const SectionTitle = ({title,message,nav,connect,study,setStudy,getStudyList,set
             setName("Manage");
 
         }
-        else{
-        }
+        
 
     }
 
+    const RoomBtnHandler = (e) => {
+        setPopup(e);
+            
+    }
+    const SubmitBtnHandler= (e) =>{
+        e.preventDefault();
+        const api = axios.create({
+            baseURL:`${wifi}`,
+            headers:{
+                "Authorization":`Bearer ${Auth.getAccessToken()}`
+            }
+        });
+        api.post('/api/user/study',room)
+        .then(res=>{
+            {res&&getStudyList(false)}
+            RoomBtnHandler(false);
+        })
+        .catch(e=>console.log(e))
+    }
+    const setRoomValue = (e) => {
+        if(e.target.dataset.kind==="0"){
+            console.log(e.target.value);
+            setRoom({
+                title:e.target.value,
+                content:room["content"],
+                studyCategory:{
+                    idx:room["studyCategory"].idx
+                }
+            })
+        }
+        else if (e.target.dataset.kind==="1"){
+            setRoom({
+                // e.target.value
+                title:room["title"],
+                content:e.target.value,
+                studyCategory:{
+                    idx:room["studyCategory"].idx
+                }
+            })
+        }
+        else{
+            setRoom({
+                // e.target.value
+                title:room["title"],
+                content:room["content"],
+                studyCategory:{
+                    idx:e.target.value
+                }
+            })
+        }
+        
 
+    }
 
+    const getCategoryList = ()=> {
+        const api = axios.create({
+            baseURL:`${wifi}`,
+            headers:{
+                "Authorization":`Bearer ${Auth.getAccessToken()}`
+            }
+        });
+        api.get('/api/user/study/categories')
+        .then(res=>{
+            {res&&setCatgry(res)}
+        })
+        .catch(e=>console.log(e));
 
-
-    return(<Container nav={nav}>
+    }
+    getCategoryList();
+    return(<><Container nav={nav}>
         <Title>       
-        {d()}
+        {changeTitle()}
         <TitleHead>{title}</TitleHead>
         </Title>
         <Add>{message}</Add>
@@ -154,10 +339,42 @@ const SectionTitle = ({title,message,nav,connect,study,setStudy,getStudyList,set
                     <Input type="text"></Input>
                     <Submit type="submit" value="&#128269;"></Submit>
                 </SearchForm>
+                <CreateRoomBtn onClick={()=>RoomBtnHandler(true)} connect={connect}>Create</CreateRoomBtn>
             </div>
             
         </Navbar>
-    </Container>)
+    </Container>
+    <PopupBkg status={popup}>
+        <PopupUser onSubmit={SubmitBtnHandler}>
+            <DelpopupBtn type="button" onClick ={()=>RoomBtnHandler(false)} >
+                <FontAwesomeIcon style={{fontSize:35}} icon={faTimes} />
+            </DelpopupBtn>
+        <CreateRoomTitle>Create Room</CreateRoomTitle>
+        <div style={{width:"70%"}}>
+            <label style={{marginBottom:15,fontSize:23,fontWeight:500}}>Title</label>
+            <RoomInput data-kind={0}onChange={setRoomValue}></RoomInput>
+        </div>
+        <div style={{width:"70%"}}>
+            <label style={{marginBottom:15,fontSize:23,fontWeight:500}}>Description</label>
+            <RoomInput data-kind={1} onChange={setRoomValue} style={{height:150}}></RoomInput>
+        </div>
+        <div style={{width:"70%"}}>
+            <label style={{marginBottom:15,fontSize:23,fontWeight:500}}>Category</label>
+            <Select data-kind={2} onChange={setRoomValue}>
+                <option value="">--Please choose an option--</option>
+                {catgry.map(e=>{
+                     <option value={e.idx}>{e.title}</option>
+                })}
+                
+            
+
+            </Select>
+        </div>
+        <SubmitButton >Create</SubmitButton>
+        </PopupUser>
+    </PopupBkg>
+    </>
+    )
 }
 
 export default SectionTitle;
