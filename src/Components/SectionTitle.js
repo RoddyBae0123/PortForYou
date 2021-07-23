@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileInvoice,faTimes} from '@fortawesome/free-solid-svg-icons';
-import { GroupAddSharp } from '@material-ui/icons';
+import { GroupAddSharp, TrainRounded } from '@material-ui/icons';
 import {faCodepen} from "@fortawesome/free-brands-svg-icons";
 import axios from "axios";
 import wifi from "../wifi";
@@ -179,7 +179,7 @@ const Select = styled.select`
     font-size:17px;
 
 ` 
-const SubmitButton =styled.button`
+const SubmitButton =styled.input`
     width:25%;
     height:50px;
     border-radius:20px;
@@ -191,9 +191,17 @@ const SubmitButton =styled.button`
     font-weight:500;
     transition: all 300ms ease-out;
     color:#4a565e;
+    opacity:${props=> props.status ? 0.1:1};
+    pointer-events:${props=> props.status ? "none":"auto"};
 `
 
 const SectionTitle = ({title,message,nav,connect,getStudyList,setName}) => {
+
+    useEffect(()=>{
+        getCategoryList();
+    },[])
+
+   
     const [picked,setPicked] = useState({
         first:true,
         second:false,
@@ -201,13 +209,20 @@ const SectionTitle = ({title,message,nav,connect,getStudyList,setName}) => {
     })
     const [popup,setPopup] = useState(false);
     const [room, setRoom] = useState({
-        title:undefined,
-        content:undefined,
+        title:"",
+        content:"",
         studyCategory:{
-            idx:undefined
+            idx:""
         }
     })
     const [catgry ,setCatgry] =useState();
+    const [disabled,setDisabled] =useState(true);
+
+    useEffect(()=>{
+            
+            {(room&&room["title"].length>2 && room["content"].length>10&&room["studyCategory"].idx )? setDisabled(false):setDisabled(true)}
+            console.log(disabled);
+    },[room])
     const body = document.querySelector("body");
 
     const changeTitle = ()=>{switch (title) {
@@ -255,9 +270,17 @@ const SectionTitle = ({title,message,nav,connect,getStudyList,setName}) => {
 
     const RoomBtnHandler = (e) => {
         setPopup(e);
+        setRoom({
+            title:"",
+            content:"",
+            studyCategory:{
+                idx:""
+            }
+        })
             
     }
     const SubmitBtnHandler= (e) =>{
+        console.log(e);
         e.preventDefault();
         const api = axios.create({
             baseURL:`${wifi}`,
@@ -269,12 +292,18 @@ const SectionTitle = ({title,message,nav,connect,getStudyList,setName}) => {
         .then(res=>{
             {res&&getStudyList(false)}
             RoomBtnHandler(false);
+            setRoom({
+                title:"",
+                content:"",
+                studyCategory:{
+                    idx:""
+                }
+            });
         })
         .catch(e=>console.log(e))
     }
     const setRoomValue = (e) => {
         if(e.target.dataset.kind==="0"){
-            console.log(e.target.value);
             setRoom({
                 title:e.target.value,
                 content:room["content"],
@@ -316,12 +345,12 @@ const SectionTitle = ({title,message,nav,connect,getStudyList,setName}) => {
         });
         api.get('/api/user/study/categories')
         .then(res=>{
-            {res&&setCatgry(res)}
+            {res&&setCatgry(res.data)}
         })
         .catch(e=>console.log(e));
 
     }
-    getCategoryList();
+    
     return(<><Container nav={nav}>
         <Title>       
         {changeTitle()}
@@ -352,25 +381,25 @@ const SectionTitle = ({title,message,nav,connect,getStudyList,setName}) => {
         <CreateRoomTitle>Create Room</CreateRoomTitle>
         <div style={{width:"70%"}}>
             <label style={{marginBottom:15,fontSize:23,fontWeight:500}}>Title</label>
-            <RoomInput data-kind={0}onChange={setRoomValue}></RoomInput>
+            <RoomInput data-kind={0}onChange={setRoomValue} value={room.title} placeholder="Please enter at least two characters.
+"></RoomInput>
         </div>
         <div style={{width:"70%"}}>
             <label style={{marginBottom:15,fontSize:23,fontWeight:500}}>Description</label>
-            <RoomInput data-kind={1} onChange={setRoomValue} style={{height:150}}></RoomInput>
+            <RoomInput data-kind={1} onChange={setRoomValue} style={{height:150}} value={room.content} placeholder="Please enter at least ten characters.
+"></RoomInput>
         </div>
         <div style={{width:"70%"}}>
             <label style={{marginBottom:15,fontSize:23,fontWeight:500}}>Category</label>
-            <Select data-kind={2} onChange={setRoomValue}>
+            <Select data-kind={2} onChange={setRoomValue} value={room.studyCategory["idx"]}>
                 <option value="">--Please choose an option--</option>
-                {catgry.map(e=>{
-                     <option value={e.idx}>{e.title}</option>
-                })}
+                {catgry&&catgry.map(e=><option value={e.idx}>{e.title}</option>)}
                 
             
 
             </Select>
         </div>
-        <SubmitButton >Create</SubmitButton>
+        <SubmitButton type="submit" status={disabled} disabled={disabled} value="Create"></SubmitButton>
         </PopupUser>
     </PopupBkg>
     </>

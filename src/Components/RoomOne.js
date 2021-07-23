@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUsers} from '@fortawesome/free-solid-svg-icons';
 import {Link} from "react-router-dom";
+import SupervisedUserCircleIcon from '@material-ui/icons/SupervisedUserCircle';
 const Container = styled(Link)`
 height:280px;
 border-radius: 37px;
@@ -67,7 +68,7 @@ const CateGory = styled.h5`
 
 const RoomOne = ({study}) => {
 
-    const src = ["https://blog.kakaocdn.net/dn/DxPyJ/btqQwmsj2wr/a4k4hul2q1rnQ3HLbxTdek/img.gif","https://blog.kakaocdn.net/dn/cGtqnJ/btquvkcb0ZQ/QVKrushncK5UguLKlnyGb0/img.gif,","https://thumbs.gfycat.com/AnguishedPleasantDormouse-size_restricted.gif","https://4.bp.blogspot.com/-SMhgPXD3dI0/XK76cyEwo2I/AAAAAAAAAtM/dHPqpjRaHGIFvSvEwqZCsMYUmTnVO7W6ACLcBGAs/s1600/99F1663C5CAEEFC627D758.gif","https://static-storychat.pstatic.net/316316_13956031/89g2af1idkj6c0.gif"];
+    const src = ["https://blog.kakaocdn.net/dn/DxPyJ/btqQwmsj2wr/a4k4hul2q1rnQ3HLbxTdek/img.gif","http://file3.instiz.net/data/cached_img/upload/2020/12/13/0/7ed6204dbd625e1542ac2a07d08e8505_mp4.gif","https://thumbs.gfycat.com/AnguishedPleasantDormouse-size_restricted.gif","https://4.bp.blogspot.com/-SMhgPXD3dI0/XK76cyEwo2I/AAAAAAAAAtM/dHPqpjRaHGIFvSvEwqZCsMYUmTnVO7W6ACLcBGAs/s1600/99F1663C5CAEEFC627D758.gif","https://static-storychat.pstatic.net/316316_13956031/89g2af1idkj6c0.gif","http://2.bp.blogspot.com/-lMeWST7dARQ/XKsfeke4LzI/AAAAAAAA6t0/XQkjB1udsQozhIOBd9zRyln77as_YXfmQCLcBGAs/s1600/1.gif","https://3.bp.blogspot.com/-JZw_bffcevI/XLnOn51lYSI/AAAAAAAA19I/v2KBuUJJddQPhGeHfEfSV_96u9JTUTF9wCLcBGAs/s1600/Honeycam%2B2019-04-19%2B22-17-47.gif"];
     
 
     const returnData = () => {
@@ -81,7 +82,7 @@ const RoomOne = ({study}) => {
                 </Number>
             </Bkg>
             <Info>
-                <Title>{e.title}</Title>
+                <Title>{e.title.length>12 ?`${e.title.substring(0,12)}...`:e.title}</Title>
                 <CateGory>{e.studyCategory["title"]}</CateGory>
                 <Introducing>{e.content}</Introducing>
             </Info>
