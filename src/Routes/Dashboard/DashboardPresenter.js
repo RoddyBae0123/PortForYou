@@ -316,7 +316,19 @@ const DashboardPresenter = ({match,data, method, imageHandler, profileImgUri,set
                 </UserProfile>
                 <UserName>Roddy</UserName>
             </UserContainer>
-            <hr style={{backgroundColor:"black",width:"10vw",height:1,border:"none"}} />
+            <div style={{backgroundColor:"black",width:"10vw",height:1,border:"none",margin:"10px 0"}} />
+            <NabvarCenter position={false}>
+                    <UserInfoBtn onClick={UserInfoBtnHandler}>
+                        <FontAwesomeIcon icon={faUser} size="2x" />
+                    </UserInfoBtn>
+                    <Link to ="/" style={{fontSize:"10px",margin:"0 10px"}}>
+                        <FontAwesomeIcon icon={faBell} size="2x" />
+                    </Link>
+                    <Link to ="/" style={{fontSize:"10px",margin:"0 10px"}}>
+                        <FontAwesomeIcon icon={faHome} size="2x" />
+                    </Link>
+                </NabvarCenter>
+            <div style={{backgroundColor:"black",width:"20px",height:1,border:"none",margin:"10px 0"}} />
             <LinkList>
                 <LinkSexy to={`${match.path}`}>
                     <LinkCent>
