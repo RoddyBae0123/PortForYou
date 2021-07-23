@@ -49,7 +49,7 @@ const Number = styled.div`
     top:10px;
     right:20px;
     width:50px;
-    height:25px;
+    height:25px ;
     background-color: white;
     border-radius: 30px;
     box-shadow: 0 3px 6px rgba(0,0,0,0.65);
