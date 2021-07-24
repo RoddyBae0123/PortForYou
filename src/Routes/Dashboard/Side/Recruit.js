@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import styled from 'styled-components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCheck} from '@fortawesome/free-solid-svg-icons';
-import SectionTitle from "../../../Components/SectionTitle";
+import MdataProcessing from "../../../Components/MdataProcessing";
 import ListWrapper from "../../../Components/ListWrapper";
 import RecruitOne from '../../../Components/RecruitOne';
 
@@ -13,7 +13,6 @@ const Container = styled.div`
     display:flex;
     flex-direction: column;
     align-items:center;
-    margin-top:60px;
 `
 const Title = styled.h1`
     font-size:35px;
@@ -54,7 +53,7 @@ const  Title2 = styled.div`
 const Recruit = () => {
     return(<motion.div exit={{opacity:0}} animate={{opacity:1}} initial = {{opacity:0}} style={{width:"100%"}}>
         <Container>
-            <SectionTitle title={"Recruit"} message={"Let's team up and make your dreams come true."} nav={true} connect={"Recruit"}></SectionTitle>
+            <MdataProcessing title={"Recruit"} message={"Let's team up and make your dreams come true."} nav={true} connect={"Recruit"}></MdataProcessing>
             <ListWrapper status={true} kind={"RecruitOne"} />
             <NewCgry>
                 <Title2 status={true}>New</Title2>

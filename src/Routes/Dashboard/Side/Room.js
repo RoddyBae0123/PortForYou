@@ -1,6 +1,6 @@
 import { AnimatePresence,motion } from "framer-motion"
 import styled from "styled-components";
-import SectionTitle from '../../../Components/SectionTitle';
+import MdataProcessing from '../../../Components/MdataProcessing';
 import ListWrapper from "../../../Components/ListWrapper";
 import { useEffect,useState } from 'react';
 
@@ -8,7 +8,6 @@ const Container = styled.div`
     display:flex;
     flex-direction: column;
     align-items:center;
-    margin-top:60px;
 `
 
 const NewCgry = styled.div`
@@ -43,7 +42,7 @@ const Room = ({ match, history,getStudyList,setStudy,study }) => {
     console.log(history);
     return(<motion.div exit={{opacity:0}} animate={{opacity:1}} initial = {{opacity:0}}>
         <Container>
-            <SectionTitle title={"Room"} message={"Make your dreams come true with your team members."} nav={true} connect={"Room"} study={study} setStudy={setStudy} getStudyList={getStudyList} setName={setName} getStudyList={getStudyList} ></SectionTitle>
+            <MdataProcessing title={"Room"} message={"Make your dreams come true with your team members."} nav={true} connect={"Room"} study={study} setStudy={setStudy} getStudyList={getStudyList} setName={setName} getStudyList={getStudyList} ></MdataProcessing>
             <NewCgry>
                 <Title2 status={true} name={name}>{name}</Title2>
             </NewCgry> 

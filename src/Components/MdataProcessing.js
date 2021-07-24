@@ -7,13 +7,15 @@ import {faCodepen} from "@fortawesome/free-brands-svg-icons";
 import axios from "axios";
 import wifi from "../wifi";
 import Auth from "../Auth";
+import HowToRegIcon from '@material-ui/icons/HowToReg';
+
 const Container = styled.div`
     display:flex;
     justify-content: center;
     flex-direction: column;
     align-items: center;
     margin-top: 50px ;
-    border-bottom:${props => props.nav ? "1px solid lightgray": "none"};
+    
     width:100%;
 `
 
@@ -38,10 +40,11 @@ const Add = styled.h4`
 `
 const Navbar = styled.div`
     height:70px;
-    width:100%;
+    width:85%;
     transform:translateY(5%);
     display: ${props => props.nav ? "grid" : "none"};
     grid-template-columns: 1fr 1fr;
+    border-bottom:${props => props.nav ? "1px solid lightgray": "none"};
 `
 const NavBtn = styled.button`
     width:30%;
@@ -195,12 +198,13 @@ const SubmitButton =styled.input`
     pointer-events:${props=> props.status ? "none":"auto"};
 `
 
-const SectionTitle = ({title,message,nav,connect,getStudyList,setName}) => {
+const MdataProcessing = ({title,message,nav,connect,getStudyList,setName}) => {
 
     useEffect(()=>{
-        getCategoryList();
+        if(connect="Room"){
+            getCategoryList();
+        }
     },[])
-
    
     const [picked,setPicked] = useState({
         first:true,
@@ -235,7 +239,10 @@ const SectionTitle = ({title,message,nav,connect,getStudyList,setName}) => {
              break;
         case "Room":
             return(<FontAwesomeIcon icon={faCodepen} size="1x" style={{fontSize:100}}/>)
-             break;     
+             break;  
+        case "Member":
+            return(<HowToRegIcon style={{fontSize:100}}></HowToRegIcon>)
+            return   
         default:
             break;
     }}
@@ -270,6 +277,13 @@ const SectionTitle = ({title,message,nav,connect,getStudyList,setName}) => {
 
     const RoomBtnHandler = (e) => {
         setPopup(e);
+        if(e){
+            body.style.overflow = "hidden";
+        }
+        else{
+            body.style.overflow = "auto";
+
+        }
         setRoom({
             title:"",
             content:"",
@@ -351,6 +365,7 @@ const SectionTitle = ({title,message,nav,connect,getStudyList,setName}) => {
 
     }
     
+    
     return(<><Container nav={nav}>
         <Title>       
         {changeTitle()}
@@ -393,7 +408,7 @@ const SectionTitle = ({title,message,nav,connect,getStudyList,setName}) => {
             <label style={{marginBottom:15,fontSize:23,fontWeight:500}}>Category</label>
             <Select data-kind={2} onChange={setRoomValue} value={room.studyCategory["idx"]}>
                 <option value="">--Please choose an option--</option>
-                {catgry&&catgry.map(e=><option value={e.idx}>{e.title}</option>)}
+                {catgry&&catgry.map(e=><option key ={e.idx}value={e.idx}>{e.title}</option>)}
                 
             
 
@@ -406,4 +421,4 @@ const SectionTitle = ({title,message,nav,connect,getStudyList,setName}) => {
     )
 }
 
-export default SectionTitle;
+export default MdataProcessing;

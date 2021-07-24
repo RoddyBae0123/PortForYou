@@ -21,7 +21,15 @@ const globalStyles= createGlobalStyle`
         cursor:pointer;
     }
 
-    
+    html {
+    --color-theme: #1B4478;
+    --color-line: #C39D78;
+    --color-text: #E4E4E4;
+    --color-theme2:#C39D78;
+    --color-line2: black;
+    --color-text2: white;
+
+  }
 `;
 
 

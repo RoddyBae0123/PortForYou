@@ -10,7 +10,7 @@ const ResumeOne = styled.td`
     display:flex;
     justify-content: center;
     align-items: center;
-    
+    margin-bottom:17px;    
 `
 const Document = styled.div`
     display:flex;
@@ -19,15 +19,23 @@ const Document = styled.div`
     font-size:20px;
 `
 const DataList = styled.div`
-    border-top:0.2px solid rgba(0, 0, 0, 0.35);
-    border-bottom:0.2px solid rgba(0, 0, 0, 0.05);
-
+    /* border-top:0.2px solid rgba(0, 0, 0, 0.35);
+    border-bottom:0.2px solid rgba(0, 0, 0, 0.05); */
+    /* border: 0.2px solid rgba(0, 0, 0, 0.35); */
     height:100px;
     display:grid;
     grid-template-columns:0.1fr 0.7fr 0.3fr 0.1fr;
     column-gap: 10px;
     width:90%;
     padding:20px 0 ;
+    border-radius: 30px;
+    box-shadow:0 3px 6px rgba(0,0,0,0.16);
+    transition: all 300ms ease-in-out;
+    &:hover{
+        transform: translateY(-5px);
+        box-shadow: 0px 8px 11px rgba(0,0,0,0.24) ;
+        
+    }
 
 `
 const IntroduceCon = styled.div`

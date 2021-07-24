@@ -20,17 +20,16 @@ const Back = styled.div`
     height:100vh;
 `
 const Left = styled.div`
-    display:flex;
-    align-items:center;
-    flex-direction: column;
+    display:grid;
+    grid-template-rows:1fr 1fr;
     position: fixed;
     top: 0px;
-    background-color:white;
-    height:100%;
+    background-color:var(--color-theme);
     width:220px;
-    border-right:1.5px solid lightgray;
+    border-right:2px solid var(--color-line);
     z-index:20;
-
+    min-height:100vh;
+    
 `
 const Right = styled.div`
     background-color:white;
@@ -41,13 +40,15 @@ const Title = styled.h1`
     font-size:25px;
     font-weight:700;
     margin: 35px 0 ;
+    color:#E4E4E4;
+    
 `
 const UserContainer = styled.div`
     display:flex;
     align-items:center;
     flex-direction: column;
     width:100%;
-    margin: 30px 0;
+    margin: 25px 0;
 `
 const UserProfile = styled.div`
     width:100px;
@@ -71,12 +72,15 @@ const UserImage = styled.div`
     background-size: 100% auto;
     background-position: center center;
     background-repeat: no-repeat;
+    color:#E4E4E4;
+
 `
 
 const UserName = styled.h3`
     font-size:23px;
     font-weight: 700;
     margin-top:25px ;
+    color:var(--color-text);
 
 `
 const UserProfileEdit = styled.label`
@@ -101,6 +105,7 @@ const LinkList = styled.div`
     flex-direction: column;
     justify-content: center;
     height:100%;
+    
 `
 const LinkTitle = styled.h2`
     font-size:17px;
@@ -121,11 +126,14 @@ const LinkIcon = styled.div`
     justify-content: center;
     align-items: center;
     font-size:10px;
+    color:var(--color-theme);
+
 `
 const LinkCent = styled.div`
     display:flex;
     justify-content: center;
     align-items: center;
+    color:var(--color-text);
 
 `
 const Navbar = styled.div`
@@ -137,6 +145,7 @@ const Navbar = styled.div`
     display:grid;
     grid-template-columns: 50% 50%;
     z-index:100;
+    color:black;
     
 `
 const NabvarCenter = styled.div`
@@ -241,10 +250,9 @@ const DelpopupBtn = styled.button`
 const UserInfoBtn = styled.button`
     font-size:10px;
     margin:0 10px;
-    color:#4a565e;
-    &:hover{
-        color:blue;
-    }
+    color:var(--color-text);
+
+    
 `
 
 
@@ -300,35 +308,32 @@ const DashboardPresenter = ({match,data, method, imageHandler, profileImgUri,set
     </PopupBkg>
     <Back>
         <Left>
-            
-            <Title style={{ fontFamily: 'Roboto Mono, monospaced' }}>Dashboard</Title>
-            <hr style={{backgroundColor:"black",width:"10vw",height:1,border:"none"}} />
+            <Makecenter style={{justifyContent:"flex-start"}}>
+            <Title style={{ fontFamily: 'Roboto Mono, monospaced' }}>StudyMall</Title>
             <UserContainer>
 
                 <UserProfile>
                     <UserImage profileImgUri = {profileImgUri} style={{ fontFamily: 'Roboto Mono, monospaced' }}></UserImage>
-                    <UserProfileEdit for="image_input">
-                        <FontAwesomeIcon icon={faPencilAlt} />
-                        <form style={{display:"none"}} method="post" encType = "multipart/form-data" id="profile_image">
-                            <input type="file" id="image_input" onChange={imageHandler}></input>
-                        </form>
-                    </UserProfileEdit>
+                    
                 </UserProfile>
                 <UserName>Roddy</UserName>
             </UserContainer>
-            <div style={{backgroundColor:"black",width:"10vw",height:1,border:"none",margin:"10px 0"}} />
+            <hr style={{backgroundColor:"var(--color-line)",width:"140px",height:2,border:"none",margin:"10px 0",opacity:"1"}} />
             <NabvarCenter position={false}>
                     <UserInfoBtn onClick={UserInfoBtnHandler}>
                         <FontAwesomeIcon icon={faUser} size="2x" />
                     </UserInfoBtn>
-                    <Link to ="/" style={{fontSize:"10px",margin:"0 10px"}}>
+                    <Link to ="/" style={{fontSize:"10px",margin:"0 10px",color:"var(--color-text)"}}>
                         <FontAwesomeIcon icon={faBell} size="2x" />
                     </Link>
-                    <Link to ="/" style={{fontSize:"10px",margin:"0 10px"}}>
+                    <Link to ="/" style={{fontSize:"10px",margin:"0 10px",color:"var(--color-text)"}}>
                         <FontAwesomeIcon icon={faHome} size="2x" />
                     </Link>
                 </NabvarCenter>
-            <div style={{backgroundColor:"black",width:"20px",height:1,border:"none",margin:"10px 0"}} />
+            <hr style={{backgroundColor:"var(--color-line)",width:"140px",height:2,border:"none",margin:"10px 0",opacity:"1"}} />
+            </Makecenter>
+            
+            
             <LinkList>
                 <LinkSexy to={`${match.path}`}>
                     <LinkCent>
@@ -386,7 +391,7 @@ const DashboardPresenter = ({match,data, method, imageHandler, profileImgUri,set
         </Left>
         <div></div>
         <Right style={{minWidth:1200}}>
-            <Navbar>
+            {/* <Navbar>
             <NabvarCenter position={true}>
                 <SearchForm>
                         <Input type="text"></Input>
@@ -405,7 +410,7 @@ const DashboardPresenter = ({match,data, method, imageHandler, profileImgUri,set
                     </Link>
                 </NabvarCenter>
 
-            </Navbar>
+            </Navbar> */}
                 <AnimatePresence>
                     <Switch>
                         <Route path={`${match.path}/recruit`}  component={Recruit}></Route>

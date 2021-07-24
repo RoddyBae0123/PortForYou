@@ -146,13 +146,11 @@ const AddBtn = styled.button`
 
 const Stack = ({data,stackData,detail,setDetail}) => 
     {   
-        
-        var someStack = [];
         const copyData =[];
         const [currentStack,setCurrentStack]=useState();
         const [hideAdd,setHideAdd] =useState(false);
         useEffect(()=>{
-            const current=[]
+            const current=[];
             data.map(e=>{
                 copyData.unshift({
                     idx:e.idx,
@@ -160,13 +158,13 @@ const Stack = ({data,stackData,detail,setDetail}) =>
                     stackIdx:e.stackIdx,
                     ability:e.ability
                 })
-                current.unshift({idx:e.stackIdx})
+                current.unshift({idx:e.stackIdx});
             })
-            var copyStackData = [...stackData];
-            current.map(t=> copyStackData = copyStackData.filter(e=>e.idx!=t.idx));
+            var copyStackData = stackData&&[...stackData];
+            stackData&&current.map(t=> copyStackData = copyStackData.filter(e=>e.idx!=t.idx));
             setCurrentStack(copyStackData);
             
-            setDetail(copyData);
+            stackData&&setDetail(copyData);
             return
         },[])
 
@@ -218,7 +216,7 @@ const Stack = ({data,stackData,detail,setDetail}) =>
 
         }
         return(<>
-            {detail&&detail.map((e,idx)=> <Container key={e.idx} id={e.idx}>
+            {currentStack&&stackData&&detail&&detail.map((e,idx)=> <Container key={e.idx} id={e.idx}>
             <DeleteButton type="button" onClick={delBtnHandler}><FontAwesomeIcon id={e.idx} icon={faTrash}></FontAwesomeIcon></DeleteButton>
             <LogoStructure>
                 <Makecenter>
@@ -246,7 +244,7 @@ const Stack = ({data,stackData,detail,setDetail}) =>
             
         <Addul status={hideAdd}>
             <SubTitle>Select your Stack</SubTitle>
-            {currentStack&& currentStack.map(e=><Addli key={e.idx}><CreateStack type="button" onClick={ChoiceStackBtnHandler} id={e.idx}>{e.name}</CreateStack></Addli>)}
+            {stackData&&currentStack&& currentStack.map(e=><Addli key={e.idx}><CreateStack type="button" onClick={ChoiceStackBtnHandler} id={e.idx}>{e.name}</CreateStack></Addli>)}
             
             
            
