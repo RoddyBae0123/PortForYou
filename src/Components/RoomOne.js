@@ -73,7 +73,7 @@ const RoomOne = ({study}) => {
 
     const returnData = () => {
         var i =0;
-        return(study.map(e => <Container to={`/dashboard/roomdetail/${e.idx}`} >
+        return(study.map(e => <Container state={{"idx":e.idx}} to={{pathname:`/roomboard/member`,state:{idx:e.idx}}} >
             <Bkg src={src[i++]}>
             {/* http://3.37.208.251:8080/api/img/default?name=youtube_profile_image */}
                 <Number>

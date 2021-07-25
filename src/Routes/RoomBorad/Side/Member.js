@@ -6,6 +6,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlusCircle,faTimes,faAngleDown,faAngleUp} from '@fortawesome/free-solid-svg-icons';
 import Popup from 'reactjs-popup';
 import {portFolioApi} from "../../../Api";
+import { PanoramaSharp } from '@material-ui/icons';
+import { deprecatedPropType } from '@material-ui/core';
 
 const Container = styled.div`
     display: flex;
@@ -133,29 +135,47 @@ const PositionList = styled.div`
     height:160px;
 `
 const PositionBtn = styled.button`
+    opacity:${props=> props.checked ? 1:0.3};
+    border:2px solid RGB(238,238,238);
     width:100%;
     height:50px;
-    background-color:white;
-    box-shadow:  0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -1px rgba(0,0,0,0.06);
+    background-color:${props=> props.checked ? "RGB(238,238,238)":"white"};
     border-radius: 20px;
     display:grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: ${props=> props.checked ? "1fr 1fr":"1fr"};
     font-size:7px;
-
+    transition: all 300ms ease-in-out;
 `
-const PositionValue = styled.div`
+const PositionTitle = styled.div`
     display:flex;
     justify-content:center;
     align-items:center;
     font-size:12px;
     height:100%;
     font-weight: 500;
+    
 
 `
+const PositionValue  = styled.input`
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:12px;
+    height:100%;
+    width:100%;
+    font-weight: 500;
+    text-align:center;
+    border:none;
+    pointer-events: none;
+    background-color: transparent;
+`
+
+
+
 const InputNumber = styled.div`
-    display:grid;
     grid-template-columns: 0.5fr 0.5fr;
     height:100%;
+    display:${props => props.checked ? "grid":"none"};
 
 `
 const InputUpDown = styled.div`
@@ -167,6 +187,7 @@ const UpDownBtn = styled.button`
     border:none;
     background-color:transparent;
     font-size:20px;
+    
     &:hover{
         transform: scale(1.2,1.2);
     }
@@ -175,22 +196,64 @@ const UpDownBtn = styled.button`
 
 
 
-const Member = ({getPositionList,position}) => {
+const Member = ({getPositionList,props,position,setPosition}) => {
 
+    const {location,history} =  props;
+    const {state:{idx}}= location;
     const [picked,setPicked] = useState({
         first:true,
         second:false
     });
+    const [recruit,setRecruit] = useState([{
+        studyIdx:idx,
+        title:"",
+        content:"",
+        demandPosition:[]
+    }]);
+
+    // this.setState(prevState => ({
+    //     todoItems: prevState.todoItems.map(
+    //       el => el.key === key? { ...el, status: 'done' }: el
+    //     )
+    //   }))
+    
+    
     useEffect(()=> {
         getPositionList();
     },[])
     const UpHandler = (e) => {
         e.preventDefault();
     }
-    const PositionBtnHandler = (e)=> {
-        {e.target.dataset.type==="father"|| e.target.dataset.type==="value" ? console.log("father") : console.log("son")}
-        
+    const UpDown = (e) => {
+        {e.target.childNodes.length ? ChangeDm(e.target.id,e.target.dataset.type): ChangeDm(e.target.parentElement.id,e.target.parentElement.dataset.type)};
+    } 
+    const ChangeDm = (number,type) => {
+        const copyPosition = [...position];
+        if(copyPosition[number].demand<5 && copyPosition[number].demand>1){
+            {type=="true" ?copyPosition[number].demand+=1:copyPosition[number].demand-=1}
+        }
+        else if(copyPosition[number].demand==1){
+            {type=="true"?copyPosition[number].demand+=1:console.log("fuckit")}
+        }
+        else{
+            {type=="false"?copyPosition[number].demand-=1:console.log("fuckit")}
+
+        }
+        setPosition([...copyPosition]);
+
     }
+    const PositionBtnHandler = (e)=> {
+        
+        const copyPosition = [...position];
+        if(e.target.checked===false&&!e.target.dataset.type){
+            {e.target.childNodes.length?copyPosition[e.target.id].checked=true:copyPosition[e.target.parentElement.id].checked=true}
+        }
+        else if(e.target.checked===true&&!e.target.dataset.type){
+            {e.target.childNodes.length?copyPosition[e.target.id].checked=false:copyPosition[e.target.parentElement.id].checked=false}
+        }
+        setPosition(copyPosition);       
+    }
+    {position&&console.log(position)}
     const small = ()=> {
         console.log("small");
     }
@@ -227,13 +290,13 @@ const Member = ({getPositionList,position}) => {
         <div style={{width:"70%"}} >
         <label style={{marginBottom:15,fontSize:23,fontWeight:500}}>Position</label>
                 <PositionList>
-                    {position&&position.map(e=><PositionBtn key={e.idx} type="button" onClick={PositionBtnHandler} data-type="father">
-                        <PositionValue>{e.name}</PositionValue>
-                        <InputNumber>
-                            <PositionValue data-type="value">1</PositionValue>
+                    {position&&position.map((e,idx)=><PositionBtn key={e.position.idx} id={idx} checked={e.checked} type="button" onClick={PositionBtnHandler} >
+                        <PositionTitle id={idx} checked={e.checked}>{e.name}</PositionTitle>
+                        <InputNumber  checked={e.checked} id={idx}>
+                            <PositionValue value={e.demand} checked={e.checked} id={idx}></PositionValue>
                             <InputUpDown>
-                                <UpDownBtn type="button"  data-type="son"><FontAwesomeIcon icon={faAngleUp}/></UpDownBtn>
-                                <UpDownBtn type="button"  data-type="son"><FontAwesomeIcon icon={faAngleDown}/></UpDownBtn>
+                                <UpDownBtn type="button" id={idx} onClick={UpDown} data-type={true}><FontAwesomeIcon id={idx} data-type={true}icon={faAngleUp}/></UpDownBtn>
+                                <UpDownBtn type="button" id={idx} onClick={UpDown}data-type={false}><FontAwesomeIcon id={idx} data-type={false} icon={faAngleDown}/></UpDownBtn>
                             </InputUpDown>
                         </InputNumber>
                     </PositionBtn>)}
