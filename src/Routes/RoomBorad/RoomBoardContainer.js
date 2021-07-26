@@ -4,12 +4,20 @@ import { useEffect,useState } from 'react';
 import axios from "axios";
 import wifi from "../../wifi";
 import Auth from "../../Auth";
-import {portFolioApi} from "../../Api";
+import {portFolioApi,studyApi} from "../../Api";
 
-const RoomBoardContainer = ({match,history,location}) => {
+const RoomBoardContainer = (props) => {
     const [profileImgUri , setProfileImgUri] = useState(undefined); //change profile
     const [userData , setUserData] = useState(undefined); //user information
     const [position , setPosition] =useState([]);
+    const {match,location,history} =  props;
+    const {state:{idx}}= location;
+    const [rcSave,setRcSave] = useState({
+        studyIdx:idx,
+        title:"",
+        content:"",
+    });
+
     const getUserInfo = async() => {
         const api = await axios.create({
             baseURL:`${wifi}`
@@ -72,7 +80,15 @@ const RoomBoardContainer = ({match,history,location}) => {
         }
         
     }
-    
+    const saveRecruit = async(rcSave) =>{
+        try{
+            const response = await studyApi.saveRecruit(rcSave);
+            {response&&console.log(response)}
+        }
+        catch(e){
+            console.log(e);
+        }
+    }
 
       useEffect(()=>{
         getUserInfo();
@@ -80,7 +96,7 @@ const RoomBoardContainer = ({match,history,location}) => {
 
 
     return(<RoomBoardPresenter location={location} match={match} history={history} profileImgUri = {profileImgUri} 
-        imageHandler = {setProfileImage} getPositionList={getPositionList} position={position} setPosition={setPosition}/>)
+         getPositionList={getPositionList} position={position} setPosition={setPosition} setRcSave={setRcSave}rcSave={rcSave}saveRecruit={saveRecruit}/>)
 }
 
 export default RoomBoardContainer;

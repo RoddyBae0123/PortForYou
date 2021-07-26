@@ -13,7 +13,7 @@ export const portFolioApi = {
     getPosition : () => api.get("api/user/portfolio/positions"),
     getStackList : () => api.get("api/user/portfolio/stacks"),
     getEducationList : () => api.get("api/user/portfolio/educations"),
-    getPortFolioList : (token) => api.get("api/user/portfolios"),
+    getPortFolioList : () => api.get("api/user/portfolios"),
     getPortFolio : (idx) => api.get(`api/user/portfolio?portfolio_idx=${idx}`),
     savePorFolio : (data) => api.post('/api/user/portfolio',{
         "idx":data.Idx,
@@ -36,6 +36,12 @@ export const portFolioApi = {
 
 export const studyApi = {
     getCategoryList : () => api.get("api/user/study/categories"),
-    getStudyList : (applied)=> api.get(`api/user/studies?applied=${applied}`)
+    getStudyList : (applied)=> api.get(`api/user/studies?applied=${applied}`),
+    saveRecruit : (data) => api.post("api/user/study/announcement",{
+        studyIdx:data.studyIdx,
+        title:data.title,
+        content:data.content,
+        demandPosition:[...data.demandPosition]
+    })
     
 }

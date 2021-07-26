@@ -194,22 +194,19 @@ const UpDownBtn = styled.button`
     transition: transform 300ms ease;
 `
 
+const Submit = styled.input`
 
+`
 
-const Member = ({getPositionList,props,position,setPosition}) => {
-
+const Member = ({getPositionList,props,position,setPosition,setRcSave,rcSave,saveRecruit}) => {
+    
     const {location,history} =  props;
     const {state:{idx}}= location;
     const [picked,setPicked] = useState({
         first:true,
         second:false
     });
-    const [recruit,setRecruit] = useState([{
-        studyIdx:idx,
-        title:"",
-        content:"",
-        demandPosition:[]
-    }]);
+    
 
     // this.setState(prevState => ({
     //     todoItems: prevState.todoItems.map(
@@ -253,9 +250,17 @@ const Member = ({getPositionList,props,position,setPosition}) => {
         }
         setPosition(copyPosition);       
     }
-    {position&&console.log(position)}
-    const small = ()=> {
-        console.log("small");
+    const changeRc = (e)=> {
+        const copyRcSave = rcSave;
+        if(e.target.dataset.kind=="0"){
+            copyRcSave.title=e.target.value;
+        }
+        else if((e.target.dataset.kind=="1")){
+            copyRcSave.content=e.target.value;
+        }
+        {copyRcSave&&setRcSave(copyRcSave)}
+        console.log(rcSave.title,rcSave.content);
+
     }
     return( <motion.div exit={{opacity:0}} animate={{opacity:1}} initial = {{opacity:0}} style={{width:"100%"}}>
         <Container>
@@ -274,20 +279,21 @@ const Member = ({getPositionList,props,position,setPosition}) => {
     </Container>
     <PopupBkg status={true}>
         <PopupUser>
-            <DelpopupBtn>
+            <DelpopupBtn type="button">
                 <FontAwesomeIcon style={{fontSize:35}} icon={faTimes} />
             </DelpopupBtn>
             <CreateRecruitTitle>Create Recruit</CreateRecruitTitle>
             <div style={{width:"70%"}}>
                 <label style={{marginBottom:15,fontSize:23,fontWeight:500}}>Title</label>
-                <RoomInput data-kind={0} placeholder="Please enter at least two characters."></RoomInput>
+                <RoomInput onChange={changeRc} data-kind={0} placeholder="Please enter at least two characters."  value={rcSave.title} />
             </div>
             <div style={{width:"70%"}}>
                 <label style={{marginBottom:15,fontSize:23,fontWeight:500}}>Description</label>
-            <RoomInput data-kind={1}  style={{height:150}}  placeholder="Please enter at least ten characters.
-    "></RoomInput>
-        </div> 
-        <div style={{width:"70%"}} >
+            <RoomInput onChange={changeRc} data-kind={1}  style={{height:150}}  placeholder="Please enter at least ten characters.
+    " value={rcSave.content}/>
+            </div> 
+            
+            <div style={{width:"70%"}} >
         <label style={{marginBottom:15,fontSize:23,fontWeight:500}}>Position</label>
                 <PositionList>
                     {position&&position.map((e,idx)=><PositionBtn key={e.position.idx} id={idx} checked={e.checked} type="button" onClick={PositionBtnHandler} >
@@ -305,6 +311,9 @@ const Member = ({getPositionList,props,position,setPosition}) => {
 
                 </PositionList>
         </div>
+            <div style={{width:"70%",display:"flex",justifyContent:"center"}}>
+                <Submit type="submit"/>
+            </div>
         </PopupUser>
     </PopupBkg>
     </motion.div>)

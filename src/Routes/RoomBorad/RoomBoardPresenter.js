@@ -217,7 +217,7 @@ const UserInfoBtn = styled.button`
 
     
 `
-const RoomBoardPresenter= ({match,history,profileImgUri,imageHandler,getPositionList,position,setPosition}) => {
+const RoomBoardPresenter= ({match,history,profileImgUri,getPositionList,position,setPosition,setRcSave,rcSave,saveRecruit}) => {
     const [popup,setPopup] = useState(false);
      const delBtnHandler = () => {
         setPopup(false);
@@ -337,8 +337,8 @@ const RoomBoardPresenter= ({match,history,profileImgUri,imageHandler,getPosition
                 <AnimatePresence>
                     <Switch>
                         <Route path={`${match.path}/board`}  component={Board}></Route>
-                        <Route exact path={`${match.path}/member`}  render={(props)=><Member  props={props}getPositionList={getPositionList} position={position} setPosition={setPosition}
-                       ></Member>}></Route>
+                        <Route exact path={`${match.path}/member`}  render={(props)=><Member  props={props}getPositionList={getPositionList} position={position} setPosition={setPosition} setRcSave={setRcSave}
+                       saveRecruit={saveRecruit} rcSave={rcSave}></Member>}></Route>
                         <Route path={`${match.path}/channel`}  component={Channel}></Route>
                         <Route path={`${match.path}/calender`} component={Calender}></Route>
                     </Switch>
