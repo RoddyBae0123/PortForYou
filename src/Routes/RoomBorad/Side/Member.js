@@ -4,10 +4,9 @@ import styled from 'styled-components';
 import Section from '../../../Components/Section';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlusCircle,faTimes,faAngleDown,faAngleUp} from '@fortawesome/free-solid-svg-icons';
-import Popup from 'reactjs-popup';
-import {portFolioApi} from "../../../Api";
-import { PanoramaSharp } from '@material-ui/icons';
-import { deprecatedPropType } from '@material-ui/core';
+import {studyApi} from "../../../Api";
+import Loader from "react-loader-spinner";
+import RecruitOne from '../../../Components/RecruitOne';
 
 const Container = styled.div`
     display: flex;
@@ -82,7 +81,7 @@ const PopupBkg = styled.div`
 `
 const PopupUser = styled.form`
     width:900px;
-    height:680px;
+    height:720px;
     background-color: white;    
     border-radius:25px;
     box-shadow: 0px 3px 6px rgba(0,0,0,0.16) ;
@@ -195,32 +194,50 @@ const UpDownBtn = styled.button`
 `
 
 const Submit = styled.input`
-
+    opacity:${props=> props.disabled ? 0.1 : 1 };
+    width:30%;
+    height:50px;
+    border-radius: 20px;
+    border: 5px solid lightgray;
+    font-weight: 500;
+    transition: all 300ms ease-out;
+    color:  ${props=> props.disabled ? "lightgray":"black"};
+    pointer-events: ${props=> props.disabled ? "none":"auto"};
+    background-color: ${props=> props.disabled ? "white":"lightgray"};
 `
 
-const Member = ({getPositionList,props,position,setPosition,setRcSave,rcSave,saveRecruit}) => {
+const Member = ({getPositionList,location,history,position,setPosition,setRcSave,rcSave,saveRecruit,save,annList,ann}) => {
     
-    const {location,history} =  props;
-    const {state:{idx}}= location;
+    const {state:{idx,where}}= location;
     const [picked,setPicked] = useState({
         first:true,
         second:false
     });
-    
-
+    const [popUp ,setPopUp] = useState(false);
+    const [disabled,setDisabled] =useState(true);
     // this.setState(prevState => ({
     //     todoItems: prevState.todoItems.map(
     //       el => el.key === key? { ...el, status: 'done' }: el
     //     )
     //   }))
     
+    useEffect (()=>{
+        var copythem = [...position];
+        copythem = copythem.filter(e => e.checked==true);
+        (copythem.length&&rcSave.title.length&&rcSave.content.length) ? setDisabled(false) : setDisabled(true) ;
+    },[position,rcSave])
     
     useEffect(()=> {
         getPositionList();
+        save();
+        {where=="recruit"&&setPicked({
+            first:false,
+            second:true
+        })}
     },[])
-    const UpHandler = (e) => {
-        e.preventDefault();
-    }
+
+
+    
     const UpDown = (e) => {
         {e.target.childNodes.length ? ChangeDm(e.target.id,e.target.dataset.type): ChangeDm(e.target.parentElement.id,e.target.parentElement.dataset.type)};
     } 
@@ -251,7 +268,7 @@ const Member = ({getPositionList,props,position,setPosition,setRcSave,rcSave,sav
         setPosition(copyPosition);       
     }
     const changeRc = (e)=> {
-        const copyRcSave = rcSave;
+        const copyRcSave = {studyIdx:idx,title:rcSave.title,content:rcSave.content};
         if(e.target.dataset.kind=="0"){
             copyRcSave.title=e.target.value;
         }
@@ -259,10 +276,42 @@ const Member = ({getPositionList,props,position,setPosition,setRcSave,rcSave,sav
             copyRcSave.content=e.target.value;
         }
         {copyRcSave&&setRcSave(copyRcSave)}
-        console.log(rcSave.title,rcSave.content);
+    }
+
+    const SumbitHandler = (e)=> {
+        e.preventDefault();
+         var copythem = [...position];
+         copythem = copythem.filter(e => e.checked==true);
+        // copythem.map(e=> {delete e.checked})
+        const data = {
+            study:{idx},
+            title:rcSave.title,
+            content:rcSave.content,
+            demandPosition:[...copythem]
+        }
+         saveRecruit(data);
+         history.push({pathname: location.pathname,state: {idx,where:"recruit"}});
+         setPopUp(false);
+    }
+
+    
+        
+
+    const DelectAll = ()=> {
+        setPopUp(false);
+        setPosition([]);
+        getPositionList();
+        save();
 
     }
-    return( <motion.div exit={{opacity:0}} animate={{opacity:1}} initial = {{opacity:0}} style={{width:"100%"}}>
+
+    // (<RruCreateBtn onClick ={() => setPopUp(true)} >
+    //             <h2>fuck </h2>
+    //             <FontAwesomeIcon icon={faPlusCircle} style={{fontSize:50}}/>
+    //         </RruCreateBtn>)
+        // {AnnList&&getAnn(AnnList[0].idx)}
+
+    return(  <motion.div exit={{opacity:0}} animate={{opacity:1}} initial = {{opacity:0}} style={{width:"100%"}}>
         <Container>
         <Section title={"Member"} message={"Let's team up and make your dreams come true."} nav={false} />
         <Navbar>
@@ -270,36 +319,40 @@ const Member = ({getPositionList,props,position,setPosition,setRcSave,rcSave,sav
             <NavBtn picked={picked["second"]}>Recruit</NavBtn>
         </Navbar>
         <MemberData>
-            <RruCreateBtn >
-                <h2>Apply Recruit of your room </h2>
-                <FontAwesomeIcon icon={faPlusCircle} style={{fontSize:50}}/>
-            </RruCreateBtn>
+        {ann? (<RecruitOne data={ann.data} type={"Member"}></RecruitOne>):(<Loader type="Rings"
+    color="#FF8C94"
+    height={300}
+    width={300}
+    timeout={10000}/>)}
+            
         </MemberData>
         
     </Container>
-    <PopupBkg status={true}>
-        <PopupUser>
-            <DelpopupBtn type="button">
+        
+        
+    <PopupBkg status={popUp}>
+        <PopupUser onSubmit={SumbitHandler}>
+            <DelpopupBtn type="button" onClick={DelectAll}>
                 <FontAwesomeIcon style={{fontSize:35}} icon={faTimes} />
             </DelpopupBtn>
             <CreateRecruitTitle>Create Recruit</CreateRecruitTitle>
             <div style={{width:"70%"}}>
                 <label style={{marginBottom:15,fontSize:23,fontWeight:500}}>Title</label>
-                <RoomInput onChange={changeRc} data-kind={0} placeholder="Please enter at least two characters."  value={rcSave.title} />
+                <RoomInput onChange={changeRc} data-kind={0} placeholder="Please enter at least two characters."  value={rcSave&&rcSave.title} />
             </div>
             <div style={{width:"70%"}}>
                 <label style={{marginBottom:15,fontSize:23,fontWeight:500}}>Description</label>
-            <RoomInput onChange={changeRc} data-kind={1}  style={{height:150}}  placeholder="Please enter at least ten characters.
-    " value={rcSave.content}/>
+            <RoomInput onChange={changeRc} data-kind={1}  style={{height:120}}  placeholder="Please enter at least ten characters.
+    " value={rcSave&&rcSave.content}/>
             </div> 
             
             <div style={{width:"70%"}} >
         <label style={{marginBottom:15,fontSize:23,fontWeight:500}}>Position</label>
                 <PositionList>
                     {position&&position.map((e,idx)=><PositionBtn key={e.position.idx} id={idx} checked={e.checked} type="button" onClick={PositionBtnHandler} >
-                        <PositionTitle id={idx} checked={e.checked}>{e.name}</PositionTitle>
+                        <PositionTitle id={idx} checked={e.checked} readOnly>{e.name}</PositionTitle>
                         <InputNumber  checked={e.checked} id={idx}>
-                            <PositionValue value={e.demand} checked={e.checked} id={idx}></PositionValue>
+                            <PositionValue value={e.demand} checked={e.checked} id={idx} readOnly></PositionValue>
                             <InputUpDown>
                                 <UpDownBtn type="button" id={idx} onClick={UpDown} data-type={true}><FontAwesomeIcon id={idx} data-type={true}icon={faAngleUp}/></UpDownBtn>
                                 <UpDownBtn type="button" id={idx} onClick={UpDown}data-type={false}><FontAwesomeIcon id={idx} data-type={false} icon={faAngleDown}/></UpDownBtn>
@@ -312,7 +365,7 @@ const Member = ({getPositionList,props,position,setPosition,setRcSave,rcSave,sav
                 </PositionList>
         </div>
             <div style={{width:"70%",display:"flex",justifyContent:"center"}}>
-                <Submit type="submit"/>
+                <Submit value="CREATE" type="submit" disabled ={disabled}/>
             </div>
         </PopupUser>
     </PopupBkg>

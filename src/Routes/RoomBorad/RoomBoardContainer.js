@@ -12,11 +12,9 @@ const RoomBoardContainer = (props) => {
     const [position , setPosition] =useState([]);
     const {match,location,history} =  props;
     const {state:{idx}}= location;
-    const [rcSave,setRcSave] = useState({
-        studyIdx:idx,
-        title:"",
-        content:"",
-    });
+    const [rcSave,setRcSave] = useState();
+    const [annList,setAnnList]= useState();
+    const [ann,setAnn] = useState();
 
     const getUserInfo = async() => {
         const api = await axios.create({
@@ -31,11 +29,16 @@ const RoomBoardContainer = (props) => {
             setUserData(res);
             setProfileImgUri("api/img/default?name="+res.data.uid+"_profile_img");
         }).catch((e)=>{
-            if(e.response.status===401){
-                history.push("/error401");
-            }
+            console.log(e);
         })
     } 
+    const save = (e)=> {
+        setRcSave({
+            studyIdx:idx,
+            title:"",
+            content:"",
+        });
+    }
     const setProfileImage = async(e) => {
         e.preventDefault();
         const formData = new FormData();
@@ -73,10 +76,11 @@ const RoomBoardContainer = (props) => {
                     }]
                 ))
             })}
-            
         }
         catch(e){
             console.log(e);
+        }
+        finally{
         }
         
     }
@@ -89,14 +93,35 @@ const RoomBoardContainer = (props) => {
             console.log(e);
         }
     }
-
+    const getAnnouncementList = async() => {
+        try{
+           const {data} = await studyApi.getAnnouncementList(idx);
+           {data&&getAnn(data[0].idx)};
+           {data&& setAnnList([...data])};
+        }
+        catch(e){
+            console.log(e);
+        }
+      
+    }
+    const getAnn = async(idx) => { 
+        try{
+            const data = await studyApi.getAnnouncement(idx);
+            {data&&setAnn(data)}
+        }
+        catch(e){
+            console.log(e);
+        }
+    }
       useEffect(()=>{
         getUserInfo();
+        getAnnouncementList();
     },[])
+    {ann&&console.log(ann)};
 
 
     return(<RoomBoardPresenter location={location} match={match} history={history} profileImgUri = {profileImgUri} 
-         getPositionList={getPositionList} position={position} setPosition={setPosition} setRcSave={setRcSave}rcSave={rcSave}saveRecruit={saveRecruit}/>)
+         getPositionList={getPositionList} position={position} setPosition={setPosition} setRcSave={setRcSave}rcSave={rcSave}saveRecruit={saveRecruit} save={save} props={props}annList={annList}ann={ann}/>)
 }
 
 export default RoomBoardContainer;

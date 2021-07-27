@@ -23,8 +23,8 @@ const DashboardContainer = ({match,history}) => {
             setUserData(res);
             setProfileImgUri("api/img/default?name="+res.data.uid+"_profile_img");
         }).catch((e)=>{
-            if(e.response.status===401){
-                history.push("/error401");
+            if(e){
+                console.log(e);
             }
         })
     }    

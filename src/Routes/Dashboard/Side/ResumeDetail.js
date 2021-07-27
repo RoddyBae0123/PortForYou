@@ -127,6 +127,7 @@ const ResumeDetail = ({match,history}) => {
 
     const [main,setMain] = useState();
     const [haveto, setHaveto] = useState(undefined);
+    console.log(match.params);
     const Idx=match.params.idx;
     const accessToken = Auth.getAccessToken();
     const [data,setData] = useState(false); //Entire Data

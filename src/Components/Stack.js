@@ -216,41 +216,39 @@ const Stack = ({data,stackData,detail,setDetail}) =>
 
         }
         return(<>
-            {currentStack&&stackData&&detail&&detail.map((e,idx)=> <Container key={e.idx} id={e.idx}>
-            <DeleteButton type="button" onClick={delBtnHandler}><FontAwesomeIcon id={e.idx} icon={faTrash}></FontAwesomeIcon></DeleteButton>
-            <LogoStructure>
-                <Makecenter>
-                    <Logo><img src={`${wifi}api/img/default?name=${stackData[e.stackIdx-1].name}`} style={{width:"70%"}}></img></Logo>
-                
-                </Makecenter>
-                <LogoName style={{textAlign:"center"}}>{stackData[e.stackIdx-1].name}</LogoName>
-            </LogoStructure>
-            <Input type="text" value={e.content} onChange={inputHandler} id={idx} >
-            </Input>
-            <Makecenter style={{borderLeft:"3.5px solid RGB(212, 212, 212)"}}><StarRatings
-          rating={e.ability}
-          starRatedColor="RGB(255, 140, 148)"
-          numberOfStars={5}
-          starSpacing="5px"
-          starDimension="20px"
-          changeRating={changeRating}
-          name={`${idx}`}
-
-        />
-        </Makecenter>
-        
-
-        </Container>)}
+            {currentStack&&stackData&&detail&&detail.map((e,idx)=> 
+            stackData[e.stackIdx-1] ? (<Container key={e.idx} id={e.idx}>
+                <DeleteButton type="button" onClick={delBtnHandler}><FontAwesomeIcon id={e.idx} icon={faTrash}></FontAwesomeIcon></DeleteButton>
+                <LogoStructure>
+                    <Makecenter>
+                        <Logo><img src={`${wifi}api/img/default?name=${stackData[e.stackIdx-1].name}`} style={{width:"70%"}}></img></Logo>
+                    
+                    </Makecenter>
+                    <LogoName style={{textAlign:"center"}}>{stackData[e.stackIdx-1].name}</LogoName>
+                </LogoStructure>
+                <Input type="text" value={e.content} onChange={inputHandler} id={idx} >
+                </Input>
+                <Makecenter style={{borderLeft:"3.5px solid RGB(212, 212, 212)"}}><StarRatings
+              rating={e.ability}
+              starRatedColor="RGB(255, 140, 148)"
+              numberOfStars={5}
+              starSpacing="5px"
+              starDimension="20px"
+              changeRating={changeRating}
+              name={`${idx}`}
+    
+            />
+            </Makecenter>
             
-        <Addul status={hideAdd}>
+    
+            </Container>): (<div>fuck</div>)
+            
+            
+        )}
+            <Addul status={hideAdd}>
             <SubTitle>Select your Stack</SubTitle>
-            {stackData&&currentStack&& currentStack.map(e=><Addli key={e.idx}><CreateStack type="button" onClick={ChoiceStackBtnHandler} id={e.idx}>{e.name}</CreateStack></Addli>)}
-            
-            
-           
-            
-
-        </Addul>
+            {stackData&&currentStack&& currentStack.map( e =>
+            <Addli key={e.idx}><CreateStack type="button" onClick={ChoiceStackBtnHandler} id={e.idx}>{e.name}</CreateStack></Addli> )}</Addul>
         <AddBtn status={hideAdd} type="button" onClick={AddBtnHandler}>Add Stack</AddBtn>
 
         </>

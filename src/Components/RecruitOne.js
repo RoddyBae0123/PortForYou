@@ -9,13 +9,15 @@ background-color: white;
 box-shadow: 0px 3px 6px rgba(0,0,0,0.16) ;
 margin:15px;
 display:grid;
-grid-template-rows: 1fr 1fr;
+grid-template-rows: ${props=>props.type!=="Member"?"1fr 1fr":"none"};
+grid-template-columns:${props=>props.type!=="Member"?"none":"1fr 1fr"}; ;
 transition: all 300ms ease-in-out;
 &:hover{
     color:black;
     transform: translateY(-5px);
     box-shadow: 0px 8px 11px rgba(0,0,0,0.24) ;
 }
+pointer-events: ${props=>props.type!=="Member"?"auto":"none"};
 
 `
 const RecruitInfo = styled.div`
@@ -34,6 +36,7 @@ grid-template-columns: 1fr 1fr 1fr;
 grid-auto-rows:25px;
 grid-gap: 5px;
 margin:10px;
+width:${props=> props.type==="Member" ? "85%":"90%"};
 `
 const PositinOne = styled.li`
 height:100%;
@@ -61,9 +64,11 @@ border-radius: 100%;
 border: 1.5px solid lightgray;
 `
 
-const RecruitOne = () => {
+const RecruitOne = ({data,type}) => {
+
+    console.log(data);
     return (
-    <Container>
+    <Container type= {type}>
         <RecruitInfo>
             <SomeInfo>
                 <RecruitPic src={"https://avatars.githubusercontent.com/u/68287181?v=4"} style={{marginBottom:10}}/>
@@ -74,7 +79,8 @@ const RecruitOne = () => {
                 <h5 style={{fontSize:10,fontWeight:500}}>...Dummy syokai</h5>
             </SomeInfo>
         </RecruitInfo>
-        <Position>
+        <Makecenter>
+        <Position type= {type}>
             <PositinOne>
                 <Makecenter>
                     <PositionText>Front-end</PositionText>
@@ -149,6 +155,8 @@ const RecruitOne = () => {
             </PositinOne>
 
         </Position>
+        </Makecenter>
+        
     </Container>)
 }
 

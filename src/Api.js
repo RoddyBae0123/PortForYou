@@ -38,10 +38,14 @@ export const studyApi = {
     getCategoryList : () => api.get("api/user/study/categories"),
     getStudyList : (applied)=> api.get(`api/user/studies?applied=${applied}`),
     saveRecruit : (data) => api.post("api/user/study/announcement",{
-        studyIdx:data.studyIdx,
+        study:{idx:data.study.idx},
         title:data.title,
         content:data.content,
         demandPosition:[...data.demandPosition]
-    })
+    }),
+    getAnnouncementList : (idx)=> api.get(`api/user/study/announcements?studyIdx=${idx}`),
+    getAnnouncement: (idx)=> api.get(`api/user/study/announcement?announcementIdx=${idx}`)
+
+    
     
 }

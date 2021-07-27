@@ -217,7 +217,7 @@ const UserInfoBtn = styled.button`
 
     
 `
-const RoomBoardPresenter= ({match,history,profileImgUri,getPositionList,position,setPosition,setRcSave,rcSave,saveRecruit}) => {
+const RoomBoardPresenter= ({match,history,profileImgUri,getPositionList,position,setPosition,setRcSave,rcSave,saveRecruit,save,props,annList,ann}) => {
     const [popup,setPopup] = useState(false);
      const delBtnHandler = () => {
         setPopup(false);
@@ -337,8 +337,8 @@ const RoomBoardPresenter= ({match,history,profileImgUri,getPositionList,position
                 <AnimatePresence>
                     <Switch>
                         <Route path={`${match.path}/board`}  component={Board}></Route>
-                        <Route exact path={`${match.path}/member`}  render={(props)=><Member  props={props}getPositionList={getPositionList} position={position} setPosition={setPosition} setRcSave={setRcSave}
-                       saveRecruit={saveRecruit} rcSave={rcSave}></Member>}></Route>
+                        <Route path={`${match.path}/member/:idx`}  render={(props)=><Member {...props}getPositionList={getPositionList} position={position} setPosition={setPosition} setRcSave={setRcSave}
+                       saveRecruit={saveRecruit} rcSave={rcSave}save={save} annList={annList} ann={ann}></Member>}></Route>
                         <Route path={`${match.path}/channel`}  component={Channel}></Route>
                         <Route path={`${match.path}/calender`} component={Calender}></Route>
                     </Switch>
