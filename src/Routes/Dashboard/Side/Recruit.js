@@ -5,7 +5,8 @@ import { faUserCheck} from '@fortawesome/free-solid-svg-icons';
 import MdataProcessing from "../../../Components/MdataProcessing";
 import ListWrapper from "../../../Components/ListWrapper";
 import RecruitOne from '../../../Components/RecruitOne';
-
+import { useState } from 'react';
+import RecruitDetail from '../../../Components/RecruitDetail';
 
 const Container = styled.div`
     height:100%;
@@ -51,6 +52,10 @@ const  Title2 = styled.div`
 
 
 const Recruit = () => {
+
+    const [popup, setPopup] = useState(true);
+
+
     return(<motion.div exit={{opacity:0}} animate={{opacity:1}} initial = {{opacity:0}} style={{width:"100%"}}>
         <Container>
             <MdataProcessing title={"Recruit"} message={"Let's team up and make your dreams come true."} nav={true} connect={"Recruit"}></MdataProcessing>
@@ -61,7 +66,7 @@ const Recruit = () => {
             <ListWrapper status={false} kind={"RecruitOne"} />
 
         </Container>
-
+        <RecruitDetail popup={popup}></RecruitDetail>
         </motion.div>)
 }
 

@@ -14,7 +14,7 @@ const Container = styled.div`
     width:85%;
     border: ${props=> props.status ? "1px solid lightgray":"none"};
     position:relative;
-    padding:10px 0;
+    padding:10px 10px;
     margin-top:45px;
 `
 
