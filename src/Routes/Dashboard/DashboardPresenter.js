@@ -261,6 +261,8 @@ const DashboardPresenter = ({
   getStudyList,
   setStudy,
   study,
+  newAnnList,
+  getNewAnnList
 }) => {
   const [popup, setPopup] = useState(false);
   const delBtnHandler = () => {
@@ -452,7 +454,17 @@ const DashboardPresenter = ({
             </Navbar> */}
           <AnimatePresence>
             <Switch>
-              <Route path={`${match.path}/recruit`} component={Recruit}></Route>
+              <Route
+                path={`${match.path}/recruit`}
+                component={() => (
+                  <Recruit
+                  getStudyList={getStudyList}
+                    history={history}
+                    newAnnList={newAnnList}
+                    getNewAnnList={getNewAnnList}
+                  />
+                )}
+              ></Route>
 
               <Route
                 exact

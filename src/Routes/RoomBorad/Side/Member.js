@@ -246,6 +246,7 @@ const Member = ({
     }
   }, []);
 
+  ann && console.log(ann);
   const UpDown = (e) => {
     {
       e.target.childNodes.length
@@ -363,7 +364,7 @@ const Member = ({
         </Navbar>
         <MemberData>
           {ann ? (
-            <RecruitOne data={ann.data} type={"Member"}></RecruitOne>
+            <RecruitOne newAnnList={[ann.data]} type={"Member"}></RecruitOne>
           ) : (
             <Loader
               type="Rings"

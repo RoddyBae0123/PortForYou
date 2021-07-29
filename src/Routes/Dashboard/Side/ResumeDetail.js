@@ -2,7 +2,7 @@ import styled from "styled-components";
 import Auth from "../../../Auth";
 import axios from "axios";
 import wifi from "../../../wifi";
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
 import Loader from "react-loader-spinner";
 import Select from "../../../Components/Select";
 import Project from "../../../Components/Project";
@@ -134,7 +134,7 @@ function ResumeDetail({ match, history }) {
   const accessToken = Auth.getAccessToken();
   const [data, setData] = useState(false); //Entire Data
   const [project, setProject] = useState(); //Entire Data.project Data
-  const [render, setRender] = useState(); //ê°•ì œë Œë”
+  const [render, setRender] = useState(); //ê°•ì œ? Œ?”
 
   const getResumeDetail = async (token, idx) => {
     const api = await axios.create({
@@ -220,7 +220,21 @@ function ResumeDetail({ match, history }) {
   };
 
   const setResumeList = async (token) => {
-    console.log(project, stackNew);
+    console.log({
+      idx: Idx,
+      title: main.title,
+      content: main.content,
+      project: [...project],
+      positions: [
+        {
+          idx: position.idx,
+        },
+      ],
+      tech: [...stackNew],
+      education: {
+        idx: education.idx,
+      },
+    });
     const api = await axios.create({
       baseURL: `${wifi}`,
       headers: {
@@ -371,4 +385,4 @@ function ResumeDetail({ match, history }) {
   );
 }
 
-export default ResumeDetail;
+export default memo(ResumeDetail);

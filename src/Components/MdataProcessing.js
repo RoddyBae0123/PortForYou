@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,memo } from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileInvoice,faTimes} from '@fortawesome/free-solid-svg-icons';
@@ -225,7 +225,7 @@ const MdataProcessing = ({title,message,nav,connect,getStudyList,setName}) => {
     useEffect(()=>{
             
             {(room&&room["title"].length>2 && room["content"].length>10&&room["studyCategory"].idx )? setDisabled(false):setDisabled(true)}
-            console.log(disabled);
+            return () => setDisabled(true);
     },[room])
     const body = document.querySelector("body");
 
@@ -421,4 +421,4 @@ const MdataProcessing = ({title,message,nav,connect,getStudyList,setName}) => {
     )
 }
 
-export default MdataProcessing;
+export default memo(MdataProcessing) ;

@@ -5,11 +5,13 @@ import axios from "axios";
 import wifi from "../../wifi";
 import { Link } from "react-router-dom";
 import { useAsync } from "react-async";
+import { studyApi } from "../../Api";
 const DashboardContainer = ({ match, history }) => {
   const [data, setData] = useState(undefined); //resume data
   const [profileImgUri, setProfileImgUri] = useState(undefined); //change profile
   const [userData, setUserData] = useState(undefined); //user information
   const [study, setStudy] = useState(undefined);
+  const [newAnnList, setNewAnnList] = useState(undefined);
   const getUserInfo = async () => {
     const api = await axios.create({
       baseURL: `${wifi}`,
@@ -112,9 +114,21 @@ const DashboardContainer = ({ match, history }) => {
       console.log(error);
     }
   };
+  const getNewAnnList = async () => {
+    try {
+      const { data } = await studyApi.getNewAnnouncementList("new");
+      {
+        data && setNewAnnList(data);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   useEffect(() => {
     getUserInfo();
+    getNewAnnList();
+    
   }, []);
 
   return (
@@ -131,6 +145,7 @@ const DashboardContainer = ({ match, history }) => {
         history={history}
         setStudy={setStudy}
         study={study}
+        newAnnList={newAnnList}
       ></DashboardPresenter>
     </>
   );

@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 
 const Container = styled.button`
-  height: 250px;
+  height: 280px;
   border-radius: 34px;
   background-color: white;
   box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16);
@@ -19,7 +19,7 @@ const Container = styled.button`
   }
   pointer-events: ${(props) => (props.type !== "Member" ? "auto" : "none")};
   margin: 10px;
-  width: ${(props) => props.type && "100%"};
+  width: ${(props) => props.type!=="recruit" && "100%"};
 `;
 const RecruitInfo = styled.div`
   display: grid;
@@ -46,7 +46,7 @@ const PositinOne = styled.li`
   grid-template-columns: 0.6fr 0.4fr;
   font-size: 5px;
   border: 1px solid lightgray;
-  border-radius: 10px;
+  border-radius: 15px;
 `;
 const Makecenter = styled.div`
   display: flex;
@@ -56,7 +56,7 @@ const Makecenter = styled.div`
   height: 100%;
 `;
 const PositionText = styled.h4`
-  font-size: 10px;
+  font-size: 7px;
   font-weight: 400;
 `;
 const RecruitPic = styled.img`
@@ -66,106 +66,68 @@ const RecruitPic = styled.img`
   border: 1.5px solid lightgray;
 `;
 
-const RecruitOne = ({ data, type }) => {
-  console.log(data);
-  return (
-    <Container type={type}>
-      <Makecenter>
-        <RecruitInfo>
-          <SomeInfo>
-            <RecruitPic
-              src={"https://avatars.githubusercontent.com/u/68287181?v=4"}
-              style={{ marginBottom: 10 }}
-            />
-            <h3>BossName</h3>
-          </SomeInfo>
-          <SomeInfo>
-            <h1 style={{ fontSize: 28, fontWeight: 600, marginBottom: 15 }}>
-              RoomName
-            </h1>
-            <h5 style={{ fontSize: 10, fontWeight: 500 }}>...Dummy syokai</h5>
-          </SomeInfo>
-        </RecruitInfo>
-      </Makecenter>
+const RecruitOne = ({
+  newAnnList,
+  type,
+  setPopup,
+  setRecruitIdx,
+  setResult,
+  ann,
+}) => {
+  const show = (idx) => {
+    setPopup(true);
+    setRecruitIdx(idx);
+    setResult(undefined);
+  };
+  const returnData = () => {
+    return type ? (
+      newAnnList.map((e) => (
+        <Container onClick={() => show(e.idx)} key={e.idx} type={type}>
+          <Makecenter>
+            <RecruitInfo>
+              <SomeInfo>
+                <RecruitPic
+                  src={"https://avatars.githubusercontent.com/u/68287181?v=4"}
+                  style={{ marginBottom: 10 }}
+                />
+                <h3>{e.study.user.name}</h3>
+              </SomeInfo>
+              <SomeInfo>
+                <h1 style={{ fontSize: 28, fontWeight: 600, marginBottom: 15 }}>
+                  {e.title}
+                </h1>
+                <h5 style={{ fontSize: 10, fontWeight: 500 }}>
+                  {e.content.substring(0, 200)}...
+                </h5>
+              </SomeInfo>
+            </RecruitInfo>
+          </Makecenter>
 
-      <Makecenter>
-        <Position type={type}>
-          <PositinOne>
-            <Makecenter>
-              <PositionText>Front-end</PositionText>
-            </Makecenter>
-            <Makecenter>
-              <PositionText>0/3</PositionText>
-            </Makecenter>
-          </PositinOne>
-          <PositinOne>
-            <Makecenter>
-              <PositionText>Front-end</PositionText>
-            </Makecenter>
-            <Makecenter>
-              <PositionText>0/3</PositionText>
-            </Makecenter>
-          </PositinOne>
-          <PositinOne>
-            <Makecenter>
-              <PositionText>Front-end</PositionText>
-            </Makecenter>
-            <Makecenter>
-              <PositionText>0/3</PositionText>
-            </Makecenter>
-          </PositinOne>
-          <PositinOne>
-            <Makecenter>
-              <PositionText>Front-end</PositionText>
-            </Makecenter>
-            <Makecenter>
-              <PositionText>0/3</PositionText>
-            </Makecenter>
-          </PositinOne>
-          <PositinOne>
-            <Makecenter>
-              <PositionText>Front-end</PositionText>
-            </Makecenter>
-            <Makecenter>
-              <PositionText>0/3</PositionText>
-            </Makecenter>
-          </PositinOne>
-          <PositinOne>
-            <Makecenter>
-              <PositionText>Front-end</PositionText>
-            </Makecenter>
-            <Makecenter>
-              <PositionText>0/3</PositionText>
-            </Makecenter>
-          </PositinOne>
-          <PositinOne>
-            <Makecenter>
-              <PositionText>Front-end</PositionText>
-            </Makecenter>
-            <Makecenter>
-              <PositionText>0/3</PositionText>
-            </Makecenter>
-          </PositinOne>
-          <PositinOne>
-            <Makecenter>
-              <PositionText>Front-end</PositionText>
-            </Makecenter>
-            <Makecenter>
-              <PositionText>0/3</PositionText>
-            </Makecenter>
-          </PositinOne>
-          <PositinOne>
-            <Makecenter>
-              <PositionText>Front-end</PositionText>
-            </Makecenter>
-            <Makecenter>
-              <PositionText>0/3</PositionText>
-            </Makecenter>
-          </PositinOne>
-        </Position>
-      </Makecenter>
-    </Container>
-  );
+          <Makecenter>
+            <Position type={type}>
+              {e.demandPosition.map((e) => (
+                <PositinOne key={e.idx}>
+                  <Makecenter>
+                    <PositionText id={e.position.idx}>
+                      {e.position.name.substring(0, 7)}..
+                    </PositionText>
+                  </Makecenter>
+                  <Makecenter>
+                    <PositionText>
+                      {e.applied}/{e.demand}
+                    </PositionText>
+                  </Makecenter>
+                </PositinOne>
+              ))}
+            </Position>
+          </Makecenter>
+        </Container>
+      ))
+    ) : (
+      <div>sdasdasdasd</div>
+    );
+  };
+  return newAnnList ? returnData() : null;
 };
 
 export default RecruitOne;

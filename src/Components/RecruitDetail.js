@@ -12,6 +12,9 @@ import {
   faJs,
   faCuttlefish,
 } from "@fortawesome/free-brands-svg-icons";
+import { useEffect, useState, memo } from "react";
+import { studyApi } from "../Api";
+import Popup from "./Popup";
 const PopupBkg = styled.div`
   position: fixed;
   height: 100vh;
@@ -40,10 +43,10 @@ const PopupUser = styled.form`
 `;
 const DelpopupBtn = styled.button`
   background-color: transparent;
-  position: absolute;
-  right: 15px;
-  top: 15px;
-  font-size: 30px;
+  position: fixed;
+  right: 25px;
+  top: 25px;
+  font-size: 50px;
   color: lightgray;
   &:hover {
     color: black;
@@ -70,7 +73,7 @@ const MakeCenter = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height:100%;
+  height: 100%;
 `;
 
 const RecruitPic = styled.img`
@@ -104,6 +107,7 @@ const RecruitContent = styled.div`
   text-align: left;
   font-weight: 600;
   width: 85%;
+  margin-bottom: 80px;
 `;
 
 const RecruitSet = styled.div`
@@ -120,15 +124,19 @@ const RecruitSet = styled.div`
 `;
 
 const Position = styled.button`
+  opacity: ${(props) => (props.clicked ? 1 : 0.5)};
+  background-color: white;
   height: 50px;
   display: grid;
   grid-template-columns: 0.6fr 0.4fr;
   margin: 8px 15px;
   border: 1px solid lightgray;
   border-radius: 20px;
+  box-shadow: ${(props) => (props.clicked ? "0 3px 6px lightgray" : "none")};
+  transition: all 300ms ease;
 `;
 const PositionTitle = styled.span`
-  font-size: 25px;
+  font-size: 18px;
   font-weight: 500;
 `;
 const PositionPeople = styled.div`
@@ -137,15 +145,19 @@ const PositionPeople = styled.div`
 `;
 
 const PortFolio = styled.button`
+  opacity: ${(props) => (props.checked ? 1 : 0.5)};
+  background-color: white;
   display: flex;
   justify-content: space-evenly;
   align-items: center;
   flex-direction: column;
   height: 230px;
   margin: 8px 15px;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
   border-radius: 30px;
+  border: 1px solid lightgray;
   padding: 15px;
+  transition: all 300ms ease;
+  box-shadow: ${(props) => (props.checked ? "0 3px 6px lightgray" : "none")};
 `;
 const PfTitle = styled.div`
   display: flex;
@@ -154,6 +166,7 @@ const PfTitle = styled.div`
   width: 100%;
   font-size: 35px;
   text-align: center;
+  align-items: center;
 `;
 const PfPosition = styled.div`
   height: 15%;
@@ -169,29 +182,118 @@ const StackList = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, 20%);
   width: 80%;
-  font-size:25px;
+  font-size: 25px;
 `;
 
-const Submit = styled.button`
-    width:200px;
-    height:50px;
-    border: 1px solid lightgray;
-    border-radius:15px;
-    font-weight:600;
+const Submit = styled.input`
+  width: 200px;
+  height: 50px;
+  border: 1px solid lightgray;
+  border-radius: 15px;
+  font-weight: 600;
+  background: white;
+  opacity: ${(props) => (props.disabled ? 0.5 : 1)};
+  pointer-events: ${(props) => (props.disabled ? "none" : "auto")};
+  transition: all 300ms ease;
+  box-shadow: ${(props) => (props.disabled ? "none" : "0 3px 6px lightgray")};
+`;
 
-`
+const RecruitDetail = ({
+  popup,
+  setPopup,
+  ann,
+  setAnn,
+  port,
+  setPort,
+  setResult,
+}) => {
+  const delPopupBtnHandler = () => {
+    setPopup(false);
+    setAnn(undefined);
+  };
 
-const RecruitDetail = ({ popup }) => {
-  return popup ? (
+  const [submit, setSubmit] = useState({
+    portfolio: {
+      idx: undefined,
+    },
+    position: {
+      idx: undefined,
+    },
+    announcement: {
+      idx: undefined,
+    },
+  });
+
+  const [disabled, setDisabled] = useState(true);
+
+  const clonedeep = require("lodash.clonedeep");
+
+  useEffect(() => {
+    checkSubmit();
+  }, [submit]);
+
+  const checkSubmit = () => {
+    submit.portfolio.idx && submit.position.idx && submit.announcement.idx
+      ? setDisabled(false)
+      : setDisabled(true);
+  };
+
+  const setchecked = (type, idx, id) => {
+    const copySub = clonedeep(submit);
+    if (type === "port") {
+      const copy = clonedeep(port);
+      copy.map((e) => (e.checked = false));
+      copy[id].checked ? (copy[id].checked = false) : (copy[id].checked = true);
+      copy[id].checked
+        ? (copySub.portfolio.idx = idx)
+        : (copySub.portfolio.idx = undefined);
+      setPort(copy);
+    } else if (type === "position") {
+      const copy = clonedeep(ann);
+      copy.demandPosition.map((e) => (e.checked = false));
+
+      console.log(copy.demandPosition[id].checked);
+      copy.demandPosition[id].checked
+        ? (copy.demandPosition[id].checked = false)
+        : (copy.demandPosition[id].checked = true);
+      copy.demandPosition[id].checked
+        ? (copySub.position.idx = idx)
+        : (copySub.position.idx = undefined);
+      setAnn(copy);
+    }
+    copySub.announcement = { idx: ann.idx };
+    setSubmit(copySub);
+  };
+
+  const PositionBtnHandler = (e) => {
+    const { id } = e.target;
+    setchecked(e.target.dataset.kind, id, e.target.dataset.num);
+  };
+
+  const sumbitHander = async (e) => {
+    try {
+      const { data, status } = await studyApi.setApplication(submit);
+      {
+        data && console.log(data, status);
+        setPopup(false);
+        status && setResult(status);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  return port && popup && ann ? (
     <PopupBkg status={popup}>
       <PopupUser>
-        <DelpopupBtn>
+        <DelpopupBtn onClick={delPopupBtnHandler}>
           <FontAwesomeIcon icon={faTimes} />
         </DelpopupBtn>
+
         <RoomInfo>
           <RoomData direction={true}>
             <h1 style={{ fontSize: 40, fontWeight: 500, textAlign: "center" }}>
-              RoomName
+              {ann.study.title}
             </h1>
             <h4
               style={{
@@ -201,7 +303,7 @@ const RecruitDetail = ({ popup }) => {
                 textAlign: "center",
               }}
             >
-              Web
+              {ann.study.studyCategory.title}
             </h4>
             <h2
               style={{
@@ -211,7 +313,7 @@ const RecruitDetail = ({ popup }) => {
                 textAlign: "center",
               }}
             >
-              ...my Name is GDRAGON
+              {ann.study.content.substring(0, 35)}...
             </h2>
           </RoomData>
           <MakeCenter>
@@ -225,13 +327,13 @@ const RecruitDetail = ({ popup }) => {
               <strong style={{ fontColor: "black", fontWeight: "600" }}>
                 Boss:
               </strong>
-              Roddyisthebest
+              {ann.study.user.name}
             </div>
             <div style={{ fontSize: 20, textAlign: "center" }}>
               <strong style={{ fontColor: "black", fontWeight: "600" }}>
                 Site:
               </strong>
-              www.naver.com
+              <a href={ann.study.user.site}>{ann.study.user.site}</a>
             </div>
           </RoomData>
         </RoomInfo>
@@ -244,19 +346,9 @@ const RecruitDetail = ({ popup }) => {
         </NewCgry>
         <RecruitContent>
           <h2 style={{ marginBottom: "40px", textAlign: "center" }}>
-            Super Ai Project
+            {ann.title}
           </h2>
-          <h5 style={{ fontSize: "17px", fontWeight: "100" }}>
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s, when an unknown printer took a galley of type
-            and scrambled it to make a type specimen book. It has survived not
-            only five centuries, but also the leap into electronic typesetting,
-            remaining essentially unchanged. It was popularised in the 1960s
-            with the release of Letraset sheets containing Lorem Ipsum passages,
-            and more recently with desktop publishing software like Aldus
-            PageMaker including versions of Lorem Ipsum.
-          </h5>
+          <h5 style={{ fontSize: "17px", fontWeight: "100" }}>{ann.content}</h5>
         </RecruitContent>
         <NewCgry>
           <Title status={true}>
@@ -265,85 +357,51 @@ const RecruitDetail = ({ popup }) => {
             </h3>
           </Title>
         </NewCgry>
-        <form style={{ width: "85%", margin: "30px 0" ,display:"flex",alignItems:"center", flexDirection:"column" }}>
+        <div
+          style={{
+            width: "85%",
+            margin: "30px 0",
+            display: "flex",
+            alignItems: "center",
+            flexDirection: "column",
+          }}
+        >
           <RecruitSet status={true}>
             <Title status={true}>
               <h3 style={{ backgroundColor: "white", padding: " 0 15px" }}>
                 Position List
               </h3>
             </Title>
-            <Position>
-              <MakeCenter>
-                <PositionTitle>Front-end</PositionTitle>
-              </MakeCenter>
-              <MakeCenter style={{ flexDirection: "row" }}>
-                <FontAwesomeIcon icon={faUserAlt} />
-                <PositionPeople>5</PositionPeople>
-              </MakeCenter>
-            </Position>
-            <Position>
-              <MakeCenter>
-                <PositionTitle>Front-end</PositionTitle>
-              </MakeCenter>
-              <MakeCenter style={{ flexDirection: "row" }}>
-                <FontAwesomeIcon icon={faUserAlt} />
-                <PositionPeople>5</PositionPeople>
-              </MakeCenter>
-            </Position>
-            <Position>
-              <MakeCenter>
-                <PositionTitle>Front-end</PositionTitle>
-              </MakeCenter>
-              <MakeCenter style={{ flexDirection: "row" }}>
-                <FontAwesomeIcon icon={faUserAlt} />
-                <PositionPeople>5</PositionPeople>
-              </MakeCenter>
-            </Position>
-            <Position>
-              <MakeCenter>
-                <PositionTitle>Front-end</PositionTitle>
-              </MakeCenter>
-              <MakeCenter style={{ flexDirection: "row" }}>
-                <FontAwesomeIcon icon={faUserAlt} />
-                <PositionPeople>5</PositionPeople>
-              </MakeCenter>
-            </Position>
-            <Position>
-              <MakeCenter>
-                <PositionTitle>Front-end</PositionTitle>
-              </MakeCenter>
-              <MakeCenter style={{ flexDirection: "row" }}>
-                <FontAwesomeIcon icon={faUserAlt} />
-                <PositionPeople>5</PositionPeople>
-              </MakeCenter>
-            </Position>
-            <Position>
-              <MakeCenter>
-                <PositionTitle>Front-end</PositionTitle>
-              </MakeCenter>
-              <MakeCenter style={{ flexDirection: "row" }}>
-                <FontAwesomeIcon icon={faUserAlt} />
-                <PositionPeople>5</PositionPeople>
-              </MakeCenter>
-            </Position>
-            <Position>
-              <MakeCenter>
-                <PositionTitle>Front-end</PositionTitle>
-              </MakeCenter>
-              <MakeCenter style={{ flexDirection: "row" }}>
-                <FontAwesomeIcon icon={faUserAlt} />
-                <PositionPeople>5</PositionPeople>
-              </MakeCenter>
-            </Position>
-            <Position>
-              <MakeCenter>
-                <PositionTitle>Front-end</PositionTitle>
-              </MakeCenter>
-              <MakeCenter style={{ flexDirection: "row" }}>
-                <FontAwesomeIcon icon={faUserAlt} />
-                <PositionPeople>5</PositionPeople>
-              </MakeCenter>
-            </Position>
+            {ann.demandPosition.map((e, idx) => (
+              <Position
+                data-kind="position"
+                clicked={e.checked}
+                type="button"
+                key={e.idx}
+                id={e.position.idx}
+                data-num={idx}
+                onClick={PositionBtnHandler}
+              >
+                <MakeCenter
+                  data-kind="position"
+                  id={e.position.idx}
+                  data-num={idx}
+                >
+                  <PositionTitle key={e.position.idx}>
+                    {e.position.name}
+                  </PositionTitle>
+                </MakeCenter>
+                <MakeCenter
+                  data-kind="position"
+                  id={e.position.idx}
+                  data-num={idx}
+                  style={{ flexDirection: "row" }}
+                >
+                  <FontAwesomeIcon icon={faUserAlt} />
+                  <PositionPeople>{e.demand}</PositionPeople>
+                </MakeCenter>
+              </Position>
+            ))}
           </RecruitSet>
           <RecruitSet status={true}>
             <Title status={true}>
@@ -351,158 +409,57 @@ const RecruitDetail = ({ popup }) => {
                 Portfolio List
               </h3>
             </Title>
-            <PortFolio>
-              <PfTitle>
-                <FontAwesomeIcon icon={faFileInvoice} />
-                <h1 style={{ fontWeight: 500 }}>Portfolio</h1>
-              </PfTitle>
-              <h2>
-                Lorem Ipsum is simply dummy text of the printing and type...
-              </h2>
-              <PfPosition>Back-end</PfPosition>
-              <StackList>
-                <MakeCenter>
-                  <FontAwesomeIcon icon={faJava} />
-                </MakeCenter>
-                <MakeCenter>
-                  <FontAwesomeIcon icon={faPython} />
-                </MakeCenter>
-                <MakeCenter>
-                  <FontAwesomeIcon icon={faJs} />
-                </MakeCenter>
-                <MakeCenter>
-                  <FontAwesomeIcon icon={faJava} />
-                </MakeCenter>
-              </StackList>
-            </PortFolio>
-            <PortFolio>
-              <PfTitle>
-                <FontAwesomeIcon icon={faFileInvoice} />
-                <h1 style={{ fontWeight: 500 }}>Portfolio</h1>
-              </PfTitle>
-              <h2>
-                Lorem Ipsum is simply dummy text of the printing and type...
-              </h2>
-              <PfPosition>Back-end</PfPosition>
-              <StackList>
-                <MakeCenter>
-                  <FontAwesomeIcon icon={faJava} />
-                </MakeCenter>
-                <MakeCenter>
-                  <FontAwesomeIcon icon={faPython} />
-                </MakeCenter>
-                <MakeCenter>
-                  <FontAwesomeIcon icon={faJs} />
-                </MakeCenter>
-                <MakeCenter>
-                  <FontAwesomeIcon icon={faJava} />
-                </MakeCenter>
-              </StackList>
-            </PortFolio>  
-            <PortFolio>
-              <PfTitle>
-                <FontAwesomeIcon icon={faFileInvoice} />
-                <h1 style={{ fontWeight: 500 }}>Portfolio</h1>
-              </PfTitle>
-              <h2>
-                Lorem Ipsum is simply dummy text of the printing and type...
-              </h2>
-              <PfPosition>Back-end</PfPosition>
-              <StackList>
-                <MakeCenter>
-                  <FontAwesomeIcon icon={faJava} />
-                </MakeCenter>
-                <MakeCenter>
-                  <FontAwesomeIcon icon={faPython} />
-                </MakeCenter>
-                <MakeCenter>
-                  <FontAwesomeIcon icon={faJs} />
-                </MakeCenter>
-                <MakeCenter>
-                  <FontAwesomeIcon icon={faJava} />
-                </MakeCenter>
-              </StackList>
-            </PortFolio>
-            <PortFolio>
-              <PfTitle>
-                <FontAwesomeIcon icon={faFileInvoice} />
-                <h1 style={{ fontWeight: 500 }}>Portfolio</h1>
-              </PfTitle>
-              <h2>
-                Lorem Ipsum is simply dummy text of the printing and type...
-              </h2>
-              <PfPosition>Back-end</PfPosition>
-              <StackList>
-                <MakeCenter>
-                  <FontAwesomeIcon icon={faJava} />
-                </MakeCenter>
-                <MakeCenter>
-                  <FontAwesomeIcon icon={faPython} />
-                </MakeCenter>
-                <MakeCenter>
-                  <FontAwesomeIcon icon={faJs} />
-                </MakeCenter>
-                <MakeCenter>
-                  <FontAwesomeIcon icon={faJava} />
-                </MakeCenter>
-              </StackList>
-            </PortFolio>
-            <PortFolio>
-              <PfTitle>
-                <FontAwesomeIcon icon={faFileInvoice} />
-                <h1 style={{ fontWeight: 500 }}>Portfolio</h1>
-              </PfTitle>
-              <h2>
-                Lorem Ipsum is simply dummy text of the printing and type...
-              </h2>
-              <PfPosition>Back-end</PfPosition>
-              <StackList>
-                <MakeCenter>
-                  <FontAwesomeIcon icon={faJava} />
-                </MakeCenter>
-                <MakeCenter>
-                  <FontAwesomeIcon icon={faPython} />
-                </MakeCenter>
-                <MakeCenter>
-                  <FontAwesomeIcon icon={faJs} />
-                </MakeCenter>
-                <MakeCenter>
-                  <FontAwesomeIcon icon={faJava} />
-                </MakeCenter>
-              </StackList>
-            </PortFolio>
-            <PortFolio>
-              <PfTitle>
-                <FontAwesomeIcon icon={faFileInvoice} />
-                <h1 style={{ fontWeight: 500 }}>Portfolio</h1>
-              </PfTitle>
-              <h2>
-                Lorem Ipsum is simply dummy text of the printing and type...
-              </h2>
-              <PfPosition>Back-end</PfPosition>
-              <StackList>
-                <MakeCenter>
-                  <FontAwesomeIcon icon={faJava} />
-                </MakeCenter>
-                <MakeCenter>
-                  <FontAwesomeIcon icon={faPython} />
-                </MakeCenter>
-                <MakeCenter>
-                  <FontAwesomeIcon icon={faJs} />
-                </MakeCenter>
-                <MakeCenter>
-                  <FontAwesomeIcon icon={faJava} />
-                </MakeCenter>
-              </StackList>
-            </PortFolio>
+            {port.map((e, idx) => (
+              <PortFolio
+                data-kind="port"
+                type="button"
+                key={e.idx}
+                checked={e.checked}
+                id={e.idx}
+                onClick={PositionBtnHandler}
+                data-num={idx}
+              >
+                <PfTitle>
+                  <FontAwesomeIcon icon={faFileInvoice} />
+                  <h1
+                    style={{
+                      fontWeight: 500,
+                      fontSize: 20,
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    {e.title.substring(0, 8)}...
+                  </h1>
+                </PfTitle>
+                <h2>{e.content}</h2>
+                <PfPosition key={e.position.idx}>
+                  {e.position[0].name}
+                </PfPosition>
+                <StackList>
+                  {e.stack.map((e) => (
+                    <MakeCenter>
+                      <img
+                        style={{ width: "80%" }}
+                        src={`http://3.37.208.251:8080/api/img/default?name=${e.name}`}
+                      />
+                    </MakeCenter>
+                  ))}
+                </StackList>
+              </PortFolio>
+            ))}
           </RecruitSet>
-        <Submit>APPLY</Submit>
-        </form>
+          <Submit
+            type="button"
+            value="APPLY"
+            disabled={disabled}
+            onClick={sumbitHander}
+          />
+        </div>
       </PopupUser>
     </PopupBkg>
-  ) : (
-    <div>fuck</div>
-  );
+  ) : null;
 };
 
 export default RecruitDetail;
