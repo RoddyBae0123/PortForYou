@@ -10,6 +10,7 @@ import Stack from "../../../Components/Stack";
 import Education from "../../../Components/Education";
 import { motion } from "framer-motion";
 import $ from "jquery";
+import { studyApi, portFolioApi } from "../../../Api";
 
 const Makecenter = styled.div`
   display: flex;
@@ -119,7 +120,7 @@ function ResumeDetail({ match, history }) {
   useEffect(() => {
     let mounted = true;
     if (mounted) {
-      getResumeDetail(accessToken, Idx);
+      getPortFolio(Idx);
       getStackList();
       getPositionList();
       getEducationList();
@@ -136,58 +137,58 @@ function ResumeDetail({ match, history }) {
   const [project, setProject] = useState(); //Entire Data.project Data
   const [render, setRender] = useState(); //ê°•ì œ? Œ?”
 
-  const getResumeDetail = async (token, idx) => {
-    const api = await axios.create({
-      baseURL: `${wifi}`,
-    });
-    api
-      .get(`/api/user/portfolio?portfolio_idx=${idx}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        setData(res);
-        setMain({
-          title: res.data.title,
-          content: res.data.content,
-        });
-        console.log(data);
-      })
-      .catch((e) => console.log(e));
+  const getPortFolio = async (idx) => {
+    try {
+      const { data: port } = await portFolioApi.getPortFolio(idx);
+      {
+        port &&
+          setMain({
+            title: port.title,
+            content: port.content,
+          });
+      }
+      {
+        port && setData(port);
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
   const [stackData, setStack] = useState([]); //project Data=>stack data of project
   const getStackList = async () => {
-    const api = await axios.create({
-      baseURL: `${wifi}`,
-    });
-    api
-      .get(`/api/user/portfolio/stacks`)
-      .then((res) => setStack(res.data))
-      .catch((e) => console.log(e));
+    try {
+      const { data } = await portFolioApi.getStackList();
+      {
+        data && setStack(data);
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const [positionData, setPositionData] = useState(undefined); //position Data=>position List
   const getPositionList = async () => {
-    const api = await axios.create({
-      baseURL: `${wifi}`,
-    });
-    api
-      .get(`/api/user/portfolio/positions`)
-      .then((res) => setPositionData(res.data))
-      .catch((e) => console.log(e));
+    try {
+      const { data } = await portFolioApi.getPosition();
+      {
+        data && setPositionData(data);
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
   const [position, setPosition] = useState(undefined);
 
   const [educationData, setEducationData] = useState(undefined);
   const getEducationList = async () => {
-    const api = await axios.create({
-      baseURL: `${wifi}`,
-    });
-    api
-      .get(`/api/user/portfolio/educations`)
-      .then((res) => setEducationData(res.data))
-      .catch((e) => console.log(e));
+    try {
+      const { data } = await portFolioApi.getEducationList();
+      {
+        data && setEducationData(data);
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
   const [education, setEducation] = useState(undefined);
 
@@ -195,7 +196,7 @@ function ResumeDetail({ match, history }) {
 
   const [stackNew, setStackNew] = useState(undefined);
   const show = () => {
-    setResumeList(Auth.getAccessToken());
+    setResumeList();
   };
 
   const changePortfolioImage = async (event) => {
@@ -219,50 +220,25 @@ function ResumeDetail({ match, history }) {
       .catch((t) => console.log(t));
   };
 
-  const setResumeList = async (token) => {
-    console.log({
-      idx: Idx,
-      title: main.title,
-      content: main.content,
-      project: [...project],
-      positions: [
-        {
-          idx: position.idx,
-        },
-      ],
-      tech: [...stackNew],
-      education: {
-        idx: education.idx,
-      },
-    });
-    const api = await axios.create({
-      baseURL: `${wifi}`,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    api
-      .post("/api/user/portfolio", {
+  const setResumeList = async () => {
+    try {
+      const submit = {
         idx: Idx,
         title: main.title,
         content: main.content,
         project: [...project],
-        positions: [
-          {
-            idx: position.idx,
-          },
-        ],
+        positionIdx: position.idx,
         tech: [...stackNew],
-        education: {
-          idx: education.idx,
-        },
-      })
-      .then((res) => {
-        {
-          res.status === 200 && history.goBack();
-        }
-      })
-      .catch((e) => console.log(e.response.status));
+        educationIdx: education.idx,
+      };
+      console.log(submit);
+      const result = await portFolioApi.savePorFolio(submit);
+      {
+        result && result.status === 200 && history.goBack();
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const mainHandler = (e) => {
@@ -315,7 +291,7 @@ function ResumeDetail({ match, history }) {
             </UserSection>
             <UserSection>
               <UserFace
-                portfolio_img={data.data.img}
+                portfolio_img={data.img}
                 onClick={() => {
                   $("#portfolio_img_input").click();
                 }}
@@ -337,7 +313,7 @@ function ResumeDetail({ match, history }) {
             <h1 style={{ margin: "30px 0" }}>Position</h1>
           </SectionTitle>
           <Select
-            data={data.data.positions}
+            data={data.positions}
             positionData={positionData}
             detail={position}
             setDetail={setPosition}
@@ -346,7 +322,7 @@ function ResumeDetail({ match, history }) {
             <h1 style={{ margin: "30px 0" }}>Education</h1>
           </SectionTitle>
           <Education
-            data={data.data.education}
+            data={data.education}
             educationData={educationData}
             detail={education}
             setDetail={setEducation}
@@ -355,7 +331,7 @@ function ResumeDetail({ match, history }) {
             <h1 style={{ margin: "30px 0" }}>Project</h1>
           </SectionTitle>
           <Project
-            data={data.data.project}
+            data={data.project}
             setDetail={setProject}
             detail={project}
             stackData={stackData}
@@ -364,7 +340,7 @@ function ResumeDetail({ match, history }) {
             <h1 style={{ margin: "30px 0" }}>Stack</h1>
           </SectionTitle>
           <Stack
-            data={data.data.tech}
+            data={data.tech}
             stackData={stackData}
             detail={stackNew}
             setDetail={setStackNew}

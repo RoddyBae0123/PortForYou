@@ -46,7 +46,6 @@ const Select = ({ data, positionData, detail, setDetail }) => {
         name: data[0].name,
       });
     }
-
     return;
   }, []);
 

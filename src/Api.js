@@ -16,7 +16,7 @@ export const portFolioApi = {
   getPortFolio: (idx) => api.get(`api/user/portfolio?portfolio_idx=${idx}`),
   savePorFolio: (data) =>
     api.post("/api/user/portfolio", {
-      idx: data.Idx,
+      idx: data.idx,
       title: data.title,
       content: data.content,
       project: [...data.project],
@@ -25,7 +25,7 @@ export const portFolioApi = {
           idx: data.positionIdx,
         },
       ],
-      tech: [...data.stack],
+      tech: [...data.tech],
       education: {
         idx: data.educationIdx,
       },
@@ -60,4 +60,6 @@ export const studyApi = {
         idx: data.announcement.idx,
       },
     }),
+  getApplicationByStudyIdx: (idx) =>
+    api.get(`api/user/study/applications?studyIdx=${idx}`),
 };

@@ -101,17 +101,12 @@ const DashboardContainer = ({ match, history }) => {
 
   const getStudyList = async (apply) => {
     try {
-      const api = await axios.create({
-        baseURL: `${wifi}`,
-        headers: {
-          Authorization: `Bearer ${Auth.getAccessToken()}`,
-        },
-      });
-      api
-        .get(`/api/user/studies?applied=${apply}`)
-        .then((e) => setStudy(e.data));
-    } catch (error) {
-      console.log(error);
+      const { data } = await studyApi.getStudyList(apply);
+      {
+        data && setStudy(data);
+      }
+    } catch (e) {
+      console.log(e);
     }
   };
   const getNewAnnList = async () => {
@@ -128,7 +123,6 @@ const DashboardContainer = ({ match, history }) => {
   useEffect(() => {
     getUserInfo();
     getNewAnnList();
-    
   }, []);
 
   return (

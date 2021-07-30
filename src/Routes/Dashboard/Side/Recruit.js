@@ -79,6 +79,12 @@ const Recruit = ({ history, newAnnList }) => {
     }
   };
 
+  {
+    ann && console.log(ann);
+  }
+  {
+    port && console.log(port);
+  }
   const getPortFolioList = async () => {
     const { data } = await portFolioApi.getPortFolioList();
     if (data) {
@@ -96,7 +102,7 @@ const Recruit = ({ history, newAnnList }) => {
       setPort(checkedPort);
     }
   };
- 
+
   const returnDetail = (popup) =>
     popup ? (
       <RecruitDetail

@@ -12,6 +12,7 @@ import {
 import { studyApi } from "../../../Api";
 import Loader from "react-loader-spinner";
 import RecruitOne from "../../../Components/RecruitOne";
+import List from "../../../Components/List";
 
 const Container = styled.div`
   display: flex;
@@ -210,6 +211,8 @@ const Member = ({
   save,
   annList,
   ann,
+  getApplication,
+  applicant,
 }) => {
   const {
     state: { idx, where },
@@ -236,6 +239,7 @@ const Member = ({
 
   useEffect(() => {
     getPositionList();
+    getApplication();
     save();
     {
       where == "recruit" &&
@@ -246,7 +250,6 @@ const Member = ({
     }
   }, []);
 
-  ann && console.log(ann);
   const UpDown = (e) => {
     {
       e.target.childNodes.length
@@ -364,7 +367,10 @@ const Member = ({
         </Navbar>
         <MemberData>
           {ann ? (
-            <RecruitOne newAnnList={[ann.data]} type={"Member"}></RecruitOne>
+            <>
+              <RecruitOne newAnnList={[ann.data]} type={"Member"}></RecruitOne>
+              <List applicant={applicant}></List>
+            </>
           ) : (
             <Loader
               type="Rings"

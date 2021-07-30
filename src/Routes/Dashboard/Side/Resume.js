@@ -178,8 +178,8 @@ const Resume = ({ data, method, setData, DelResumeBtn }) => {
   ) : (
     <Makecenter>
       <Loader
-        type="Rings"
-        color="#FF8C94"
+        type="ThreeDots"
+        color="var(--color-theme)"
         height={300}
         width={300}
         timeout={10000}

@@ -8,7 +8,7 @@ const Container = styled.button`
   box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.16);
   display: grid;
   grid-template-rows: ${(props) =>
-    props.type !== "Member" ? "1fr 1fr" : "none"};
+    props.type !== "Member" ? "0.5fr 0.5fr" : "none"};
   grid-template-columns: ${(props) =>
     props.type !== "Member" ? "none" : "1fr 1fr"};
   transition: all 300ms ease-in-out;
@@ -18,8 +18,8 @@ const Container = styled.button`
     box-shadow: 0px 8px 11px rgba(0, 0, 0, 0.24);
   }
   pointer-events: ${(props) => (props.type !== "Member" ? "auto" : "none")};
-  margin: 10px;
-  width: ${(props) => props.type!=="recruit" && "100%"};
+  margin: ${(props) => (props.type !== "Member" ? "10px" : "20px 0")};
+  width: ${(props) => props.type === "Member" && "100%"};
 `;
 const RecruitInfo = styled.div`
   display: grid;
@@ -80,7 +80,7 @@ const RecruitOne = ({
     setResult(undefined);
   };
   const returnData = () => {
-    return type ? (
+    return type && newAnnList ? (
       newAnnList.map((e) => (
         <Container onClick={() => show(e.idx)} key={e.idx} type={type}>
           <Makecenter>
