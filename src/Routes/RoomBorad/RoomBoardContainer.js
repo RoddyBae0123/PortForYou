@@ -19,6 +19,7 @@ const RoomBoardContainer = (props) => {
   const [annList, setAnnList] = useState();
   const [ann, setAnn] = useState();
   const [applicant, setApplicant] = useState();
+  const [status, setStatus] = useState();
   const getUserInfo = async () => {
     const api = await axios.create({
       baseURL: `${wifi}`,
@@ -104,9 +105,9 @@ const RoomBoardContainer = (props) => {
   };
   const saveRecruit = async (rcSave) => {
     try {
-      const response = await studyApi.SaveAnnouncement(rcSave);
+      const { status } = await studyApi.SaveAnnouncement(rcSave);
       {
-        response && console.log(response);
+        status === 200 && getAnnouncementList(rcSave.study.idx);
       }
     } catch (e) {
       console.log(e);
@@ -119,8 +120,9 @@ const RoomBoardContainer = (props) => {
         data && console.log(data);
       }
       {
-        data.length && getAnn(data[0].idx);
+        data.length ? getAnn(data[0].idx) : setAnn(undefined);
       }
+
       {
         data.length && setAnnList([...data]);
       }
@@ -128,14 +130,33 @@ const RoomBoardContainer = (props) => {
       console.log(e);
     }
   };
+  const clonedeep = require("lodash.clonedeep");
+
   const getAnn = async (idx) => {
     try {
-      const data = await studyApi.getAnnouncement(idx);
+      const { data } = await studyApi.getAnnouncement(idx);
       {
-        data && setAnn(data);
+        data && console.log(data);
+      }
+      if (data) {
+        var copyData = clonedeep(data);
+        const checkedPosition = copyData.demandPosition.map((e) => ({
+          idx: e.idx,
+          position: e.position,
+          studyAnnouncementIdx: e.studyAnnouncementIdx,
+          demand: e.demand,
+          applied: e.applied,
+          checked: false,
+        }));
+        copyData.demandPosition = checkedPosition;
+        setAnn(copyData);
       }
     } catch (e) {
       console.log(e);
+      setStatus(e.response.status);
+      {
+        status && console.log(status);
+      }
     }
   };
 
@@ -171,8 +192,11 @@ const RoomBoardContainer = (props) => {
       props={props}
       annList={annList}
       ann={ann}
+      setAnn={setAnn}
       getApplication={getApplication}
       applicant={applicant}
+      getAnnouncementList={getAnnouncementList}
+      getAnn={getAnn}
     />
   );
 };

@@ -53,6 +53,7 @@ export const studyApi = {
       },
     }),
   getApplicationByStudyIdx: (idx) => api.get(`api/study/${idx}/applications`),
+  deleteAnnouncement: (idx) => api.delete(`api/announcement/${idx}`),
 };
 
 export const AuthApi = {

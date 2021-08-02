@@ -44,7 +44,8 @@ const ListWrapper = ({
 }) => {
   const srcList = [
     "https://blog.kakaocdn.net/dn/DxPyJ/btqQwmsj2wr/a4k4hul2q1rnQ3HLbxTdek/img.gif",
-    "https://thumbs.gfycat.com/CraftyDelectableHoneyeater-size_restricted.gif",""
+    "https://thumbs.gfycat.com/CraftyDelectableHoneyeater-size_restricted.gif",
+    "",
   ];
 
   const oneReturn = (kind) => {
@@ -52,15 +53,13 @@ const ListWrapper = ({
       case "RecruitOne":
         return (
           <>
-            {" "}
             <RecruitOne
               newAnnList={newAnnList}
               type={"recruit"}
               setRecruitIdx={setRecruitIdx}
               setPopup={setPopup}
               setResult={setResult}
-            />{" "}
-            <RecruitOne /> <RecruitOne />
+            />
           </>
         );
         break;

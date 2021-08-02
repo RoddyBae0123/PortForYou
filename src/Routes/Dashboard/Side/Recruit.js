@@ -114,6 +114,7 @@ const Recruit = ({ history, newAnnList }) => {
         getPortFolioList={getPortFolioList}
         setPort={setPort}
         setResult={setResult}
+        type={"recruit"}
       ></RecruitDetail>
     ) : null;
 

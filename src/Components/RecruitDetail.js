@@ -112,15 +112,21 @@ const RecruitContent = styled.div`
 
 const RecruitSet = styled.div`
   position: relative;
-  display: grid;
+  display: ${(props) => props.grid};
   grid-template-columns: repeat(auto-fill, 33.3%);
   background-color: white;
   border-radius: 25px;
   width: 100%;
-  border: ${(props) => (props.status ? "1px solid lightgray" : "none")};
+  border: ${(props) =>
+    props.status ? "1px solid lightgray" : "1px solid red"};
   position: relative;
   padding: 25px 10px;
   margin-bottom: 40px;
+  justify-content: center;
+  align-items: center;
+  &:focus {
+    border-color: black;
+  }
 `;
 
 const Position = styled.button`
@@ -178,6 +184,21 @@ const PfPosition = styled.div`
   padding: 10px 20px;
   font-weight: 500;
 `;
+
+const DelBtn = styled.button`
+  width: 100px;
+  height: 50px;
+  border: 1px solid lightgray;
+  border-radius: 15px;
+  font-size: 15px;
+  color: lightgray;
+  margin: 20px;
+  &:hover {
+    color: red;
+    border-color: red;
+  }
+  transition: all 300ms ease;
+`;
 const StackList = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, 20%);
@@ -206,11 +227,51 @@ const RecruitDetail = ({
   port,
   setPort,
   setResult,
+  getAnnouncementList,
+  location,
+  history,
+  type,
 }) => {
   const delPopupBtnHandler = () => {
     setPopup(false);
-    setAnn(undefined);
+    type == "recruit" && setAnn(undefined);
   };
+
+  const delAnnBtnHandler = async () => {
+    try {
+      const data = await studyApi.deleteAnnouncement(ann.idx);
+      if (data && data.status == 204) {
+        getAnnouncementList(location.state.idx);
+
+        // history.push({
+        //   pathname: `${pathname}`,
+        //   state: { idx: state.idx },
+        // });
+      }
+      setPopup(false);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const returnDeleteAnn = () => (
+    <RecruitSet status={false} grid={"flex"}>
+      <Title status={true}>
+        <h3
+          style={{
+            backgroundColor: "white",
+            padding: " 0 15px",
+            color: "red",
+          }}
+        >
+          Danserous Zone
+        </h3>
+      </Title>
+      <DelBtn type="button" onClick={delAnnBtnHandler}>
+        DELETE
+      </DelBtn>
+    </RecruitSet>
+  );
 
   const [submit, setSubmit] = useState({
     portfolio: {
@@ -247,7 +308,7 @@ const RecruitDetail = ({
       copy[id].checked
         ? (copySub.portfolio.idx = idx)
         : (copySub.portfolio.idx = undefined);
-      setPort(copy);
+      setPort && setPort(copy);
     } else if (type === "position") {
       const copy = clonedeep(ann);
       copy.demandPosition.map((e) => (e.checked = false));
@@ -258,7 +319,7 @@ const RecruitDetail = ({
       copy.demandPosition[id].checked
         ? (copySub.position.idx = idx)
         : (copySub.position.idx = undefined);
-      setAnn(copy);
+      setAnn && setAnn(copy);
     }
     copySub.announcement = { idx: ann.idx };
     setSubmit(copySub);
@@ -281,6 +342,16 @@ const RecruitDetail = ({
       console.log(e);
     }
   };
+
+  const returnSubmitBtn = () =>
+    setResult ? (
+      <Submit
+        type="button"
+        value="APPLY"
+        disabled={disabled}
+        onClick={sumbitHander}
+      />
+    ) : null;
 
   {
     port && console.log(port);
@@ -369,7 +440,7 @@ const RecruitDetail = ({
             flexDirection: "column",
           }}
         >
-          <RecruitSet status={true}>
+          <RecruitSet status={true} grid={"grid"}>
             <Title status={true}>
               <h3 style={{ backgroundColor: "white", padding: " 0 15px" }}>
                 Position List
@@ -406,7 +477,7 @@ const RecruitDetail = ({
               </Position>
             ))}
           </RecruitSet>
-          <RecruitSet status={true}>
+          <RecruitSet status={true} grid={"grid"}>
             <Title status={true}>
               <h3 style={{ backgroundColor: "white", padding: " 0 15px" }}>
                 Portfolio List
@@ -452,12 +523,8 @@ const RecruitDetail = ({
               </PortFolio>
             ))}
           </RecruitSet>
-          <Submit
-            type="button"
-            value="APPLY"
-            disabled={disabled}
-            onClick={sumbitHander}
-          />
+          {type == "recruit" && returnSubmitBtn()}
+          {type == "member" && returnDeleteAnn()}
         </div>
       </PopupUser>
     </PopupBkg>

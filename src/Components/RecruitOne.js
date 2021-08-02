@@ -23,6 +23,8 @@ const Container = styled.button`
   position: relative;
 `;
 
+
+
 const RecruitInfo = styled.div`
   display: grid;
   grid-template-columns: 0.35fr 0.65fr;
@@ -74,15 +76,15 @@ const RecruitOne = ({
   setPopup,
   setRecruitIdx,
   setResult,
-  ann,
 }) => {
+  newAnnList && console.log(newAnnList);
   const show = (idx) => {
     setPopup(true);
     setRecruitIdx(idx);
-    setResult(undefined);
+    setResult && setResult(undefined);
   };
   const returnData = () => {
-    return type && newAnnList ? (
+    return type && newAnnList && newAnnList ? (
       newAnnList.map((e) => (
         <Container onClick={() => show(e.idx)} key={e.idx} type={type}>
           <Makecenter>

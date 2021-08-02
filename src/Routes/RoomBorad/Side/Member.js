@@ -9,10 +9,11 @@ import {
   faAngleDown,
   faAngleUp,
 } from "@fortawesome/free-solid-svg-icons";
-import { studyApi } from "../../../Api";
+import { studyApi, portFolioApi } from "../../../Api";
 import Loader from "react-loader-spinner";
 import RecruitOne from "../../../Components/RecruitOne";
 import List from "../../../Components/List";
+import RecruitDetail from "../../../Components/RecruitDetail";
 
 const Container = styled.div`
   display: flex;
@@ -211,8 +212,11 @@ const Member = ({
   save,
   annList,
   ann,
+  setAnn,
   getApplication,
   applicant,
+  getAnnouncementList,
+  getAnn,
 }) => {
   const {
     state: { idx, where },
@@ -221,8 +225,15 @@ const Member = ({
     first: true,
     second: false,
   });
-  const [popUp, setPopUp] = useState(false);
+  {
+    ann && console.log(ann);
+  }
+  const [popup, setPopup] = useState(false);
+  const [recruitPopup, setRecruitPopup] = useState(false);
+  const [recruitIdx, setRecruitIdx] = useState(undefined);
   const [disabled, setDisabled] = useState(true);
+  const [port, setPort] = useState(undefined);
+
   // this.setState(prevState => ({
   //     todoItems: prevState.todoItems.map(
   //       el => el.key === key? { ...el, status: 'done' }: el
@@ -249,7 +260,30 @@ const Member = ({
         });
     }
   }, []);
+  useEffect(() => {
+    if (recruitPopup) {
+      getAnn(recruitIdx);
+      getPortFolioList();
+    }
+  }, [recruitPopup]);
 
+  const getPortFolioList = async () => {
+    const { data } = await portFolioApi.getPortFolioList();
+    if (data) {
+      var copyData = data;
+      const checkedPort = copyData.map((e) => ({
+        idx: e.idx,
+        title: e.title,
+        content: e.content,
+        reg_date: e.reg_date,
+        position: e.position,
+        stack: e.stack,
+        education: e.education,
+        checked: false,
+      }));
+      setPort(checkedPort);
+    }
+  };
   const UpDown = (e) => {
     {
       e.target.childNodes.length
@@ -332,11 +366,27 @@ const Member = ({
       pathname: location.pathname,
       state: { idx, where: "recruit" },
     });
-    setPopUp(false);
+    setPopup(false);
   };
 
+  const returnDetail = (recruitPopup) =>
+    recruitPopup ? (
+      <RecruitDetail
+        popup={recruitPopup}
+        setPopup={setRecruitPopup}
+        ann={ann}
+        port={port}
+        getPortFolioList={getPortFolioList}
+        getAnnouncementList={getAnnouncementList}
+        location={location}
+        history={history}
+        setAnn={setAnn}
+        type={"member"}
+      ></RecruitDetail>
+    ) : null;
+
   const DelectAll = () => {
-    setPopUp(false);
+    setPopup(false);
     setPosition([]);
     getPositionList();
     save();
@@ -368,11 +418,16 @@ const Member = ({
         <MemberData>
           {ann ? (
             <>
-              <RecruitOne newAnnList={[ann.data]} type={"Member"}></RecruitOne>
+              <RecruitOne
+                newAnnList={[ann]}
+                type={"Member"}
+                setRecruitIdx={setRecruitIdx}
+                setPopup={setRecruitPopup}
+              ></RecruitOne>
               <List applicant={applicant}></List>
             </>
           ) : (
-            <RruCreateBtn onClick={() => setPopUp(true)}>
+            <RruCreateBtn onClick={() => setPopup(true)}>
               <h2>
                 There are no registered recruitment. Please make a new one!
               </h2>
@@ -381,8 +436,8 @@ const Member = ({
           )}
         </MemberData>
       </Container>
-
-      <PopupBkg status={popUp}>
+      {returnDetail(recruitPopup)}
+      <PopupBkg status={popup}>
         <PopupUser onSubmit={SumbitHandler}>
           <DelpopupBtn type="button" onClick={DelectAll}>
             <FontAwesomeIcon style={{ fontSize: 35 }} icon={faTimes} />
