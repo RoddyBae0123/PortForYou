@@ -4,7 +4,7 @@ import axios from "axios";
 import wifi from "../../wifi";
 import { AnimatePresence, motion } from "framer-motion";
 import auth from "../../Auth";
-
+import { AuthApi } from "../../Api";
 const SigninContainer = (props) => {
   const [error, setError] = useState(undefined);
   const [result, setResult] = useState(undefined);
@@ -31,18 +31,14 @@ const SigninContainer = (props) => {
   useEffect(Isresult, [result]);
 
   const login = async (id, pw) => {
-    const api = await axios.create({
-      baseURL: `${wifi}`,
-    });
-    api
-      .post("/api/login", {
-        username: id,
-        password: pw,
-      })
-      .then((res) => {
-        setResult(res);
-      })
-      .catch((e) => setError(e.response.status));
+    try {
+      const res = await AuthApi.getLoginToken(id, pw);
+      {
+        res && setResult(res);
+      }
+    } catch (e) {
+      setError(e.response.status);
+    }
   };
 
   return (

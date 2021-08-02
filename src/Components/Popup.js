@@ -22,13 +22,14 @@ const PopupUser = styled.div`
   width: ${(props) => props.width};
   height: ${(props) => props.height};
   background-color: white;
-  border-radius: 25px;
-  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.35);
+
+  box-shadow: 0 0.0625rem 0.1875rem rgb(20 20 94 / 12%),
+    0 0.1875rem 0.4375rem rgb(20 20 94 / 10%);
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   position: relative;
+  overflow-y: scroll;
 `;
 const DelpopupBtn = styled.button`
   display: ${(props) => (props.second ? "none" : "block")};
@@ -50,12 +51,14 @@ const Popup = ({ status, component, second, size }) => {
 
   const timeout = () => {
     setChange(true);
-    setTimeout(() => {
-      setChange(false);
-    }, second - 1000);
-    setTimeout(() => {
-      setSec(false);
-    }, second);
+    if (second) {
+      setTimeout(() => {
+        setChange(false);
+      }, second - 1000);
+      setTimeout(() => {
+        setSec(false);
+      }, second);
+    }
   };
   useEffect(() => {
     timeout();

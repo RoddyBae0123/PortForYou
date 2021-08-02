@@ -133,7 +133,7 @@ const Recruit = ({ history, newAnnList }) => {
     }
   }, [popup]);
   const returnDiv = () => {
-    return <div>{result == 200 ? "Success Aplication" : "failed bitch"}</div>;
+    return <div>{result == 201 ? "Success Aplication" : "failed bitch"}</div>;
   };
 
   return (

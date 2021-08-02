@@ -252,7 +252,6 @@ const RecruitDetail = ({
       const copy = clonedeep(ann);
       copy.demandPosition.map((e) => (e.checked = false));
 
-      console.log(copy.demandPosition[id].checked);
       copy.demandPosition[id].checked
         ? (copy.demandPosition[id].checked = false)
         : (copy.demandPosition[id].checked = true);
@@ -282,6 +281,10 @@ const RecruitDetail = ({
       console.log(e);
     }
   };
+
+  {
+    port && console.log(port);
+  }
 
   return port && popup && ann ? (
     <PopupBkg status={popup}>
@@ -434,18 +437,17 @@ const RecruitDetail = ({
                   </h1>
                 </PfTitle>
                 <h2>{e.content}</h2>
-                <PfPosition key={e.position.idx}>
-                  {e.position[0].name}
-                </PfPosition>
+                <PfPosition key={e.position.idx}>{e.position.name}</PfPosition>
                 <StackList>
-                  {e.stack.map((e) => (
-                    <MakeCenter>
-                      <img
-                        style={{ width: "80%" }}
-                        src={`http://3.37.208.251:8080/api/img/default?name=${e.name}`}
-                      />
-                    </MakeCenter>
-                  ))}
+                  {e.stack &&
+                    e.stack.map((e) => (
+                      <MakeCenter>
+                        <img
+                          style={{ width: "80%" }}
+                          src={`http://3.37.208.251:8080/api/img/default?name=${e.name}`}
+                        />
+                      </MakeCenter>
+                    ))}
                 </StackList>
               </PortFolio>
             ))}

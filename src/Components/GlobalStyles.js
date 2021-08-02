@@ -1,6 +1,6 @@
-import {createGlobalStyle} from "styled-components";
+import { createGlobalStyle } from "styled-components";
 import reset from "styled-reset";
-const globalStyles= createGlobalStyle`
+const globalStyles = createGlobalStyle`
     ${reset};
     a{
         text-decoration:none;
@@ -30,7 +30,17 @@ const globalStyles= createGlobalStyle`
     --color-text2: white;
 
   }
+  html::-webkit-scrollbar {
+                width: 1px; /*스크롤바의 너비*/
+            }
+ 
+            body::-webkit-scrollbar-thumb {
+                background-color: black; /*스크롤바의 색상*/
+            }
+ 
+            body::-webkit-scrollbar-track {
+                background-color: yellow; /*스크롤바 트랙 색상*/
+            }
 `;
-
 
 export default globalStyles;

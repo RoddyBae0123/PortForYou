@@ -186,18 +186,17 @@ const Stack = ({ data, stackData, detail, setDetail }) => {
   };
 
   const ChoiceStackBtnHandler = (e) => {
-    const copyDetail = [...detail];
-    copyDetail.push({
+    setDetail([...detail], {
       content: "",
       stackIdx: parseInt(e.target.id),
       ability: 0,
     });
-    setDetail(copyDetail);
-    var copyStackData = [...stackData];
-    copyDetail.map((e) => {
-      copyStackData = copyStackData.filter((t) => t.idx != e.stackIdx);
+
+    stackData.filter((t) => t.idx != e.stackIdx);
+    detail.map((e) => {
+      stackData.filter((t) => t.idx != e.stackIdx);
     });
-    setCurrentStack(copyStackData);
+    setCurrentStack([...stackData]);
     setHideAdd(false);
   };
 

@@ -41,9 +41,13 @@ const SubTitle = styled.h1`
 const Select = ({ data, positionData, detail, setDetail }) => {
   useEffect(() => {
     {
+      positionData && console.log(positionData);
+    }
+
+    {
       setDetail({
-        idx: data[0].idx,
-        name: data[0].name,
+        idx: data.idx,
+        name: data.name,
       });
     }
     return;

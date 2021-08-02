@@ -5,7 +5,7 @@ import axios from "axios";
 import wifi from "../../wifi";
 import { Link } from "react-router-dom";
 import { useAsync } from "react-async";
-import { studyApi } from "../../Api";
+import { studyApi, portFolioApi } from "../../Api";
 const DashboardContainer = ({ match, history }) => {
   const [data, setData] = useState(undefined); //resume data
   const [profileImgUri, setProfileImgUri] = useState(undefined); //change profile
@@ -36,25 +36,18 @@ const DashboardContainer = ({ match, history }) => {
       });
   };
 
-  const getResumeList = async (token) => {
-    const api = await axios.create({
-      baseURL: `${wifi}`,
-    });
-    api
-      .get("/api/user/portfolios", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((res) => {
-        setData(res);
-        console.log(res);
-      })
-      .catch((e) => {
-        if (e.response.status === 401) {
-          history.push("/error401");
-        }
-      });
+  const getResumeList = async () => {
+    try {
+      const res = await portFolioApi.getPortFolioList();
+      {
+        res && setData(res);
+      }
+    } catch (e) {
+      console.log(e);
+      // if (e.response.status === 401) {
+      //   history.push("/error401");
+      // }
+    }
   };
 
   const setProfileImage = async (e) => {
@@ -86,17 +79,16 @@ const DashboardContainer = ({ match, history }) => {
   };
 
   const DelResumeBtn = async (e) => {
-    const api = await axios.create({
-      baseURL: `${wifi}`,
-      headers: {
-        Authorization: `Bearer ${Auth.getAccessToken()}`,
-      },
-    });
-    api
-      .delete(`/api/user/portfolio?portfolio_idx=${e.target.parentElement.id}`)
-      .then(() => {
-        getResumeList(Auth.getAccessToken());
-      });
+    try {
+      const result = await portFolioApi.deletePortFolio(
+        e.target.parentElement.id
+      );
+      {
+        result && getResumeList(Auth.getAccessToken());
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const getStudyList = async (apply) => {
@@ -111,7 +103,7 @@ const DashboardContainer = ({ match, history }) => {
   };
   const getNewAnnList = async () => {
     try {
-      const { data } = await studyApi.getNewAnnouncementList("new");
+      const { data } = await studyApi.getNewAnnouncementList();
       {
         data && setNewAnnList(data);
       }

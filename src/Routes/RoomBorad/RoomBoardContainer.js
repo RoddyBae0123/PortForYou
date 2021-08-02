@@ -94,6 +94,9 @@ const RoomBoardContainer = (props) => {
             ]);
           });
       }
+      {
+        data && console.log(data);
+      }
     } catch (e) {
       console.log(e);
     } finally {
@@ -101,7 +104,7 @@ const RoomBoardContainer = (props) => {
   };
   const saveRecruit = async (rcSave) => {
     try {
-      const response = await studyApi.saveRecruit(rcSave);
+      const response = await studyApi.SaveAnnouncement(rcSave);
       {
         response && console.log(response);
       }
@@ -116,10 +119,10 @@ const RoomBoardContainer = (props) => {
         data && console.log(data);
       }
       {
-        data && getAnn(data[0].idx);
+        data.length && getAnn(data[0].idx);
       }
       {
-        data && setAnnList([...data]);
+        data.length && setAnnList([...data]);
       }
     } catch (e) {
       console.log(e);

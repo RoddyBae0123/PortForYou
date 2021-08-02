@@ -17,10 +17,12 @@ const Container = styled.button`
     transform: translateY(-5px);
     box-shadow: 0px 8px 11px rgba(0, 0, 0, 0.24);
   }
-  pointer-events: ${(props) => (props.type !== "Member" ? "auto" : "none")};
+
   margin: ${(props) => (props.type !== "Member" ? "10px" : "20px 0")};
   width: ${(props) => props.type === "Member" && "100%"};
+  position: relative;
 `;
+
 const RecruitInfo = styled.div`
   display: grid;
   grid-template-columns: 0.35fr 0.65fr;

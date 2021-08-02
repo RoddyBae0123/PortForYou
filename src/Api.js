@@ -9,57 +9,56 @@ const api = axios.create({
 });
 
 export const portFolioApi = {
-  getPosition: () => api.get("api/user/portfolio/positions"),
-  getStackList: () => api.get("api/user/portfolio/stacks"),
-  getEducationList: () => api.get("api/user/portfolio/educations"),
+  getPosition: () => api.get("api/resource/positions"),
+  getStackList: () => api.get("api/resource/stacks"),
+  getEducationList: () => api.get("api/resource/educations"),
   getPortFolioList: () => api.get("api/user/portfolios"),
-  getPortFolio: (idx) => api.get(`api/user/portfolio?portfolio_idx=${idx}`),
+  getPortFolio: (idx) => api.get(`api/user/portfolio/${idx}`),
   savePorFolio: (data) =>
-    api.post("/api/user/portfolio", {
+    api.post("api/user/portfolio", {
       idx: data.idx,
       title: data.title,
       content: data.content,
       project: [...data.project],
-      positions: [
-        {
-          idx: data.positionIdx,
-        },
-      ],
+      position: {
+        idx: data.positionIdx,
+      },
       tech: [...data.tech],
       education: {
         idx: data.educationIdx,
       },
     }),
+  deletePortFolio: (idx) => api.delete(`api/user/portfolio/${idx}`),
 };
 
 export const studyApi = {
-  getCategoryList: () => api.get("api/user/study/categories"),
+  getCategoryList: () => api.get("api/resource/categories"),
   getStudyList: (applied) => api.get(`api/user/studies?applied=${applied}`),
-  saveRecruit: (data) =>
-    api.post("api/user/study/announcement", {
-      study: { idx: data.study.idx },
+  SaveAnnouncement: (data) =>
+    api.post(`api/study/${data.study.idx}/announcement`, {
       title: data.title,
       content: data.content,
       demandPosition: [...data.demandPosition],
     }),
-  getAnnouncementList: (idx) =>
-    api.get(`api/user/study/announcements?studyIdx=${idx}`),
-  getAnnouncement: (idx) =>
-    api.get(`api/user/study/announcement?announcementIdx=${idx}`),
-  getNewAnnouncementList: (kind) =>
-    api.get(`api/user/announcements?kind=${kind}`),
+  getAnnouncementList: (idx) => api.get(`api/study/${idx}/announcements`),
+  getAnnouncement: (idx) => api.get(`api/announcement/${idx}`),
+  getNewAnnouncementList: () => api.get(`api/announcements?kind=new`),
   setApplication: (data) =>
-    api.post(`api/user/study/announcement/application`, {
+    api.post(`api/announcement/${data.announcement.idx}/application`, {
       portfolio: {
         idx: data.portfolio.idx,
       },
       position: {
         idx: data.position.idx,
       },
-      announcement: {
-        idx: data.announcement.idx,
-      },
     }),
-  getApplicationByStudyIdx: (idx) =>
-    api.get(`api/user/study/applications?studyIdx=${idx}`),
+  getApplicationByStudyIdx: (idx) => api.get(`api/study/${idx}/applications`),
+};
+
+export const AuthApi = {
+  getLoginToken: (user, pw) =>
+    api.post("api/login", {
+      username: user,
+      password: pw,
+    }),
 };

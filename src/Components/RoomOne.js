@@ -77,6 +77,10 @@ const RoomOne = ({ study }) => {
     "https://3.bp.blogspot.com/-JZw_bffcevI/XLnOn51lYSI/AAAAAAAA19I/v2KBuUJJddQPhGeHfEfSV_96u9JTUTF9wCLcBGAs/s1600/Honeycam%2B2019-04-19%2B22-17-47.gif",
   ];
 
+  {
+    study && console.log(study);
+  }
+
   const returnData = () => {
     var i = 0;
     return study.map((e) => (
@@ -91,7 +95,7 @@ const RoomOne = ({ study }) => {
           {/* http://3.37.208.251:8080/api/img/default?name=youtube_profile_image */}
           <Number>
             <FontAwesomeIcon icon={faUsers}></FontAwesomeIcon>
-            <div style={{ fontSize: 15 }}>{e.members}</div>
+            <div style={{ fontSize: 15 }}>{e.numberOfMembers}</div>
           </Number>
         </Bkg>
         <Info>

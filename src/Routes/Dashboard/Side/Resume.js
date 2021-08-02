@@ -16,6 +16,7 @@ import Loader from "react-loader-spinner";
 import MdataProcessing from "../../../Components/MdataProcessing";
 import wifi from "../../../wifi";
 import axios from "axios";
+import { portFolioApi } from "../../../Api";
 // const SubTitle = styled.h5`
 //     font-size:17px;
 //     font-weight:400;
@@ -116,36 +117,26 @@ const AddBtn = styled.button`
 
 const Resume = ({ data, method, setData, DelResumeBtn }) => {
   useEffect(() => {
-    method(Auth.getAccessToken());
+    console.log(Auth.getAccessToken());
+    method();
   }, []);
 
-  const AddBtnHandler = async (token) => {
-    const api = await axios.create({
-      baseURL: `${wifi}`,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    api
-      .post("/api/user/portfolio", {
-        title: "New shit",
+  const AddBtnHandler = async () => {
+    try {
+      const res = await portFolioApi.savePorFolio({
+        title: "New Portfolio",
         content: "New content",
         project: [],
-        positions: [
-          {
-            idx: 7,
-          },
-        ],
+        positionIdx: 7,
         tech: [],
-        education: {
-          idx: 5,
-        },
-      })
-      .then((res) => {
-        console.log(res);
-        method(Auth.getAccessToken());
-      })
-      .catch((e) => console.log(e));
+        educationIdx: 5,
+      });
+      {
+        res && method();
+      }
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return data ? (
@@ -164,7 +155,7 @@ const Resume = ({ data, method, setData, DelResumeBtn }) => {
         <div
           style={{ width: "90%", display: "flex", justifyContent: "flex-end" }}
         >
-          <AddBtn onClick={() => AddBtnHandler(Auth.getAccessToken())}>
+          <AddBtn onClick={AddBtnHandler}>
             <h5>ADD</h5>
           </AddBtn>
         </div>

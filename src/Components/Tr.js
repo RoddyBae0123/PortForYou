@@ -88,61 +88,65 @@ const TR = styled.tr`
 `;
 const SexyLink = styled(Link)``;
 const Tr = ({ data, DelResumeBtn }) => {
-  return data.map((e) => (
-    <TR key={`${e.idx}`}>
-      <ResumeOne key={`${e.idx}`} style={{ padding: 0 }}>
-        <DataList>
-          <Document>
-            {" "}
-            <FontAwesomeIcon
-              icon={faFileAlt}
-              size="2x"
-              style={{ color: "RGB(74, 86, 94)" }}
-            />
-          </Document>
-          <IntroduceCon>
-            <Makecenter>
-              <SexyLink to={`resume/${e.idx}`}>
-                <Title>{e.title}</Title>
-              </SexyLink>
+  return data ? (
+    data.map((e) => (
+      <TR key={`${e.idx}`}>
+        <ResumeOne key={`${e.idx}`} style={{ padding: 0 }}>
+          <DataList>
+            <Document>
+              {" "}
+              <FontAwesomeIcon
+                icon={faFileAlt}
+                size="2x"
+                style={{ color: "RGB(74, 86, 94)" }}
+              />
+            </Document>
+            <IntroduceCon>
+              <Makecenter>
+                <SexyLink to={`resume/${e.idx}`}>
+                  <Title>{e.title}</Title>
+                </SexyLink>
+              </Makecenter>
+              <Makecenter>
+                <h5>{e.content}</h5>
+              </Makecenter>
+            </IntroduceCon>
+            <IntroduceCon>
+              <Makecenter style={{ fontSize: "10px" }}>
+                {e.tech.map((e) => {
+                  switch (e.name) {
+                    case "Kotlin":
+                      return <FontAwesomeIcon icon={faKorvue} size="2x" />;
+                      break;
+                    case "Java":
+                      return <FontAwesomeIcon icon={faJava} size="2x" />;
+                      break;
+                    case "C":
+                      return <FontAwesomeIcon icon={faCuttlefish} size="2x" />;
+                      break;
+                    default:
+                      break;
+                  }
+                })}
+              </Makecenter>
+              <Makecenter>
+                <h5>{e.position.name}</h5>
+              </Makecenter>
+            </IntroduceCon>
+            <Makecenter
+              style={{ justifyContent: "center", alignItems: "center" }}
+            >
+              <DelEdit id={e.idx} onClick={DelResumeBtn}>
+                <FontAwesomeIcon id={e.idx} icon={faTrash} size="2x" />
+              </DelEdit>
             </Makecenter>
-            <Makecenter>
-              <h5>{e.content}</h5>
-            </Makecenter>
-          </IntroduceCon>
-          <IntroduceCon>
-            <Makecenter style={{ fontSize: "10px" }}>
-              {e.stack.map((e) => {
-                switch (e.name) {
-                  case "Kotlin":
-                    return <FontAwesomeIcon icon={faKorvue} size="2x" />;
-                    break;
-                  case "Java":
-                    return <FontAwesomeIcon icon={faJava} size="2x" />;
-                    break;
-                  case "C":
-                    return <FontAwesomeIcon icon={faCuttlefish} size="2x" />;
-                    break;
-                  default:
-                    break;
-                }
-              })}
-            </Makecenter>
-            <Makecenter>
-              <h5>{e.position.map((e) => `${e.name}/`)}</h5>
-            </Makecenter>
-          </IntroduceCon>
-          <Makecenter
-            style={{ justifyContent: "center", alignItems: "center" }}
-          >
-            <DelEdit id={e.idx} onClick={DelResumeBtn}>
-              <FontAwesomeIcon id={e.idx} icon={faTrash} size="2x" />
-            </DelEdit>
-          </Makecenter>
-        </DataList>
-      </ResumeOne>
-    </TR>
-  ));
+          </DataList>
+        </ResumeOne>
+      </TR>
+    ))
+  ) : (
+    <div>none</div>
+  );
 };
 
 export default Tr;

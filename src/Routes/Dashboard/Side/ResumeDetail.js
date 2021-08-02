@@ -130,7 +130,6 @@ function ResumeDetail({ match, history }) {
   }, []);
 
   const [main, setMain] = useState();
-  const [haveto, setHaveto] = useState(undefined);
   const Idx = match.params.idx;
   const accessToken = Auth.getAccessToken();
   const [data, setData] = useState(false); //Entire Data
@@ -140,6 +139,9 @@ function ResumeDetail({ match, history }) {
   const getPortFolio = async (idx) => {
     try {
       const { data: port } = await portFolioApi.getPortFolio(idx);
+      {
+        port && console.log(port);
+      }
       {
         port &&
           setMain({
@@ -172,6 +174,9 @@ function ResumeDetail({ match, history }) {
       const { data } = await portFolioApi.getPosition();
       {
         data && setPositionData(data);
+      }
+      {
+        data && console.log(data);
       }
     } catch (e) {
       console.log(e);
@@ -222,7 +227,7 @@ function ResumeDetail({ match, history }) {
 
   const setResumeList = async () => {
     try {
-      const submit = {
+      const result = await portFolioApi.savePorFolio({
         idx: Idx,
         title: main.title,
         content: main.content,
@@ -230,9 +235,7 @@ function ResumeDetail({ match, history }) {
         positionIdx: position.idx,
         tech: [...stackNew],
         educationIdx: education.idx,
-      };
-      console.log(submit);
-      const result = await portFolioApi.savePorFolio(submit);
+      });
       {
         result && result.status === 200 && history.goBack();
       }
@@ -313,7 +316,7 @@ function ResumeDetail({ match, history }) {
             <h1 style={{ margin: "30px 0" }}>Position</h1>
           </SectionTitle>
           <Select
-            data={data.positions}
+            data={data.position}
             positionData={positionData}
             detail={position}
             setDetail={setPosition}

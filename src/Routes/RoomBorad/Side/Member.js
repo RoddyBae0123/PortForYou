@@ -372,13 +372,12 @@ const Member = ({
               <List applicant={applicant}></List>
             </>
           ) : (
-            <Loader
-              type="Rings"
-              color="#FF8C94"
-              height={300}
-              width={300}
-              timeout={10000}
-            />
+            <RruCreateBtn onClick={() => setPopUp(true)}>
+              <h2>
+                There are no registered recruitment. Please make a new one!
+              </h2>
+              <FontAwesomeIcon icon={faPlusCircle} style={{ fontSize: 50 }} />
+            </RruCreateBtn>
           )}
         </MemberData>
       </Container>
