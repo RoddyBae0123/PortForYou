@@ -74,18 +74,18 @@ const Input = styled.textarea`
   resize: none;
 `;
 
-const Addul = styled.ul`
+const AddSearch = styled.div`
   width: 80%;
   background-color: white;
-  border-radius: 20px;
+  border-radius: 15px;
   border: 3.5px solid #d4d4d4;
   display: flex;
   justify-content: space-around;
   align-items: center;
-  height: 150px;
-  margin-bottom: 15px;
+  height: auto;
   position: relative;
   display: ${(props) => (props.status ? "flex" : "none")};
+  margin-bottom: 20px;
 `;
 
 const Addli = styled.li`
@@ -136,45 +136,117 @@ const AddBtn = styled.button`
   margin: 30px 0 150px 0;
 `;
 
-const Stack = ({ data, stackData, detail, setDetail }) => {
+const InputSearch = styled.input`
+  font-size: 30px;
+  font-weight: 500;
+  width: 100%;
+  border: none;
+  outline: none;
+  margin: 20px;
+`;
+
+const SearchWrap = styled.div`
+  width: 80%;
+  box-shadow: 0 0.5rem 0.75rem rgb(20 20 94 / 6%),
+    0 1.25rem 1.25rem -0.125rem rgb(20 20 94 / 12%),
+    0 1.5rem 2.125rem -0.125rem rgb(20 20 94 / 6%),
+    0 2rem 2.5rem -2rem rgb(20 20 94 / 5%);
+  border-radius: 15px 15px 0 0;
+`;
+
+const SearchUl = styled.ul`
+  display: grid;
+  grid-auto-rows: 100px;
+  width: 100%;
+`;
+
+const Searchli = styled.li`
+  height: 100%;
+
+  opacity: 0.5;
+  transition: all 300ms ease-in;
+  &:hover {
+    opacity: 1;
+  }
+`;
+
+const SearchButton = styled.button`
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 0.15fr 0.85fr;
+`;
+const MakeCenter = styled.div`
+  display: flex;
+  height: 100%;
+  justify-content: ${(props) => props.dirc};
+  align-items: center;
+`;
+
+const Stack = ({
+  data,
+  stackData,
+  detail,
+  setDetail,
+  getStackList,
+  setStack,
+}) => {
+  const clonedeep = require("lodash.clonedeep");
+
   const copyData = [];
   const [currentStack, setCurrentStack] = useState();
+  const [searchValue, setSearchValue] = useState("");
   const [hideAdd, setHideAdd] = useState(false);
+  const [first, setFirst] = useState(false);
+
+  // useEffect(() => {
+  //   let copyDetail, copyCurrent;
+
+  //   if (detail && stackData) {
+  //     copyDetail = clonedeep(detail);
+  //     copyCurrent = clonedeep(currentStack);
+  //     copyCurrent.map((e) => {
+  //       copyDetail = copyDetail.filter((t) => t.idx != e.stackIdx);
+  //     });
+  //     setCurrentStack(copyStackData);
+  //   }
+  // }, [detail]);
+
   useEffect(() => {
     const current = [];
+    data && setDetail([...data]);
     data.map((e) => {
-      copyData.unshift({
-        idx: e.idx,
-        content: e.content,
-        stackIdx: e.stackIdx,
-        ability: e.ability,
+      current.unshift({
+        idx: e.stackIdx,
+        name: e.stackName,
       });
-      current.unshift({ idx: e.stackIdx });
     });
-    var copyStackData = stackData && [...stackData];
-    stackData &&
-      current.map(
-        (t) => (copyStackData = copyStackData.filter((e) => e.idx != t.idx))
-      );
-    setCurrentStack(copyStackData);
+    data && console.log(data);
+    detail && console.log(detail);
+    // var copyStackData = stackData && [...clonedeep(stackData)];
+    // stackData &&
+    //   current.map(
+    //     (t) => (copyStackData = copyStackData.filter((e) => e.idx != t.idx))
+    //   );
+    setCurrentStack(current);
 
-    stackData && setDetail(copyData);
     return;
   }, []);
-
+  currentStack && console.log(currentStack);
   const inputHandler = (e) => {
     const { value, id } = e.target;
     let copyDetail = [...detail];
+
     copyDetail[id].content = value;
     setDetail(copyDetail);
   };
 
   const delBtnHandler = (e) => {
     const DelId = e.target.parentElement.id;
-    let copyDetail = [...detail];
-    copyDetail = copyDetail.filter((e) => e.idx != DelId);
+    let copyDetail = clonedeep(detail);
+    copyDetail = copyDetail.filter((e) => e.stackIdx != DelId);
     setDetail(copyDetail);
-    var copyStackData = [...stackData];
+    let copyStackData = clonedeep(stackData);
     copyDetail.map((e) => {
       copyStackData = copyStackData.filter((t) => t.idx != e.stackIdx);
     });
@@ -182,22 +254,50 @@ const Stack = ({ data, stackData, detail, setDetail }) => {
   };
 
   const AddBtnHandler = (e) => {
-    setHideAdd(true);
+    e.target.value.length == 0 ? setStack([]) : getStackList(e.target.value);
+    setSearchValue(e.target.value);
+
+    {
+      stackData && setFirst(true);
+    }
   };
 
   const ChoiceStackBtnHandler = (e) => {
-    setDetail([...detail], {
-      content: "",
-      stackIdx: parseInt(e.target.id),
-      ability: 0,
-    });
+    console.log(e.target.id, e.target.dataset.name);
+    let pass = true;
 
-    stackData.filter((t) => t.idx != e.stackIdx);
-    detail.map((e) => {
-      stackData.filter((t) => t.idx != e.stackIdx);
-    });
-    setCurrentStack([...stackData]);
-    setHideAdd(false);
+    for (let i = 0; i < currentStack.length; i++) {
+      if (currentStack[i].idx == e.target.id) {
+        pass = false;
+        break;
+      } else {
+        continue;
+      }
+    }
+
+    {
+      pass &&
+        setDetail([
+          ...detail,
+          {
+            content: "",
+            stackIdx: parseInt(e.target.id),
+            ability: 0,
+            stackName: e.target.dataset.name,
+          },
+        ]);
+    }
+    {
+      pass &&
+        setCurrentStack([
+          ...currentStack,
+          {
+            idx: parseInt(e.target.id),
+          },
+        ]);
+    }
+    setSearchValue("");
+    setStack([]);
   };
 
   const changeRating = (newRating, name) => {
@@ -205,59 +305,61 @@ const Stack = ({ data, stackData, detail, setDetail }) => {
     copyDetail[name].ability = newRating;
     setDetail(copyDetail);
   };
+
+  const returnSearch = () => {
+    return (
+      <SearchWrap>
+        <SearchUl>
+          {stackData ? (
+            <>
+              {stackData.map((e) => (
+                <Searchli key={e.idx} id={e.idx} data-name={e.name}>
+                  <SearchButton
+                    type="button"
+                    onClick={ChoiceStackBtnHandler}
+                    id={e.idx}
+                    data-name={e.name}
+                  >
+                    <MakeCenter dirc="center" id={e.idx} data-name={e.name}>
+                      <img
+                        id={e.idx}
+                        data-name={e.name}
+                        src={`${wifi}api/img/default/${e.name}`}
+                        style={{ width: "35%" }}
+                      />
+                    </MakeCenter>
+                    <MakeCenter id={e.idx} data-name={e.name}>
+                      <span
+                        id={e.idx}
+                        data-name={e.name}
+                        style={{ fontWeight: 500, fontSize: 30 }}
+                      >
+                        {e.name}
+                      </span>
+                    </MakeCenter>
+                  </SearchButton>
+                </Searchli>
+              ))}
+            </>
+          ) : (
+            <div>NoData</div>
+          )}
+        </SearchUl>
+      </SearchWrap>
+    );
+  };
+
   return (
     <>
-      {currentStack &&
-        stackData &&
-        detail &&
-        detail.map((e, idx) =>
-          stackData[e.stackIdx - 1] ? (
-            <Container key={e.idx} id={e.idx}>
-              <DeleteButton type="button" onClick={delBtnHandler}>
-                <FontAwesomeIcon id={e.idx} icon={faTrash}></FontAwesomeIcon>
-              </DeleteButton>
-              <LogoStructure>
-                <Makecenter>
-                  <Logo>
-                    <img
-                      src={`${wifi}api/img/default?name=${
-                        stackData[e.stackIdx - 1].name
-                      }`}
-                      style={{ width: "70%" }}
-                    ></img>
-                  </Logo>
-                </Makecenter>
-                <LogoName style={{ textAlign: "center" }}>
-                  {stackData[e.stackIdx - 1].name}
-                </LogoName>
-              </LogoStructure>
-              <Input
-                type="text"
-                value={e.content}
-                onChange={inputHandler}
-                id={idx}
-              ></Input>
-              <Makecenter
-                style={{ borderLeft: "3.5px solid RGB(212, 212, 212)" }}
-              >
-                <StarRatings
-                  rating={e.ability}
-                  starRatedColor="RGB(255, 140, 148)"
-                  numberOfStars={5}
-                  starSpacing="5px"
-                  starDimension="20px"
-                  changeRating={changeRating}
-                  name={`${idx}`}
-                />
-              </Makecenter>
-            </Container>
-          ) : (
-            <div>fuck</div>
-          )
-        )}
-      <Addul status={hideAdd}>
-        <SubTitle>Select your Stack</SubTitle>
-        {stackData &&
+      <AddSearch status={true}>
+        <SubTitle>Enter your Stack</SubTitle>
+        <InputSearch
+          value={searchValue}
+          placeholder="...Please enter anything you want"
+          onChange={AddBtnHandler}
+        ></InputSearch>
+
+        {/* {stackData &&
           currentStack &&
           currentStack.map((e) => (
             <Addli key={e.idx}>
@@ -269,11 +371,52 @@ const Stack = ({ data, stackData, detail, setDetail }) => {
                 {e.name}
               </CreateStack>
             </Addli>
-          ))}
-      </Addul>
-      <AddBtn status={hideAdd} type="button" onClick={AddBtnHandler}>
+          ))} */}
+      </AddSearch>
+      {stackData.length != 0 && returnSearch()}
+      {currentStack &&
+        detail &&
+        detail.map((e, idx) => (
+          <Container key={e.idx} id={e.stackIdx}>
+            <DeleteButton type="button" onClick={delBtnHandler}>
+              <FontAwesomeIcon id={e.stackIdx} icon={faTrash}></FontAwesomeIcon>
+            </DeleteButton>
+            <LogoStructure>
+              <Makecenter>
+                <Logo>
+                  <img
+                    src={`${wifi}api/img/default/${e.stackName}`}
+                    style={{ width: "70%" }}
+                  ></img>
+                </Logo>
+              </Makecenter>
+              <LogoName style={{ textAlign: "center" }}>{e.stackName}</LogoName>
+            </LogoStructure>
+            <Input
+              type="text"
+              value={e.content}
+              onChange={inputHandler}
+              id={idx}
+            ></Input>
+            <Makecenter
+              style={{ borderLeft: "3.5px solid RGB(212, 212, 212)" }}
+            >
+              <StarRatings
+                rating={e.ability}
+                starRatedColor="RGB(255, 140, 148)"
+                numberOfStars={5}
+                starSpacing="5px"
+                starDimension="20px"
+                changeRating={changeRating}
+                name={`${idx}`}
+              />
+            </Makecenter>
+          </Container>
+        ))}
+
+      {/* <AddBtn status={hideAdd} type="button" onClick={AddBtnHandler}>
         Add Stack
-      </AddBtn>
+      </AddBtn> */}
     </>
   );
 };

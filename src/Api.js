@@ -10,7 +10,7 @@ const api = axios.create({
 
 export const portFolioApi = {
   getPosition: () => api.get("api/resource/positions"),
-  getStackList: () => api.get("api/resource/stacks"),
+  getStackList: (name) => api.get(`api/resource/stacks?query=${name}`),
   getEducationList: () => api.get("api/resource/educations"),
   getPortFolioList: () => api.get("api/user/portfolios"),
   getPortFolio: (idx) => api.get(`api/user/portfolio/${idx}`),

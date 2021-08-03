@@ -121,7 +121,6 @@ function ResumeDetail({ match, history }) {
     let mounted = true;
     if (mounted) {
       getPortFolio(Idx);
-      getStackList();
       getPositionList();
       getEducationList();
     }
@@ -157,9 +156,14 @@ function ResumeDetail({ match, history }) {
     }
   };
   const [stackData, setStack] = useState([]); //project Data=>stack data of project
-  const getStackList = async () => {
+  const getStackList = async (name) => {
     try {
-      const { data } = await portFolioApi.getStackList();
+      const { data } = await portFolioApi.getStackList(name);
+
+      {
+        data && console.log(data);
+      }
+
       {
         data && setStack(data);
       }
@@ -237,7 +241,7 @@ function ResumeDetail({ match, history }) {
         educationIdx: education.idx,
       });
       {
-        result && result.status === 200 && history.goBack();
+        result && result.status === 201 && history.goBack();
       }
     } catch (e) {
       console.log(e);
@@ -347,6 +351,8 @@ function ResumeDetail({ match, history }) {
             stackData={stackData}
             detail={stackNew}
             setDetail={setStackNew}
+            getStackList={getStackList}
+            setStack={setStack}
           />
         </Container>
       </div>

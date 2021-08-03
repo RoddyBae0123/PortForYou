@@ -231,6 +231,8 @@ const RecruitDetail = ({
   location,
   history,
   type,
+  setApplicant,
+  save,
 }) => {
   const delPopupBtnHandler = () => {
     setPopup(false);
@@ -242,7 +244,7 @@ const RecruitDetail = ({
       const data = await studyApi.deleteAnnouncement(ann.idx);
       if (data && data.status == 204) {
         getAnnouncementList(location.state.idx);
-
+        setApplicant && setApplicant(undefined);
         // history.push({
         //   pathname: `${pathname}`,
         //   state: { idx: state.idx },
@@ -264,7 +266,7 @@ const RecruitDetail = ({
             color: "red",
           }}
         >
-          Danserous Zone
+          Dangerous Zone
         </h3>
       </Title>
       <DelBtn type="button" onClick={delAnnBtnHandler}>
@@ -515,7 +517,7 @@ const RecruitDetail = ({
                       <MakeCenter>
                         <img
                           style={{ width: "80%" }}
-                          src={`http://3.37.208.251:8080/api/img/default?name=${e.name}`}
+                          src={`http://3.37.208.251:8080/api/img/default/${e.stackName}`}
                         />
                       </MakeCenter>
                     ))}

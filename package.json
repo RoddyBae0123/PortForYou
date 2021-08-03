@@ -16,6 +16,8 @@
     "bootstrap": "^5.0.2",
     "framer-motion": "^4.1.17",
     "jquery": "^3.6.0",
+    "navigation": "^5.5.0",
+    "navigation-react": "^4.3.0",
     "rc-input-number": "^7.2.0",
     "react": "^17.0.2",
     "react-async": "^10.0.1",

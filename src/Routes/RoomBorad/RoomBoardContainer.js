@@ -46,6 +46,7 @@ const RoomBoardContainer = (props) => {
       studyIdx: idx,
       title: "",
       content: "",
+      Position: [],
     });
   };
   const setProfileImage = async (e) => {
@@ -197,6 +198,7 @@ const RoomBoardContainer = (props) => {
       applicant={applicant}
       getAnnouncementList={getAnnouncementList}
       getAnn={getAnn}
+      setApplicant={setApplicant}
     />
   );
 };

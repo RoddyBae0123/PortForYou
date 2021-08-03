@@ -217,6 +217,7 @@ const Member = ({
   applicant,
   getAnnouncementList,
   getAnn,
+  setApplicant,
 }) => {
   const {
     state: { idx, where },
@@ -277,7 +278,7 @@ const Member = ({
         content: e.content,
         reg_date: e.reg_date,
         position: e.position,
-        stack: e.stack,
+        stack: e.tech,
         education: e.education,
         checked: false,
       }));
@@ -366,7 +367,7 @@ const Member = ({
       pathname: location.pathname,
       state: { idx, where: "recruit" },
     });
-    setPopup(false);
+    DelectAll();
   };
 
   const returnDetail = (recruitPopup) =>
@@ -382,6 +383,8 @@ const Member = ({
         history={history}
         setAnn={setAnn}
         type={"member"}
+        setApplicant={setApplicant}
+        save={save}
       ></RecruitDetail>
     ) : null;
 

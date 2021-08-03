@@ -1,14 +1,10 @@
 import React from "react";
 import Popup from "../../Components/Popup";
 import Applicant from "../../Components/Applicant";
+import Navigation from "../../Components/Navigation";
+
 const HomeContainer = () => {
-  return (
-    <Popup
-      status={true}
-      component={Applicant}
-      size={{ width: "1050px", height: "650px" }}
-    ></Popup>
-  );
+  return <div>Home</div>;
 };
 
 export default HomeContainer;

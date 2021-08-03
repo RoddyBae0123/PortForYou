@@ -95,7 +95,7 @@ const Recruit = ({ history, newAnnList }) => {
         content: e.content,
         reg_date: e.reg_date,
         position: e.position,
-        stack: e.stack,
+        stack: e.tech,
         education: e.education,
         checked: false,
       }));
