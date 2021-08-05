@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
+import Loader from "react-loader-spinner";
 
 const Container = styled.button`
   height: 280px;
@@ -22,8 +23,6 @@ const Container = styled.button`
   width: ${(props) => props.type === "Member" && "100%"};
   position: relative;
 `;
-
-
 
 const RecruitInfo = styled.div`
   display: grid;
@@ -70,22 +69,16 @@ const RecruitPic = styled.img`
   border: 1.5px solid lightgray;
 `;
 
-const RecruitOne = ({
-  newAnnList,
-  type,
-  setPopup,
-  setRecruitIdx,
-  setResult,
-}) => {
-  newAnnList && console.log(newAnnList);
+const RecruitOne = ({ annList, type, setPopup, setRecruitIdx, setResult }) => {
+  annList && console.log(annList);
   const show = (idx) => {
     setPopup(true);
     setRecruitIdx(idx);
     setResult && setResult(undefined);
   };
   const returnData = () => {
-    return type && newAnnList && newAnnList ? (
-      newAnnList.map((e) => (
+    return type && annList && annList ? (
+      annList.map((e) => (
         <Container onClick={() => show(e.idx)} key={e.idx} type={type}>
           <Makecenter>
             <RecruitInfo>
@@ -131,7 +124,7 @@ const RecruitOne = ({
       <div>sdasdasdasd</div>
     );
   };
-  return newAnnList ? returnData() : null;
+  return annList ? returnData() : null;
 };
 
 export default RecruitOne;

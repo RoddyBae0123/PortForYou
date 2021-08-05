@@ -9,6 +9,8 @@ import { useState, memo, useEffect } from "react";
 import RecruitDetail from "../../../Components/RecruitDetail";
 import { studyApi, portFolioApi } from "../../../Api";
 import Popup from "../../../Components/Popup";
+import Navigation from "../../../Components/Navigation";
+import Section from "../../../Components/Section";
 const Container = styled.div`
   height: 100%;
   width: 100%;
@@ -32,30 +34,39 @@ const Button = styled.button`
 
 const NewCgry = styled.div`
   border-top: 1px solid lightgray;
-  width: 85%;
+  width: 100%;
   margin-top: 45px;
   position: relative;
 `;
 const Title2 = styled.div`
-  width: 70px;
-  height: 20px;
   background-color: white;
   font-size: 20px;
   color: #4a565e;
   position: absolute;
-  top: -10px;
+  top: -30px;
   left: 90px;
   text-align: center;
   font-weight: 700;
+  padding: 20px;
   display: ${(props) => (props.status ? "block" : "none")};
 `;
 
-const Recruit = ({ history, newAnnList }) => {
+const Recruit = ({
+  history,
+  otherAnnList,
+  getOtherAnnList,
+  setAlcondition,
+  alCondition,
+}) => {
   const [popup, setPopup] = useState(undefined);
   const [recruitIdx, setRecruitIdx] = useState(undefined);
   const [ann, setAnn] = useState(undefined);
   const [port, setPort] = useState(undefined);
   const [result, setResult] = useState(undefined);
+
+  useEffect(() => {
+    otherAnnList && console.log(otherAnnList);
+  }, []);
 
   const getAnn = async (idx) => {
     try {
@@ -136,6 +147,116 @@ const Recruit = ({ history, newAnnList }) => {
   const returnDiv = () => {
     return <div>{result == 201 ? "Success Aplication" : "failed bitch"}</div>;
   };
+  const navbar = [
+    {
+      idx: 130,
+      component: (state) =>
+        state ? (
+          <>
+            <ListWrapper
+              status={true}
+              annList={otherAnnList.announcements.slice(0, 3)}
+              kind={"RecruitOne"}
+              setRecruitIdx={setRecruitIdx}
+              setPopup={setPopup}
+              getAnn={getAnn}
+              setResult={setResult}
+              getAnnList={getOtherAnnList}
+            />
+            <NewCgry>
+              <Title2 status={true}>Recommend</Title2>
+            </NewCgry>
+            <ListWrapper
+              status={false}
+              annList={otherAnnList.announcements}
+              kind={"RecruitOne"}
+              setRecruitIdx={setRecruitIdx}
+              setPopup={setPopup}
+              getAnn={getAnn}
+              setResult={setResult}
+              getAnnList={getOtherAnnList}
+            />
+          </>
+        ) : null,
+      name: "Recommend",
+      page: otherAnnList && {
+        pno: otherAnnList.pno,
+        lastPno: otherAnnList.lastPno,
+      },
+    },
+    {
+      idx: 131,
+      component: (state) =>
+        state ? (
+          <>
+            <ListWrapper
+              status={true}
+              annList={otherAnnList.announcements.slice(0, 3)}
+              kind={"RecruitOne"}
+              setRecruitIdx={setRecruitIdx}
+              setPopup={setPopup}
+              getAnn={getAnn}
+              setResult={setResult}
+              getAnnList={getOtherAnnList}
+            />
+            <NewCgry>
+              <Title2 status={true}>New</Title2>
+            </NewCgry>
+            <ListWrapper
+              status={false}
+              annList={otherAnnList.announcements}
+              kind={"RecruitOne"}
+              setRecruitIdx={setRecruitIdx}
+              setPopup={setPopup}
+              getAnn={getAnn}
+              setResult={setResult}
+              getAnnList={getOtherAnnList}
+            />
+          </>
+        ) : null,
+      name: "New",
+      page: otherAnnList && {
+        pno: otherAnnList.pno,
+        lastPno: otherAnnList.lastPno,
+      },
+    },
+    {
+      idx: 132,
+      component: (state) =>
+        state ? (
+          <>
+            <ListWrapper
+              status={true}
+              annList={otherAnnList.announcements.slice(0, 3)}
+              kind={"RecruitOne"}
+              setRecruitIdx={setRecruitIdx}
+              setPopup={setPopup}
+              getAnn={getAnn}
+              setResult={setResult}
+              getAnnList={getOtherAnnList}
+            />
+            <NewCgry>
+              <Title2 status={true}>Imminent</Title2>
+            </NewCgry>
+            <ListWrapper
+              status={false}
+              annList={otherAnnList.announcements}
+              kind={"RecruitOne"}
+              setRecruitIdx={setRecruitIdx}
+              setPopup={setPopup}
+              getAnn={getAnn}
+              setResult={setResult}
+              getAnnList={getOtherAnnList}
+            />
+          </>
+        ) : null,
+      name: "Imminent",
+      page: otherAnnList && {
+        pno: otherAnnList.pno,
+        lastPno: otherAnnList.lastPno,
+      },
+    },
+  ];
 
   return (
     <motion.div
@@ -145,33 +266,18 @@ const Recruit = ({ history, newAnnList }) => {
       style={{ width: "100%" }}
     >
       <Container>
-        <MdataProcessing
+        <Section
           title={"Recruit"}
           message={"Let's team up and make your dreams come true."}
-          nav={true}
-          connect={"Recruit"}
-        ></MdataProcessing>
-        <ListWrapper
-          status={true}
-          newAnnList={newAnnList}
-          kind={"RecruitOne"}
-          setRecruitIdx={setRecruitIdx}
-          setPopup={setPopup}
-          getAnn={getAnn}
-          setResult={setResult}
+          nav={false}
         />
-        <NewCgry>
-          <Title2 status={true}>New</Title2>
-        </NewCgry>
-        <ListWrapper
-          status={false}
-          newAnnList={newAnnList}
-          kind={"RecruitOne"}
-          setRecruitIdx={setRecruitIdx}
-          setPopup={setPopup}
-          getAnn={getAnn}
-          setResult={setResult}
-        />
+        {otherAnnList && (
+          <Navigation
+            navbar={navbar}
+            change={setAlcondition}
+            data={alCondition}
+          />
+        )}
       </Container>
       {returnDetail(popup)}
       {popup == false && result ? returnPopup(popup) : null}

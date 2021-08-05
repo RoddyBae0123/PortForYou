@@ -42,7 +42,10 @@ export const studyApi = {
     }),
   getAnnouncementList: (idx) => api.get(`api/study/${idx}/announcements`),
   getAnnouncement: (idx) => api.get(`api/announcement/${idx}`),
-  getNewAnnouncementList: () => api.get(`api/announcements?kind=new`),
+  getOtherAnnouncementList: (data) =>
+    api.get(
+      `api/announcements?pno=${data.pno}&kind=${data.kind}&query=${data.query}`
+    ),
   setApplication: (data) =>
     api.post(`api/announcement/${data.announcement.idx}/application`, {
       portfolio: {

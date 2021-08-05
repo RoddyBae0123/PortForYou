@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, memo } from "react";
 import styled from "styled-components";
 import GoogleFontLoader from "react-google-font-loader";
 import wifi from "../../wifi";
@@ -261,8 +261,10 @@ const DashboardPresenter = ({
   getStudyList,
   setStudy,
   study,
-  newAnnList,
-  getNewAnnList
+  otherAnnList,
+  getOtherAnnList,
+  setAlcondition,
+  alCondition,
 }) => {
   const [popup, setPopup] = useState(false);
   const delBtnHandler = () => {
@@ -458,10 +460,12 @@ const DashboardPresenter = ({
                 path={`${match.path}/recruit`}
                 component={() => (
                   <Recruit
-                  getStudyList={getStudyList}
+                    getStudyList={getStudyList}
                     history={history}
-                    newAnnList={newAnnList}
-                    getNewAnnList={getNewAnnList}
+                    otherAnnList={otherAnnList}
+                    getOtherAnnList={getOtherAnnList}
+                    setAlcondition={setAlcondition}
+                    alCondition={alCondition}
                   />
                 )}
               ></Route>
@@ -501,4 +505,4 @@ const DashboardPresenter = ({
   );
 };
 
-export default DashboardPresenter;
+export default memo(DashboardPresenter);

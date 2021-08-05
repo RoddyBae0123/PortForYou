@@ -11,7 +11,12 @@ const DashboardContainer = ({ match, history }) => {
   const [profileImgUri, setProfileImgUri] = useState(undefined); //change profile
   const [userData, setUserData] = useState(undefined); //user information
   const [study, setStudy] = useState(undefined);
-  const [newAnnList, setNewAnnList] = useState(undefined);
+  const [otherAnnList, setOtherAnnList] = useState(undefined);
+  const [alCondition, setAlcondition] = useState({
+    pno: 1,
+    kind: "recommend",
+    query: undefined,
+  });
   const getUserInfo = async () => {
     const api = await axios.create({
       baseURL: `${wifi}`,
@@ -101,11 +106,19 @@ const DashboardContainer = ({ match, history }) => {
       console.log(e);
     }
   };
-  const getNewAnnList = async () => {
+  const getOtherAnnList = async ({ pno, kind, query }) => {
     try {
-      const { data } = await studyApi.getNewAnnouncementList();
+      setOtherAnnList(undefined);
+      const { data } = await studyApi.getOtherAnnouncementList({
+        pno,
+        kind,
+        query,
+      });
       {
-        data && setNewAnnList(data);
+        data && setOtherAnnList(data);
+      }
+      {
+        data && console.log(data);
       }
     } catch (e) {
       console.log(e);
@@ -113,9 +126,12 @@ const DashboardContainer = ({ match, history }) => {
   };
 
   useEffect(() => {
-    getUserInfo();
-    getNewAnnList();
-  }, []);
+    getOtherAnnList({
+      pno: alCondition.pno,
+      kind: alCondition.kind,
+      query: alCondition.query,
+    });
+  }, [alCondition]);
 
   return (
     <>
@@ -131,7 +147,10 @@ const DashboardContainer = ({ match, history }) => {
         history={history}
         setStudy={setStudy}
         study={study}
-        newAnnList={newAnnList}
+        otherAnnList={otherAnnList}
+        getOtherAnnList={getOtherAnnList}
+        setAlcondition={setAlcondition}
+        alCondition={alCondition}
       ></DashboardPresenter>
     </>
   );

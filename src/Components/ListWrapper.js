@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
@@ -6,13 +6,14 @@ import { GroupAddSharp, Translate } from "@material-ui/icons";
 import RecruitOne from "./RecruitOne";
 import RoomOne from "./RoomOne";
 import { faLastfmSquare } from "@fortawesome/free-brands-svg-icons";
+import Loader from "react-loader-spinner";
 
 const Container = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, 33.3%);
   background-color: white;
   border-radius: 50px;
-  width: 85%;
+  width: 100%;
   border: ${(props) => (props.status ? "1px solid lightgray" : "none")};
   position: relative;
   padding: 10px 10px;
@@ -33,14 +34,24 @@ const Title = styled.div`
   display: ${(props) => (props.status ? "block" : "none")};
 `;
 
+const Makecenter = styled.div`
+  width: 100%;
+  height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
 const ListWrapper = ({
   status,
   kind,
   study,
-  newAnnList,
+  annList,
   setRecruitIdx,
   setPopup,
   setResult,
+  getAnnList,
+  type,
 }) => {
   const srcList = [
     "https://blog.kakaocdn.net/dn/DxPyJ/btqQwmsj2wr/a4k4hul2q1rnQ3HLbxTdek/img.gif",
@@ -54,7 +65,7 @@ const ListWrapper = ({
         return (
           <>
             <RecruitOne
-              newAnnList={newAnnList}
+              annList={annList}
               type={"recruit"}
               setRecruitIdx={setRecruitIdx}
               setPopup={setPopup}
@@ -74,11 +85,21 @@ const ListWrapper = ({
     }
   };
 
-  return (
+  return annList ? (
     <Container status={status}>
       <Title status={status}>AD</Title>
       {oneReturn(kind)}
     </Container>
+  ) : (
+    <Makecenter>
+      <Loader
+        type="Ball-Triangle	"
+        color="var(--color-theme)"
+        height={100}
+        width={100}
+        timeout={10000}
+      />
+    </Makecenter>
   );
 };
 

@@ -352,10 +352,10 @@ const Stack = ({
   return (
     <>
       <AddSearch status={true}>
-        <SubTitle>Enter your Stack</SubTitle>
+        <SubTitle>Stack Name</SubTitle>
         <InputSearch
           value={searchValue}
-          placeholder="...Please enter anything you want"
+          placeholder="Search"
           onChange={AddBtnHandler}
         ></InputSearch>
 
