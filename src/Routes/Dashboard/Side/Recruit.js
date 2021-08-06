@@ -138,10 +138,14 @@ const Recruit = ({
     ></Popup>
   );
 
+  const body = document.querySelector("body");
   useEffect(() => {
     if (popup) {
       getAnn(recruitIdx);
       getPortFolioList();
+      body.style.overflow = "hidden";
+    } else {
+      body.style.overflow = "auto";
     }
   }, [popup]);
   const returnDiv = () => {

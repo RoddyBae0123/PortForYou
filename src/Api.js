@@ -66,3 +66,16 @@ export const AuthApi = {
       password: pw,
     }),
 };
+
+export const userApi = {
+  getUserInfo: () => api.get("api/userInfo"),
+};
+
+export const imageApi = {
+  setPortfolio: (idx, formData) =>
+    api.post(
+      `api/img/portfolio?portfolio-idx=${idx}
+  `,
+      formData
+    ),
+};

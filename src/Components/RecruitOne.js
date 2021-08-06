@@ -124,7 +124,7 @@ const RecruitOne = ({ annList, type, setPopup, setRecruitIdx, setResult }) => {
       <div>sdasdasdasd</div>
     );
   };
-  return annList ? returnData() : null;
+  return annList  ? returnData() : null;
 };
 
 export default RecruitOne;

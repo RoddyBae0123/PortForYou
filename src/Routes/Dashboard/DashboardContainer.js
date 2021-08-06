@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, memo } from "react";
 import Auth from "../../Auth";
 import DashboardPresenter from "./DashboardPresenter";
 import axios from "axios";
 import wifi from "../../wifi";
 import { Link } from "react-router-dom";
 import { useAsync } from "react-async";
-import { studyApi, portFolioApi } from "../../Api";
+import { studyApi, portFolioApi, userApi } from "../../Api";
 const DashboardContainer = ({ match, history }) => {
   const [data, setData] = useState(undefined); //resume data
   const [profileImgUri, setProfileImgUri] = useState(undefined); //change profile
@@ -18,27 +18,14 @@ const DashboardContainer = ({ match, history }) => {
     query: undefined,
   });
   const getUserInfo = async () => {
-    const api = await axios.create({
-      baseURL: `${wifi}`,
-    });
-
-    api
-      .get("/api/userInfo", {
-        headers: {
-          Authorization: `Bearer ${Auth.getAccessToken()}`,
-        },
-      })
-      .then((res) => {
-        setUserData(res);
-        setProfileImgUri(res.data.img);
-        console.log(Auth.getAccessToken());
-      })
-      .catch((e) => {
-        if (e) {
-          console.log(e);
-          console.log(Auth.getAccessToken());
-        }
-      });
+    try {
+      const result = await userApi.getUserInfo();
+      result && console.log(result);
+      result && setUserData(result);
+      result && setProfileImgUri(result.data.img);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const getResumeList = async () => {
@@ -133,6 +120,10 @@ const DashboardContainer = ({ match, history }) => {
     });
   }, [alCondition]);
 
+  useEffect(() => {
+    getUserInfo();
+  }, []);
+
   return (
     <>
       <DashboardPresenter
@@ -140,6 +131,7 @@ const DashboardContainer = ({ match, history }) => {
         data={data}
         method={getResumeList}
         profileImgUri={profileImgUri}
+        getUserInfo={getUserInfo}
         imageHandler={setProfileImage}
         setData={setData}
         DelResumeBtn={DelResumeBtn}
@@ -156,4 +148,4 @@ const DashboardContainer = ({ match, history }) => {
   );
 };
 
-export default DashboardContainer;
+export default memo(DashboardContainer);

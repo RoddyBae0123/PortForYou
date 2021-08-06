@@ -58,7 +58,8 @@ const PageLi = styled.li`
 const PageBtn = styled.button`
   width: 100%;
   height: 100%;
-  background-color: wheat;
+  background-color: var(--color-theme);
+  opacity: ${(props) => (props.checked ? 1 : 0.5)};
 `;
 
 const Navigation = ({ navbar, change, data }) => {
@@ -105,7 +106,11 @@ const Navigation = ({ navbar, change, data }) => {
         <PageUl>
           {newArray.map((e) => (
             <PageLi>
-              <PageBtn data-value={data.name} onClick={changePage}>
+              <PageBtn
+                data-value={data.name}
+                checked={data.pno == e + 1}
+                onClick={changePage}
+              >
                 {e + 1}
               </PageBtn>
             </PageLi>

@@ -422,7 +422,7 @@ const Member = ({
           {ann ? (
             <>
               <RecruitOne
-                newAnnList={[ann]}
+                annList={[ann]}
                 type={"Member"}
                 setRecruitIdx={setRecruitIdx}
                 setPopup={setRecruitPopup}

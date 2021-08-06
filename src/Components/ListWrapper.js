@@ -13,7 +13,7 @@ const Container = styled.div`
   grid-template-columns: repeat(auto-fill, 33.3%);
   background-color: white;
   border-radius: 50px;
-  width: 100%;
+  width: ${(props) => (props.kind === "RoomOne" ? "85%" : "100%")};
   border: ${(props) => (props.status ? "1px solid lightgray" : "none")};
   position: relative;
   padding: 10px 10px;
@@ -59,6 +59,7 @@ const ListWrapper = ({
     "",
   ];
 
+  study && console.log(study);
   const oneReturn = (kind) => {
     switch (kind) {
       case "RecruitOne":
@@ -85,8 +86,8 @@ const ListWrapper = ({
     }
   };
 
-  return annList ? (
-    <Container status={status}>
+  return annList || study ? (
+    <Container status={status} kind={kind}>
       <Title status={status}>AD</Title>
       {oneReturn(kind)}
     </Container>

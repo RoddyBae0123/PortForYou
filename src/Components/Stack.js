@@ -324,7 +324,7 @@ const Stack = ({
                       <img
                         id={e.idx}
                         data-name={e.name}
-                        src={`${wifi}api/img/default/${e.name}`}
+                        src={`${wifi}api/img/default/stack_image_${e.idx}`}
                         style={{ width: "35%" }}
                       />
                     </MakeCenter>
@@ -385,7 +385,7 @@ const Stack = ({
               <Makecenter>
                 <Logo>
                   <img
-                    src={`${wifi}api/img/default/${e.stackName}`}
+                    src={`${wifi}api/img/default/stack_image_${e.stackIdx}`}
                     style={{ width: "70%" }}
                   ></img>
                 </Logo>

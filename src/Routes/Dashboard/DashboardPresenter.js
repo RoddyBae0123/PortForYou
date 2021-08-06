@@ -265,6 +265,7 @@ const DashboardPresenter = ({
   getOtherAnnList,
   setAlcondition,
   alCondition,
+  
 }) => {
   const [popup, setPopup] = useState(false);
   const delBtnHandler = () => {

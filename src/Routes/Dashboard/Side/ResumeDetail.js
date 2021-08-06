@@ -10,7 +10,7 @@ import Stack from "../../../Components/Stack";
 import Education from "../../../Components/Education";
 import { motion } from "framer-motion";
 import $ from "jquery";
-import { studyApi, portFolioApi } from "../../../Api";
+import { studyApi, portFolioApi, imageApi } from "../../../Api";
 
 const Makecenter = styled.div`
   display: flex;
@@ -52,17 +52,15 @@ const UserTitle = styled.div`
   align-items: center;
 `;
 const UserFace = styled.div`
-  width: 130px;
-  height: 130px;
-  border: 2px solid black;
-  border-radius: 16px;
-  background-size: 100% auto;
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-image: ${(props) =>
-    props.portfolio_img
-      ? "url(" + props.portfolio_img + "&" + Date.now() + ")"
-      : "none"};
+  height: 150px;
+  width: 350px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 3.5px solid lightgray;
+  border-radius: 15px;
+  position: relative;
 `;
 const SectionTitle = styled.div`
   display: flex;
@@ -116,6 +114,15 @@ const ContentInput = styled.input`
   text-align: center;
 `;
 
+const SubTitle = styled.h1`
+  background-color: white;
+  position: absolute;
+  top: -0.5rem;
+  left: 3.5rem;
+  padding: 0 7px;
+  font-weight: 500;
+`;
+
 function ResumeDetail({ match, history }) {
   useEffect(() => {
     let mounted = true;
@@ -123,6 +130,7 @@ function ResumeDetail({ match, history }) {
       getPortFolio(Idx);
       getPositionList();
       getEducationList();
+      data && setImage(data.img);
     }
 
     return () => (mounted = false);
@@ -133,7 +141,7 @@ function ResumeDetail({ match, history }) {
   const accessToken = Auth.getAccessToken();
   const [data, setData] = useState(false); //Entire Data
   const [project, setProject] = useState(); //Entire Data.project Data
-  const [render, setRender] = useState(); //ê°•ì œ? Œ?”
+  const [image, setImage] = useState(); //ê°•ì œ? Œ?”
 
   const getPortFolio = async (idx) => {
     try {
@@ -211,22 +219,29 @@ function ResumeDetail({ match, history }) {
   const changePortfolioImage = async (event) => {
     const formData = new FormData();
     formData.append("img", event.target.files[0]);
-    formData.append("portfolio_idx", Idx);
-    const api = await axios.create({
-      baseURL: `${wifi}`,
-    });
-    console.log(Idx);
-    api
-      .post("/api/img/portfolio", formData, {
-        headers: {
-          Authorization: `Bearer ${Auth.getAccessToken()}`,
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((res) => {
-        setRender(res);
-      })
-      .catch((t) => console.log(t));
+    // formData.append("portfolio_idx", Idx);
+    try {
+      const result = await imageApi.setPortfolio(Idx, formData);
+      result && getPortFolio(Idx);
+      result && console.log(result);
+    } catch (e) {
+      console.log(e);
+    }
+    // const api = await axios.create({
+    //   baseURL: `${wifi}`,
+    // });
+    // console.log(Idx);
+    // api
+    //   .post("/api/img/portfolio", formData, {
+    //     headers: {
+    //       Authorization: `Bearer ${Auth.getAccessToken()}`,
+    //       "Content-Type": "multipart/form-data",
+    //     },
+    //   })
+    //   // .then((res) => {
+    //   //   setRender(res);
+    //   // })
+    //   // .catch((t) => console.log(t));
   };
 
   const setResumeList = async () => {
@@ -298,11 +313,19 @@ function ResumeDetail({ match, history }) {
             </UserSection>
             <UserSection>
               <UserFace
-                portfolio_img={data.img}
                 onClick={() => {
                   $("#portfolio_img_input").click();
                 }}
               >
+                <SubTitle>Choose your Image</SubTitle>
+                <img
+                  src={`${wifi}api/img/default/${Idx}_portfolio_img`}
+                  style={{
+                    height: "70%",
+                    borderRadius: "15px",
+                    boxShadow: "0 10px 15px lightgray",
+                  }}
+                ></img>
                 <form
                   style={{ display: "none" }}
                   onChange={changePortfolioImage}
