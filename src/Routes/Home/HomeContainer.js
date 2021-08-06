@@ -31,7 +31,7 @@ const HomeContainer = () => {
     },
   ];
 
-  return <Navigation navbar={navbar} />;
+  return <Applicant />;
 };
 
 export default HomeContainer;
