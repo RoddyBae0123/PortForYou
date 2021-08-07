@@ -108,7 +108,7 @@ const Tr = ({ data, DelResumeBtn }) => {
                 </SexyLink>
               </Makecenter>
               <Makecenter>
-                <h5>{e.content}</h5>
+                <h5>{e.content.substring(0, 150)}...</h5>
               </Makecenter>
             </IntroduceCon>
             <IntroduceCon>

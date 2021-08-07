@@ -13,7 +13,7 @@ const Container = styled.div`
   grid-template-columns: repeat(auto-fill, 33.3%);
   background-color: white;
   border-radius: 50px;
-  width: ${(props) => (props.kind === "RoomOne" ? "85%" : "100%")};
+  width: 100%;
   border: ${(props) => (props.status ? "1px solid lightgray" : "none")};
   position: relative;
   padding: 10px 10px;

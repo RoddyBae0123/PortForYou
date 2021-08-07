@@ -99,17 +99,18 @@ const Title2 = styled.h2`
   text-align: center;
   font-weight: 700;
 `;
-const List = ({ applicant }) => {
-  {
-    applicant && console.log(applicant);
-  }
+const List = ({ applicant, setPopup }) => {
+  const LiBtnHandler = (state, num) => {
+    setPopup({ state, num });
+  };
+
   const returnData = () => {
     return (
       <Container>
         <Title2>APPLICANT</Title2>
         {applicant &&
           applicant.map((e, idx) => (
-            <Li key={e.idx}>
+            <Li key={e.idx} onClick={() => LiBtnHandler(true, idx)}>
               <Button>
                 <MakeCenter align={true}>
                   <Text>{idx + 1}</Text>
@@ -140,7 +141,7 @@ const List = ({ applicant }) => {
                   </StackPosition>
                 </MakeCenter>
                 <MakeCenter align={true}>
-                  <Status color={e.declined}>{!e.declined&&"Waiting"}</Status>
+                  <Status color={e.declined}>{!e.declined && "Waiting"}</Status>
                 </MakeCenter>
                 <CreateDate>{e.regDate.substring(0, 10)}</CreateDate>
               </Button>

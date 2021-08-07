@@ -2,7 +2,8 @@ import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { GroupAddSharp, TrainRounded } from "@material-ui/icons";
 import HowToRegIcon from "@material-ui/icons/HowToReg";
-import { faFileInvoice } from "@fortawesome/free-solid-svg-icons";
+import { faCodepen } from "@fortawesome/free-brands-svg-icons";
+
 const Container = styled.div`
   display: flex;
   justify-content: center;
@@ -39,8 +40,9 @@ const Section = ({ title, message, nav }) => {
       case "Member":
         return <HowToRegIcon style={{ fontSize: 100 }}></HowToRegIcon>;
       case "Recruit":
-        return <FontAwesomeIcon icon={faFileInvoice} style={{ fontSize: 100 }} />;
-
+        return <GroupAddSharp style={{ fontSize: 100 }} />;
+      case "Room":
+        return <FontAwesomeIcon icon={faCodepen} style={{ fontSize: 100 }} />;
       default:
         break;
     }

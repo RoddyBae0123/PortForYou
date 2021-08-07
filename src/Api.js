@@ -57,6 +57,8 @@ export const studyApi = {
     }),
   getApplicationByStudyIdx: (idx) => api.get(`api/study/${idx}/applications`),
   deleteAnnouncement: (idx) => api.delete(`api/announcement/${idx}`),
+  declineApplication: (idx) => api.delete(`api/application/${idx}/decline`),
+  acceptApplication: (idx) => api.post(`api/application/${idx}/accept`),
 };
 
 export const AuthApi = {

@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGraduationCap, faLink } from "@fortawesome/free-solid-svg-icons";
 import wifi from "../wifi";
 import StarRatings from "react-star-ratings";
+import { portFolioApi, studyApi } from "../Api";
 
 const Container = styled.div`
   width: 100%;
@@ -37,7 +38,7 @@ const Small = styled.span`
   opacity: 0.3;
 `;
 
-const Portfolio = styled.main`
+const Section = styled.main`
   width: 80%;
   border: 1px solid lightgray;
   border-radius: 50px;
@@ -45,9 +46,10 @@ const Portfolio = styled.main`
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin: 30px 0;
 `;
 
-const PortName = styled.div`
+const SectionName = styled.div`
   height: 20px;
   font-size: 20px;
   color: #4a565e;
@@ -173,6 +175,7 @@ const StackContents = styled.div`
   height: 75%;
   width: 100%;
   box-shadow: 0 3px 6px lightgray;
+  overflow-y: scroll;
 `;
 
 const BtnBkg = styled.div`
@@ -180,348 +183,219 @@ const BtnBkg = styled.div`
   height: 200px;
   align-items: center;
   justify-content: space-evenly;
+  width: 100%;
 `;
 
 const ControlBtn = styled.button`
-  width: 160px;
-  height: 70px;
+  width: 120px;
+  height: 60px;
   border-radius: 20px;
-  border: 1px solid ${(props) => (props.accept ? "green" : "red")};
+  border: 2.5px solid ${(props) => (props.accept ? "green" : "red")};
   color: ${(props) => (props.accept ? "green" : "red")};
+  font-weight: 600;
+  font-size: 15px;
+  transition: all 300ms ease;
+  &:hover {
+    background-color: ${(props) => (props.accept ? "green" : "red")};
+    color: white;
+  }
 `;
 
-const Applicant = () => {
+const Applicant = (applicant) => {
+  applicant && console.log(applicant);
+  const [portfolio, setPortfolio] = useState();
+
+  const getPortFolio = async (idx) => {
+    try {
+      const { data } = await portFolioApi.getPortFolio(idx);
+      data && setPortfolio(data);
+    } catch (e) {
+      console.log("noData");
+    }
+  };
+  const controlBtnHandler = async (e) => {
+    try {
+      let res;
+      if (Boolean(e.target.dataset.accept)) {
+        const { data } = await studyApi.acceptApplication(e.target.id);
+        if (data) {
+          res = data;
+        }
+      } else {
+        const { data } = await studyApi.declineApplication(e.target.id);
+        if (data) {
+          res = data;
+        }
+      }
+      {
+        res && console.log(res);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+
+    // console.log(e.target.id, Boolean(e.target.dataset.accept));
+  };
+
+  {
+    applicant && console.log(applicant.idx);
+  }
+
+  useState(() => {
+    applicant && getPortFolio(applicant.portfolio.idx);
+  }, []);
+
   return (
-    <Container>
-      <Title>
-        <Img src="https://dimg.donga.com/carriage/NEWS/content/IDOLPICK/Profile/2019/02/01/20190201165707.jpg"></Img>
-        <Name>
-          Roddyisthebest / <Small>Back-end</Small>{" "}
-        </Name>
-      </Title>
-      <Portfolio>
-        <PortName status={true}>
-          <span style={{ backgroundColor: "white", padding: "0 20px" }}>
-            Portfolio
-          </span>
-        </PortName>
-        <PortSection>
-          <PortTitle>Title</PortTitle>
-          <PortContents>Super Ai Project</PortContents>
-        </PortSection>
-        <PortSection>
-          <PortTitle>Contents</PortTitle>
-          <PortContents>
-            Lorem Ipsum is simply dummy text of the printing and type setting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s, when an unknown printer took a galley of type
-            and scrambled it to make a type specimen book.{" "}
-          </PortContents>
-        </PortSection>
-        <PortSection>
-          <PortTitle>Education & Position</PortTitle>
-          <PortContents>
-            <EduAndPos>
-              <EduPosOne display={"grid"}>
-                <MakeCenter>
-                  <FontAwesomeIcon icon={faGraduationCap}></FontAwesomeIcon>
-                </MakeCenter>
-                <MakeCenter style={{ fontSize: 30 }}>Bachelor</MakeCenter>
-              </EduPosOne>
-              <EduPosOne display={"flex"}>Back-end</EduPosOne>
-            </EduAndPos>
-          </PortContents>
-        </PortSection>
-        <PortSection>
-          <PortTitle>Project</PortTitle>
-          <PortContents style={{ opacity: 1 }}>
-            <ProjectUl>
-              <ProjectLi>
-                <Project>
-                  <MakeCenter style={{ borderBottom: "1px solid lightgray" }}>
-                    <PortTitle style={{ fontSize: 40 }}>TITLE</PortTitle>
-                  </MakeCenter>
-                  <PortContents
-                    style={{
-                      fontSize: 12,
-                      height: "100%",
-                      overflowY: "scroll",
-                      margin: 0,
-                      padding: "15px 0 ",
-                    }}
-                  >
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industry's
-                    standard dummy text ever since the 1500s, when an unknown
-                    printer took a galley of type and scrambled it to make a
-                    type specimen book. It has survived not only five centuries
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industry's
-                    standard dummy text ever since the 1500s, when an unknown
-                    printer took a galley of type and scrambled it to make a
-                    type specimen book. It has survived not only five
-                    centuries...
-                  </PortContents>
-                  <Stacklist>
-                    <MakeCenter>
-                      <img
-                        style={{ width: "65%" }}
-                        src={`${wifi}api/img/default/stack_image_5`}
-                      />
-                    </MakeCenter>
-                    <MakeCenter>
-                      <img
-                        style={{ width: "65%" }}
-                        src={`${wifi}api/img/default/stack_image_2`}
-                      />
-                    </MakeCenter>
-                    <MakeCenter>
-                      <img
-                        style={{ width: "65%" }}
-                        src={`${wifi}api/img/default/stack_image_6`}
-                      />
-                    </MakeCenter>
-                    <MakeCenter>
-                      <img
-                        style={{ width: "65%" }}
-                        src={`${wifi}api/img/default/stack_image_4`}
-                      />
-                    </MakeCenter>
-                  </Stacklist>
+    portfolio && (
+      <Container>
+        <Title>
+          <Img src={portfolio.img}></Img>
+          <Name>
+            {applicant.portfolio.user.name} /{" "}
+            <Small>{applicant.position.name}</Small>{" "}
+          </Name>
+        </Title>
+        <Section>
+          <SectionName status={true}>
+            <span style={{ backgroundColor: "white", padding: "0 20px" }}>
+              Portfolio
+            </span>
+          </SectionName>
+          <PortSection>
+            <PortTitle>Title</PortTitle>
+            <PortContents>{applicant.portfolio.title}</PortContents>
+          </PortSection>
+          <PortSection>
+            <PortTitle>Content</PortTitle>
+            <PortContents>{portfolio.content}</PortContents>
+          </PortSection>
+          <PortSection>
+            <PortTitle>Education & Position</PortTitle>
+            <PortContents>
+              <EduAndPos>
+                <EduPosOne display={"grid"}>
                   <MakeCenter>
-                    <GoLink>
-                      <FontAwesomeIcon icon={faLink} />
-                      <span style={{ marginLeft: 20 }}>Go Link</span>
-                    </GoLink>
+                    <FontAwesomeIcon icon={faGraduationCap}></FontAwesomeIcon>
                   </MakeCenter>
-                </Project>
-              </ProjectLi>
-              <ProjectLi>
-                <Project>
-                  <MakeCenter style={{ borderBottom: "1px solid lightgray" }}>
-                    <PortTitle style={{ fontSize: 40 }}>TITLE</PortTitle>
+                  <MakeCenter style={{ fontSize: 20 }}>
+                    {portfolio.education.name}
                   </MakeCenter>
-                  <PortContents
-                    style={{
-                      fontSize: 12,
-                      height: "100%",
-                      overflowY: "scroll",
-                      margin: 0,
-                      padding: "15px 0 ",
-                    }}
-                  >
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industry's
-                    standard dummy text ever since the 1500s, when an unknown
-                    printer took a galley of type and scrambled it to make a
-                    type specimen book. It has survived not only five centuries
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industry's
-                    standard dummy text ever since the 1500s, when an unknown
-                    printer took a galley of type and scrambled it to make a
-                    type specimen book. It has survived not only five
-                    centuries...
-                  </PortContents>
-                  <Stacklist>
-                    <MakeCenter>
-                      <img
-                        style={{ width: "65%" }}
-                        src={`${wifi}api/img/default/stack_image_5`}
-                      />
-                    </MakeCenter>
-                    <MakeCenter>
-                      <img
-                        style={{ width: "65%" }}
-                        src={`${wifi}api/img/default/stack_image_2`}
-                      />
-                    </MakeCenter>
-                    <MakeCenter>
-                      <img
-                        style={{ width: "65%" }}
-                        src={`${wifi}api/img/default/stack_image_6`}
-                      />
-                    </MakeCenter>
-                    <MakeCenter>
-                      <img
-                        style={{ width: "65%" }}
-                        src={`${wifi}api/img/default/stack_image_4`}
-                      />
-                    </MakeCenter>
-                  </Stacklist>
-                  <MakeCenter>
-                    <GoLink>
-                      <FontAwesomeIcon icon={faLink} />
-                      <span style={{ marginLeft: 20 }}>Go Link</span>
-                    </GoLink>
-                  </MakeCenter>
-                </Project>
-              </ProjectLi>
-              <ProjectLi>
-                <Project>
-                  <MakeCenter style={{ borderBottom: "1px solid lightgray" }}>
-                    <PortTitle style={{ fontSize: 40 }}>TITLE</PortTitle>
-                  </MakeCenter>
-                  <PortContents
-                    style={{
-                      fontSize: 12,
-                      height: "100%",
-                      overflowY: "scroll",
-                      margin: 0,
-                      padding: "15px 0 ",
-                    }}
-                  >
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industry's
-                    standard dummy text ever since the 1500s, when an unknown
-                    printer took a galley of type and scrambled it to make a
-                    type specimen book. It has survived not only five centuries
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industry's
-                    standard dummy text ever since the 1500s, when an unknown
-                    printer took a galley of type and scrambled it to make a
-                    type specimen book. It has survived not only five
-                    centuries...
-                  </PortContents>
-                  <Stacklist>
-                    <MakeCenter>
-                      <img
-                        style={{ width: "65%" }}
-                        src={`${wifi}api/img/default/stack_image_5`}
-                      />
-                    </MakeCenter>
-                    <MakeCenter>
-                      <img
-                        style={{ width: "65%" }}
-                        src={`${wifi}api/img/default/stack_image_2`}
-                      />
-                    </MakeCenter>
-                    <MakeCenter>
-                      <img
-                        style={{ width: "65%" }}
-                        src={`${wifi}api/img/default/stack_image_6`}
-                      />
-                    </MakeCenter>
-                    <MakeCenter>
-                      <img
-                        style={{ width: "65%" }}
-                        src={`${wifi}api/img/default/stack_image_4`}
-                      />
-                    </MakeCenter>
-                  </Stacklist>
-                  <MakeCenter>
-                    <GoLink>
-                      <FontAwesomeIcon icon={faLink} />
-                      <span style={{ marginLeft: 20 }}>Go Link</span>
-                    </GoLink>
-                  </MakeCenter>
-                </Project>
-              </ProjectLi>
-              <ProjectLi>
-                <Project>
-                  <MakeCenter style={{ borderBottom: "1px solid lightgray" }}>
-                    <PortTitle style={{ fontSize: 40 }}>TITLE</PortTitle>
-                  </MakeCenter>
-                  <PortContents
-                    style={{
-                      fontSize: 12,
-                      height: "100%",
-                      overflowY: "scroll",
-                      margin: 0,
-                      padding: "15px 0 ",
-                    }}
-                  >
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industry's
-                    standard dummy text ever since the 1500s, when an unknown
-                    printer took a galley of type and scrambled it to make a
-                    type specimen book. It has survived not only five centuries
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industry's
-                    standard dummy text ever since the 1500s, when an unknown
-                    printer took a galley of type and scrambled it to make a
-                    type specimen book. It has survived not only five
-                    centuries...
-                  </PortContents>
-                  <Stacklist>
-                    <MakeCenter>
-                      <img
-                        style={{ width: "65%" }}
-                        src={`${wifi}api/img/default/stack_image_5`}
-                      />
-                    </MakeCenter>
-                    <MakeCenter>
-                      <img
-                        style={{ width: "65%" }}
-                        src={`${wifi}api/img/default/stack_image_2`}
-                      />
-                    </MakeCenter>
-                    <MakeCenter>
-                      <img
-                        style={{ width: "65%" }}
-                        src={`${wifi}api/img/default/stack_image_6`}
-                      />
-                    </MakeCenter>
-                    <MakeCenter>
-                      <img
-                        style={{ width: "65%" }}
-                        src={`${wifi}api/img/default/stack_image_4`}
-                      />
-                    </MakeCenter>
-                  </Stacklist>
-                  <MakeCenter>
-                    <GoLink>
-                      <FontAwesomeIcon icon={faLink} />
-                      <span style={{ marginLeft: 20 }}>Go Link</span>
-                    </GoLink>
-                  </MakeCenter>
-                </Project>
-              </ProjectLi>
-            </ProjectUl>
-          </PortContents>
-        </PortSection>
-        <PortSection style={{ borderBottom: "none" }}>
-          <PortTitle>Stack</PortTitle>
-          <PortContents style={{ opacity: 1 }}>
-            <StackUl>
-              <StackLi>
-                <Stack>
-                  <StackLogo>
-                    <img
-                      style={{ width: "50px" }}
-                      src={`${wifi}api/img/default/stack_image_4`}
-                    />
-                    <span>React</span>
-                  </StackLogo>
-                  <MakeCenter>
-                    <StackContents></StackContents>
-                  </MakeCenter>
-                  <MakeCenter>
-                    <StarRatings
-                      rating={3}
-                      starRatedColor="RGB(255, 140, 148)"
-                      numberOfStars={5}
-                      starSpacing="10px"
-                      starDimension="25px"
-                    />
-                  </MakeCenter>
-                </Stack>
-              </StackLi>
-            </StackUl>
-          </PortContents>
-        </PortSection>
-      </Portfolio>
-      <Portfolio style={{ marginTop: 30 }}>
-        <PortName status={true}>
-          <span style={{ backgroundColor: "white", padding: "0 20px" }}>
-            No Flex zone
-          </span>
-        </PortName>
-        <BtnBkg>
-          <ControlBtn accept={true}>Accept</ControlBtn>
-          <ControlBtn accept={false}>Deny</ControlBtn>
-        </BtnBkg>
-      </Portfolio>
-    </Container>
+                </EduPosOne>
+                <EduPosOne display={"flex"} style={{ fontSize: 25 }}>
+                  {portfolio.position.name}
+                </EduPosOne>
+              </EduAndPos>
+            </PortContents>
+          </PortSection>
+          <PortSection>
+            <PortTitle>Project</PortTitle>
+            <PortContents style={{ opacity: 1 }}>
+              <ProjectUl>
+                {portfolio.project.map((e) => (
+                  <ProjectLi key={e.idx}>
+                    <Project>
+                      <MakeCenter
+                        style={{ borderBottom: "1px solid lightgray" }}
+                      >
+                        <PortTitle style={{ fontSize: 40 }}>
+                          {e.title.length >= 13
+                            ? e.title.substring(0, 13) + "..."
+                            : e.title}
+                        </PortTitle>
+                      </MakeCenter>
+                      <PortContents
+                        style={{
+                          fontSize: 12,
+                          height: "100%",
+                          overflowY: "scroll",
+                          margin: 0,
+                          padding: "15px 0 ",
+                        }}
+                      >
+                        {e.content}
+                      </PortContents>
+                      <Stacklist>
+                        {e.stack.map((e) => (
+                          <MakeCenter key={e.idx}>
+                            <img
+                              style={{ width: "65%" }}
+                              src={`${wifi}api/img/default/stack_image_${e.idx}`}
+                            />
+                          </MakeCenter>
+                        ))}
+                      </Stacklist>
+                      <MakeCenter>
+                        <GoLink href={e.site}>
+                          <FontAwesomeIcon icon={faLink} />
+                          <span style={{ marginLeft: 20 }}>Go Link</span>
+                        </GoLink>
+                      </MakeCenter>
+                    </Project>
+                  </ProjectLi>
+                ))}
+              </ProjectUl>
+            </PortContents>
+          </PortSection>
+          <PortSection style={{ borderBottom: "none" }}>
+            <PortTitle>Stack</PortTitle>
+            <PortContents style={{ opacity: 1 }}>
+              <StackUl>
+                {portfolio.tech.map((e) => (
+                  <StackLi key={e.idx}>
+                    <Stack>
+                      <StackLogo>
+                        <img
+                          style={{ width: "50px" }}
+                          src={`${wifi}api/img/default/stack_image_${e.stackIdx}`}
+                        />
+                        <span>{e.stackName}</span>
+                      </StackLogo>
+                      <MakeCenter>
+                        <StackContents>{e.content}</StackContents>
+                      </MakeCenter>
+                      <MakeCenter>
+                        <StarRatings
+                          rating={e.ability}
+                          starRatedColor="RGB(255, 140, 148)"
+                          numberOfStars={5}
+                          starSpacing="8px"
+                          starDimension="20px"
+                        />
+                      </MakeCenter>
+                    </Stack>
+                  </StackLi>
+                ))}
+              </StackUl>
+            </PortContents>
+          </PortSection>
+        </Section>
+        <Section style={{ marginTop: 30 }}>
+          <SectionName status={true}>
+            <span style={{ backgroundColor: "white", padding: "0 20px" }}>
+              No Flex zone
+            </span>
+          </SectionName>
+          <BtnBkg>
+            <ControlBtn
+              id={applicant.idx}
+              accept={true}
+              onClick={controlBtnHandler}
+              data-accept={true}
+            >
+              ACCEPT
+            </ControlBtn>
+            <ControlBtn
+              id={applicant.idx}
+              accept={false}
+              onClick={controlBtnHandler}
+              data-accept={""}
+            >
+              DENY
+            </ControlBtn>
+          </BtnBkg>
+        </Section>
+      </Container>
+    )
   );
 };
 

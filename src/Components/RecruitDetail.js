@@ -509,7 +509,7 @@ const RecruitDetail = ({
                     {e.title.substring(0, 8)}...
                   </h1>
                 </PfTitle>
-                <h2>{e.content}</h2>
+                <h2>{e.content.substring(0, 50)}...</h2>
                 <PfPosition key={e.position.idx}>{e.position.name}</PfPosition>
                 <StackList>
                   {e.stack &&

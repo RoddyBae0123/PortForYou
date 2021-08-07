@@ -17,6 +17,7 @@ const PopupBkg = styled.div`
   opacity: ${(props) => (props.change ? 1 : 0)};
   transition: all 300ms ease-in-out;
   display: ${(props) => (props.status ? "flex" : "none")};
+  background-color: rgba(0, 0, 0, 0.3);
 `;
 const PopupUser = styled.div`
   width: ${(props) => props.width};
@@ -34,7 +35,7 @@ const PopupUser = styled.div`
 const DelpopupBtn = styled.button`
   display: ${(props) => (props.second ? "none" : "block")};
   background-color: transparent;
-  position: absolute;
+  position: fixed;
   right: 15px;
   top: 15px;
   font-size: 20px;
@@ -45,10 +46,9 @@ const DelpopupBtn = styled.button`
   transition: all 200ms ease-in-out;
 `;
 
-const Popup = ({ status, component, second, size }) => {
+const Popup = ({ status, component, second, size, setPopup }) => {
   const [sec, setSec] = useState(true);
   const [change, setChange] = useState(false);
-
   const timeout = () => {
     setChange(true);
     if (second) {
@@ -67,7 +67,7 @@ const Popup = ({ status, component, second, size }) => {
   return sec ? (
     <PopupBkg status={status} change={change}>
       <PopupUser width={size.width} height={size.height}>
-        <DelpopupBtn second>
+        <DelpopupBtn second={second} onClick={() => setPopup(false)}>
           <FontAwesomeIcon style={{ fontSize: 35 }} icon={faTimes} />
         </DelpopupBtn>
         {component()}

@@ -131,6 +131,7 @@ function ResumeDetail({ match, history }) {
       getPositionList();
       getEducationList();
       data && setImage(data.img);
+      getFullStack();
     }
 
     return () => (mounted = false);
@@ -141,8 +142,8 @@ function ResumeDetail({ match, history }) {
   const accessToken = Auth.getAccessToken();
   const [data, setData] = useState(false); //Entire Data
   const [project, setProject] = useState(); //Entire Data.project Data
-  const [image, setImage] = useState(); //ê°•ì œ? Œ?”
-
+  const [fullStack, setFullStack] = useState();
+  const [image, setImage] = useState();
   const getPortFolio = async (idx) => {
     try {
       const { data: port } = await portFolioApi.getPortFolio(idx);
@@ -174,6 +175,21 @@ function ResumeDetail({ match, history }) {
 
       {
         data && setStack(data);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const getFullStack = async () => {
+    try {
+      const { data } = await portFolioApi.getStackList("");
+
+      {
+        data && console.log(data);
+      }
+
+      {
+        data && setFullStack(data);
       }
     } catch (e) {
       console.log(e);
@@ -319,7 +335,7 @@ function ResumeDetail({ match, history }) {
               >
                 <SubTitle>Choose your Image</SubTitle>
                 <img
-                  src={`${wifi}api/img/default/${Idx}_portfolio_img`}
+                  src={`${wifi}api/img/default/${Idx}_portfolio_img?date=${new Date().toString()}`}
                   style={{
                     height: "70%",
                     borderRadius: "15px",
@@ -364,7 +380,7 @@ function ResumeDetail({ match, history }) {
             data={data.project}
             setDetail={setProject}
             detail={project}
-            stackData={stackData}
+            stackData={fullStack}
           />
           <SectionTitle>
             <h1 style={{ margin: "30px 0" }}>Stack</h1>

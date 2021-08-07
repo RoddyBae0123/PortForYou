@@ -17,6 +17,10 @@ const DashboardContainer = ({ match, history }) => {
     kind: "recommend",
     query: undefined,
   });
+  const [roomCondition, setRoomCondition] = useState({
+    kind: "managed",
+  });
+
   const getUserInfo = async () => {
     try {
       const result = await userApi.getUserInfo();
@@ -121,6 +125,10 @@ const DashboardContainer = ({ match, history }) => {
   }, [alCondition]);
 
   useEffect(() => {
+    roomCondition.kind === "managed" ? getStudyList(false) : getStudyList(true);
+  }, [roomCondition]);
+
+  useEffect(() => {
     getUserInfo();
   }, []);
 
@@ -143,6 +151,8 @@ const DashboardContainer = ({ match, history }) => {
         getOtherAnnList={getOtherAnnList}
         setAlcondition={setAlcondition}
         alCondition={alCondition}
+        roomCondition={roomCondition}
+        setRoomCondition={setRoomCondition}
       ></DashboardPresenter>
     </>
   );

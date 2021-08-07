@@ -14,7 +14,8 @@ import Loader from "react-loader-spinner";
 import RecruitOne from "../../../Components/RecruitOne";
 import List from "../../../Components/List";
 import RecruitDetail from "../../../Components/RecruitDetail";
-
+import Applicant from "../../../Components/Applicant";
+import Popup from "../../../Components/Popup";
 const Container = styled.div`
   display: flex;
   align-items: center;
@@ -231,6 +232,8 @@ const Member = ({
   }
   const [popup, setPopup] = useState(false);
   const [recruitPopup, setRecruitPopup] = useState(false);
+  const [appPopup, setAppPopup] = useState({ popup: false, num: undefined });
+
   const [recruitIdx, setRecruitIdx] = useState(undefined);
   const [disabled, setDisabled] = useState(true);
   const [port, setPort] = useState(undefined);
@@ -388,6 +391,16 @@ const Member = ({
       ></RecruitDetail>
     ) : null;
 
+  const returnAppDetail = (popup, setPopup, applicant) => {
+    return applicant && popup.state ? (
+      <Popup
+        status={popup.state}
+        component={() => Applicant(applicant[popup.num])}
+        setPopup={setPopup}
+        size={{ width: "1200px", height: "700px" }}
+      ></Popup>
+    ) : null;
+  };
   const DelectAll = () => {
     setPopup(false);
     setPosition([]);
@@ -427,7 +440,7 @@ const Member = ({
                 setRecruitIdx={setRecruitIdx}
                 setPopup={setRecruitPopup}
               ></RecruitOne>
-              <List applicant={applicant}></List>
+              <List applicant={applicant} setPopup={setAppPopup} />
             </>
           ) : (
             <RruCreateBtn onClick={() => setPopup(true)}>
@@ -440,6 +453,7 @@ const Member = ({
         </MemberData>
       </Container>
       {returnDetail(recruitPopup)}
+      {applicant && returnAppDetail(appPopup, setAppPopup, applicant)}
       <PopupBkg status={popup}>
         <PopupUser onSubmit={SumbitHandler}>
           <DelpopupBtn type="button" onClick={DelectAll}>

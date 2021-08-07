@@ -265,7 +265,8 @@ const DashboardPresenter = ({
   getOtherAnnList,
   setAlcondition,
   alCondition,
-  
+  roomCondition,
+  setRoomCondition,
 }) => {
   const [popup, setPopup] = useState(false);
   const delBtnHandler = () => {
@@ -495,6 +496,8 @@ const DashboardPresenter = ({
                     setStudy={setStudy}
                     study={study}
                     history={history}
+                    roomCondition={roomCondition}
+                    setRoomCondition={setRoomCondition}
                   ></Room>
                 )}
               ></Route>

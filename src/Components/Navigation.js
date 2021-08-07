@@ -7,6 +7,14 @@ const Container = styled.div`
 
 const Navbar = styled.div`
   border-bottom: 1px solid lightgray;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+`;
+
+const AddZone = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 `;
 
 const Ul = styled.ul`
@@ -62,13 +70,14 @@ const PageBtn = styled.button`
   opacity: ${(props) => (props.checked ? 1 : 0.5)};
 `;
 
-const Navigation = ({ navbar, change, data }) => {
+const Navigation = ({ navbar, change, data, additup }) => {
   const clonedeep = require("lodash.clonedeep");
 
   const [st, setSt] = useState();
   const copy = [];
   useState(() => {
     navbar &&
+      data &&
       navbar.map((e) => {
         copy.push(
           data.kind === e.name.toLowerCase()
@@ -135,6 +144,7 @@ const Navigation = ({ navbar, change, data }) => {
                 </Li>
               ))}
             </Ul>
+            <AddZone>{additup && additup(true)}</AddZone>
           </Navbar>
           <Contents>
             {navbar.map((e, idx) => e.component(st[idx].checked))}

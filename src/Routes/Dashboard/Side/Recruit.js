@@ -280,6 +280,7 @@ const Recruit = ({
             navbar={navbar}
             change={setAlcondition}
             data={alCondition}
+            type={"recruit"}
           />
         )}
       </Container>
