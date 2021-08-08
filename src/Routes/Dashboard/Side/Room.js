@@ -1,11 +1,11 @@
 import { AnimatePresence, motion } from "framer-motion";
 import styled from "styled-components";
-import MdataProcessing from "../../../Components/MdataProcessing";
 import ListWrapper from "../../../Components/ListWrapper";
 import { useEffect, useState } from "react";
 import Section from "../../../Components/Section";
 import Navigation from "../../../Components/Navigation";
 import Popup from "../../../Components/Popup";
+import { studyApi } from "../../../Api";
 
 const Container = styled.div`
   display: flex;
@@ -122,11 +122,33 @@ const Room = ({
 }) => {
   const [name, setName] = useState("Manage");
   const [popup, setPopup] = useState();
+  const [room, setRoom] = useState({
+    title: "",
+    content: "",
+    studyCategory: {
+      idx: "",
+    },
+  });
+  const [catgry, setCatgry] = useState();
+  const [disabled, setDisabled] = useState(true);
+
   useEffect(() => {
     getStudyList(false);
+    getCategoryList();
   }, []);
+  useEffect(() => {
+    {
+      room &&
+      room["title"].length > 2 &&
+      room["content"].length > 10 &&
+      room["studyCategory"].idx
+        ? setDisabled(false)
+        : setDisabled(true);
+    }
+    return () => setDisabled(true);
+  }, [room]);
 
-  console.log(history);
+  const body = document.querySelector("body");
 
   const navbar = [
     {
@@ -166,6 +188,78 @@ const Room = ({
       page: { pno: 1, lastPno: 1 },
     },
   ];
+  const RoomBtnHandler = (e) => {
+    setPopup(e);
+    if (e) {
+      body.style.overflow = "hidden";
+    } else {
+      body.style.overflow = "auto";
+    }
+    setRoom({
+      title: "",
+      content: "",
+      studyCategory: {
+        idx: "",
+      },
+    });
+  };
+  const SubmitBtnHandler = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await studyApi.saveStudy(room);
+      res && getStudyList(false);
+      RoomBtnHandler(false);
+      setRoom({
+        title: "",
+        content: "",
+        studyCategory: {
+          idx: "",
+        },
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const setRoomValue = (e) => {
+    if (e.target.dataset.kind === "0") {
+      setRoom({
+        title: e.target.value,
+        content: room["content"],
+        studyCategory: {
+          idx: room["studyCategory"].idx,
+        },
+      });
+    } else if (e.target.dataset.kind === "1") {
+      setRoom({
+        // e.target.value
+        title: room["title"],
+        content: e.target.value,
+        studyCategory: {
+          idx: room["studyCategory"].idx,
+        },
+      });
+    } else {
+      setRoom({
+        // e.target.value
+        title: room["title"],
+        content: room["content"],
+        studyCategory: {
+          idx: e.target.value,
+        },
+      });
+    }
+  };
+
+  const getCategoryList = async () => {
+    try {
+      const { data } = await studyApi.getCategoryList();
+      {
+        data && setCatgry(data);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   const returnButton = (type) => {
     return type ? (
@@ -186,7 +280,7 @@ const Room = ({
   );
 
   const returnDiv = (e) => (
-    <CreateContainer>
+    <CreateContainer onSubmit={SubmitBtnHandler}>
       <CreateRoomTitle>Create Room</CreateRoomTitle>
       <div style={{ width: "70%", marginBottom: "50px" }}>
         <label style={{ marginBottom: 15, fontSize: 23, fontWeight: 500 }}>
@@ -194,8 +288,8 @@ const Room = ({
         </label>
         <RoomInput
           data-kind={0}
-          // onChange={setRoomValue}
-          // value={room.title}
+          onChange={setRoomValue}
+          value={room.title}
           placeholder="Please enter at least two characters.
 "
         ></RoomInput>
@@ -205,10 +299,10 @@ const Room = ({
           Description
         </label>
         <RoomInput
-          // data-kind={1}
-          // onChange={setRoomValue}
+          data-kind={1}
+          onChange={setRoomValue}
           style={{ height: 150 }}
-          // value={room.content}
+          value={room.content}
           placeholder="Please enter at least ten characters.
 "
         ></RoomInput>
@@ -219,22 +313,22 @@ const Room = ({
         </label>
         <Select
           data-kind={2}
-          // onChange={setRoomValue}
-          // value={room.studyCategory["idx"]}
+          onChange={setRoomValue}
+          value={room.studyCategory["idx"]}
         >
           <option value="">--Please choose an option--</option>
-          {/* {catgry &&
+          {catgry &&
             catgry.map((e) => (
               <option key={e.idx} value={e.idx}>
                 {e.title}
               </option>
-            ))} */}
+            ))}
         </Select>
       </div>
       <SubmitButton
         type="submit"
-        // status={disabled}
-        // disabled={disabled}
+        status={disabled}
+        disabled={disabled}
         value="Create"
       ></SubmitButton>
     </CreateContainer>

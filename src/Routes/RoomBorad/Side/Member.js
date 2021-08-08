@@ -395,7 +395,7 @@ const Member = ({
     return applicant && popup.state ? (
       <Popup
         status={popup.state}
-        component={() => Applicant(applicant[popup.num])}
+        component={() => Applicant(applicant[popup.num], getApplication)}
         setPopup={setPopup}
         size={{ width: "1200px", height: "700px" }}
       ></Popup>

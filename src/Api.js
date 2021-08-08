@@ -42,6 +42,12 @@ export const studyApi = {
     }),
   getAnnouncementList: (idx) => api.get(`api/study/${idx}/announcements`),
   getAnnouncement: (idx) => api.get(`api/announcement/${idx}`),
+  saveStudy: (data) =>
+    api.post("api/study", {
+      title: data.title,
+      content: data.content,
+      studyCategory: data.studyCategory,
+    }),
   getOtherAnnouncementList: (data) =>
     api.get(
       `api/announcements?pno=${data.pno}&kind=${data.kind}&query=${data.query}`
@@ -57,8 +63,8 @@ export const studyApi = {
     }),
   getApplicationByStudyIdx: (idx) => api.get(`api/study/${idx}/applications`),
   deleteAnnouncement: (idx) => api.delete(`api/announcement/${idx}`),
-  declineApplication: (idx) => api.delete(`api/application/${idx}/decline`),
-  acceptApplication: (idx) => api.post(`api/application/${idx}/accept`),
+  declineApplication: (idx) => api.get(`api/application/${idx}/decline`),
+  acceptApplication: (idx) => api.get(`api/application/${idx}/accept`),
 };
 
 export const AuthApi = {

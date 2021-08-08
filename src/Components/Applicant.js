@@ -201,7 +201,13 @@ const ControlBtn = styled.button`
   }
 `;
 
-const Applicant = (applicant) => {
+const Message = styled.span`
+  color: ${(props) => (props.color == -1 ? "green" : "red")};
+  font-size: 30px;
+  font-weight: 500;
+`;
+
+const Applicant = (applicant, getApplication) => {
   applicant && console.log(applicant);
   const [portfolio, setPortfolio] = useState();
 
@@ -228,7 +234,7 @@ const Applicant = (applicant) => {
         }
       }
       {
-        res && console.log(res);
+        res && getApplication();
       }
     } catch (e) {
       console.log(e);
@@ -236,6 +242,34 @@ const Applicant = (applicant) => {
 
     // console.log(e.target.id, Boolean(e.target.dataset.accept));
   };
+
+  const returnControlBtn = (state) =>
+    state ? (
+      <Message color={state}>
+        {state == -1
+          ? "This user has been approved."
+          : "This user has been denied approval."}
+      </Message>
+    ) : (
+      <>
+        <ControlBtn
+          id={applicant.idx}
+          accept={true}
+          onClick={controlBtnHandler}
+          data-accept={true}
+        >
+          ACCEPT
+        </ControlBtn>
+        <ControlBtn
+          id={applicant.idx}
+          accept={false}
+          onClick={controlBtnHandler}
+          data-accept={""}
+        >
+          DENY
+        </ControlBtn>
+      </>
+    );
 
   {
     applicant && console.log(applicant.idx);
@@ -375,24 +409,7 @@ const Applicant = (applicant) => {
               No Flex zone
             </span>
           </SectionName>
-          <BtnBkg>
-            <ControlBtn
-              id={applicant.idx}
-              accept={true}
-              onClick={controlBtnHandler}
-              data-accept={true}
-            >
-              ACCEPT
-            </ControlBtn>
-            <ControlBtn
-              id={applicant.idx}
-              accept={false}
-              onClick={controlBtnHandler}
-              data-accept={""}
-            >
-              DENY
-            </ControlBtn>
-          </BtnBkg>
+          <BtnBkg>{returnControlBtn(applicant.declined)}</BtnBkg>
         </Section>
       </Container>
     )

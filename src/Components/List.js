@@ -61,7 +61,7 @@ const Position = styled.div`
 `;
 
 const Status = styled.button`
-  color: ${(props) => props.color};
+  color: ${(props) => (props.color == -1 ? "green" : "red")};
   font-size: 25px;
   font-weight: 500;
 `;
@@ -141,7 +141,11 @@ const List = ({ applicant, setPopup }) => {
                   </StackPosition>
                 </MakeCenter>
                 <MakeCenter align={true}>
-                  <Status color={e.declined}>{!e.declined && "Waiting"}</Status>
+                  <Status color={e.declined}>
+                    {e.declined == -1 && "Accepted"}
+                    {e.declined == 1 && "Rejected"}
+                    {e.declined == 0 && "Wating"}
+                  </Status>
                 </MakeCenter>
                 <CreateDate>{e.regDate.substring(0, 10)}</CreateDate>
               </Button>
