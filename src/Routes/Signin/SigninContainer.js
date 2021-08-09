@@ -20,10 +20,10 @@ const SigninContainer = (props) => {
   };
   useEffect(Iserror, [error]);
   const Isresult = () => {
-    console.log(result);
+    result && console.log(result.data.message);
 
     if (result && result.status === 200) {
-      auth.setAccessTokenToCookie(result.data.message);
+      auth.setTokenToLocalstorage(result.data.message);
 
       push("/dashboard/resume");
     }
