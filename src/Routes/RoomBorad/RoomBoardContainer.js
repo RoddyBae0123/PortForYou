@@ -11,7 +11,7 @@ const RoomBoardContainer = (props) => {
   const [userData, setUserData] = useState(undefined); //user information
   const [position, setPosition] = useState([]);
   const { match, location, history } = props;
-
+  match && console.log(match);
   const {
     state: { idx },
   } = location;
@@ -202,6 +202,7 @@ const RoomBoardContainer = (props) => {
       getAnnouncementList={getAnnouncementList}
       getAnn={getAnn}
       setApplicant={setApplicant}
+      roomIdx={idx}
     />
   );
 };

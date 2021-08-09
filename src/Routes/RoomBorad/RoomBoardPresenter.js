@@ -233,6 +233,7 @@ const RoomBoardPresenter = ({
   getAnnouncementList,
   getAnn,
   setApplicant,
+  roomIdx,
 }) => {
   const [popup, setPopup] = useState(false);
   const delBtnHandler = () => {
@@ -310,7 +311,13 @@ const RoomBoardPresenter = ({
           </Makecenter>
 
           <LinkList>
-            <LinkSexy to={`${match.path}/board`}>
+            <LinkSexy
+              state={{ idx: roomIdx }}
+              to={{
+                pathname: `/roomboard/board/${roomIdx}`,
+                state: { idx: roomIdx, where: "room" },
+              }}
+            >
               <LinkCent>
                 <LinkIcon>
                   <FontAwesomeIcon icon={faTable} size="2x" />
@@ -320,7 +327,12 @@ const RoomBoardPresenter = ({
                 <LinkTitle>Board</LinkTitle>
               </LinkCent>
             </LinkSexy>
-            <LinkSexy to={`${match.path}/member`}>
+            <LinkSexy
+              to={{
+                pathname: `/roomboard/member/${roomIdx}`,
+                state: { idx: roomIdx, where: "room" },
+              }}
+            >
               <LinkCent>
                 <LinkIcon>
                   <HowToRegIcon />
@@ -330,7 +342,12 @@ const RoomBoardPresenter = ({
                 <LinkTitle>Member</LinkTitle>
               </LinkCent>
             </LinkSexy>
-            <LinkSexy to={`${match.path}/channel`}>
+            <LinkSexy
+              to={{
+                pathname: `/roomboard/channel/${roomIdx}`,
+                state: { idx: roomIdx, where: "room" },
+              }}
+            >
               <LinkCent>
                 <LinkIcon>
                   <Forum />
@@ -340,8 +357,13 @@ const RoomBoardPresenter = ({
                 <LinkTitle>Channel</LinkTitle>
               </LinkCent>
             </LinkSexy>
-
-            <LinkSexy to={`${match.path}/calender`}>
+            {/* calender */}
+            <LinkSexy
+              to={{
+                pathname: `/roomboard/calender/${roomIdx}`,
+                state: { idx: roomIdx, where: "room" },
+              }}
+            >
               <LinkCent>
                 <LinkIcon>
                   <FontAwesomeIcon icon={faCalendarAlt} size="2x" />
@@ -351,7 +373,12 @@ const RoomBoardPresenter = ({
                 <LinkTitle>Calender</LinkTitle>
               </LinkCent>
             </LinkSexy>
-            <LinkSexy to={`${match.path}/setting`}>
+            <LinkSexy
+              to={{
+                pathname: `/roomboard/setting/${roomIdx}`,
+                state: { idx: roomIdx, where: "room" },
+              }}
+            >
               <LinkCent>
                 <LinkIcon>
                   <FontAwesomeIcon icon={faCogs} size="2x" />
@@ -390,7 +417,10 @@ const RoomBoardPresenter = ({
         <Right style={{ minWidth: 1200 }}>
           <AnimatePresence>
             <Switch>
-              <Route path={`${match.path}/board`} component={Board}></Route>
+              <Route
+                path={`${match.path}/board/:idx`}
+                component={Board}
+              ></Route>
               <Route
                 path={`${match.path}/member/:idx`}
                 render={(props) => (

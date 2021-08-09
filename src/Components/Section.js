@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { GroupAddSharp, TrainRounded } from "@material-ui/icons";
 import HowToRegIcon from "@material-ui/icons/HowToReg";
 import { faCodepen } from "@fortawesome/free-brands-svg-icons";
+import { Forum } from "@material-ui/icons";
 
 const Container = styled.div`
   display: flex;
@@ -43,6 +44,8 @@ const Section = ({ title, message, nav }) => {
         return <GroupAddSharp style={{ fontSize: 100 }} />;
       case "Room":
         return <FontAwesomeIcon icon={faCodepen} style={{ fontSize: 100 }} />;
+      case "Channel":
+        return <Forum style={{ fontSize: 100 }} />;
       default:
         break;
     }

@@ -253,6 +253,8 @@ const Member = ({
   }, [position, rcSave]);
 
   useEffect(() => {
+    setPosition([]);
+
     getPositionList();
     getApplication();
     save();
