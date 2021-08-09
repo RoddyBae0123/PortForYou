@@ -17,5 +17,10 @@ const cookieAuth = {
 }
 
 
+const localstorageAuth ={
+    setTokenToLocalstorage(access_token){localStorage.setItem("Auth",access_token)},
+    
+}
+
 
 export default cookieAuth;

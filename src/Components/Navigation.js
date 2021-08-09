@@ -77,7 +77,6 @@ const Navigation = ({ navbar, change, data, additup }) => {
   const copy = [];
   useState(() => {
     navbar &&
-      data &&
       navbar.map((e) => {
         copy.push(
           data.kind === e.name.toLowerCase()
@@ -87,11 +86,17 @@ const Navigation = ({ navbar, change, data, additup }) => {
       });
     setSt(copy);
   }, []);
-
   const setChecked = (idx) => {
+    console.log(typeof navbar[idx].query);
     const copy = clonedeep(st);
     copy.map((e) => (e.checked = false));
-    change && change({ pno: 1, kind: navbar[idx].name.toLowerCase() });
+    change &&
+      change({
+        pno: 1,
+        kind: navbar[idx].name.toLowerCase(),
+        query:
+          typeof navbar[idx].query == "string" ? navbar[idx].query : "hello",
+      });
     copy[idx].checked = true;
     // console.log(navbar[idx].page.lastPno);
     setSt(copy);
@@ -106,7 +111,6 @@ const Navigation = ({ navbar, change, data, additup }) => {
 
   const returnPage = (state, data) => {
     const newArray = [];
-    console.log(data);
     for (let i = 0; i < data.lastPno; i++) {
       newArray.push(i);
     }
@@ -128,8 +132,7 @@ const Navigation = ({ navbar, change, data, additup }) => {
       </Page>
     ) : null;
   };
-  navbar && navbar.map((e) => console.log(e));
-
+  st && console.log(st);
   const returnNavbar = () => (
     <Container>
       {st && (

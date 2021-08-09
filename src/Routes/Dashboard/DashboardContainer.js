@@ -24,7 +24,6 @@ const DashboardContainer = ({ match, history }) => {
   const getUserInfo = async () => {
     try {
       const result = await userApi.getUserInfo();
-      result && console.log(result);
       result && setUserData(result);
       result && setProfileImgUri(result.data.img);
     } catch (e) {
@@ -108,6 +107,7 @@ const DashboardContainer = ({ match, history }) => {
       {
         data && setOtherAnnList(data);
       }
+      console.log(pno, kind, query);
       {
         data && console.log(data);
       }

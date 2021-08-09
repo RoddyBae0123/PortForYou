@@ -51,6 +51,29 @@ const Title2 = styled.div`
   display: ${(props) => (props.status ? "block" : "none")};
 `;
 
+const SearchForm = styled.form`
+  margin-right: 20px;
+  display: grid;
+  grid-template-columns: 230px 40px;
+  height: 40px;
+  border-radius: 4px;
+`;
+const Input = styled.input`
+  border: 1px solid lightgray;
+  outline: none;
+  background-color: white;
+  font-size: 20px;
+  border-radius: 10px 0 0 10px;
+  border-right: none;
+  box-shadow: 1px 1px 5px lightgray;
+`;
+const Submit = styled.input`
+  border: 1px solid lightgray;
+  border-radius: 0 10px 10px 0;
+  background-color: white;
+  box-shadow: 1px 1px 5px lightgray;
+`;
+
 const Recruit = ({
   history,
   otherAnnList,
@@ -63,6 +86,7 @@ const Recruit = ({
   const [ann, setAnn] = useState(undefined);
   const [port, setPort] = useState(undefined);
   const [result, setResult] = useState(undefined);
+  const [search, setSearch] = useState("fuck");
 
   useEffect(() => {
     otherAnnList && console.log(otherAnnList);
@@ -138,6 +162,29 @@ const Recruit = ({
     ></Popup>
   );
 
+  const returnSearch = (type) =>
+    type ? (
+      <SearchForm onSubmit={searchSubmitBtn}>
+        <Input type="text"></Input>
+        <Submit type="submit" value="&#128269;"></Submit>
+      </SearchForm>
+    ) : null;
+
+  // const SearchTyping = (e) => {
+  //   setSearch(e.target.value);
+  // };
+  // useState(() => {
+  //   console.log(search);
+  // }, [search]);
+  const searchSubmitBtn = (e) => {
+    e.preventDefault();
+    localStorage.setItem("search", e.target[0].value);
+    setAlcondition({
+      pno: 1,
+      kind: "search",
+      query: localStorage.getItem("search"),
+    });
+  };
   const body = document.querySelector("body");
   useEffect(() => {
     if (popup) {
@@ -260,6 +307,33 @@ const Recruit = ({
         lastPno: otherAnnList.lastPno,
       },
     },
+    {
+      idx: 133,
+      component: (state) =>
+        state ? (
+          <>
+            <NewCgry>
+              <Title2 status={true}>Search</Title2>
+            </NewCgry>
+            <ListWrapper
+              status={false}
+              annList={otherAnnList.announcements}
+              kind={"RecruitOne"}
+              setRecruitIdx={setRecruitIdx}
+              setPopup={setPopup}
+              getAnn={getAnn}
+              setResult={setResult}
+              getAnnList={getOtherAnnList}
+            />
+          </>
+        ) : null,
+      name: "Search",
+      page: otherAnnList && {
+        pno: otherAnnList.pno,
+        lastPno: otherAnnList.lastPno,
+      },
+      query: localStorage.getItem("search"),
+    },
   ];
 
   return (
@@ -280,7 +354,7 @@ const Recruit = ({
             navbar={navbar}
             change={setAlcondition}
             data={alCondition}
-            type={"recruit"}
+            additup={returnSearch}
           />
         )}
       </Container>
