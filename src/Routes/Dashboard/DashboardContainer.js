@@ -24,8 +24,11 @@ const DashboardContainer = ({ match, history }) => {
   const getUserInfo = async () => {
     try {
       const result = await userApi.getUserInfo();
+      result && console.log(result.data.img + Date.now());
       result && setUserData(result);
-      result && setProfileImgUri(result.data.img);
+      // {`${wifi}api/img/default/${Idx}_portfolio_img?date=${new Date().toString()}`}
+      result &&
+        setProfileImgUri(`${result.data.img}?date=${new Date().toString()}`);
     } catch (e) {
       console.log(e);
     }
@@ -34,6 +37,7 @@ const DashboardContainer = ({ match, history }) => {
   const getResumeList = async () => {
     try {
       const res = await portFolioApi.getPortFolioList();
+      console.log(Auth.getAccessToken());
       {
         res && setData(res);
       }
@@ -47,30 +51,31 @@ const DashboardContainer = ({ match, history }) => {
 
   const setProfileImage = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append("profile", e.target.files[0]);
-    const api = await axios.create({
-      baseURL: `${wifi}`,
-    });
-    api
-      .post("/api/img/user", formData, {
-        data: FormData,
-        headers: {
-          Authorization: `Bearer ${Auth.getAccessToken()}`,
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((res) => {
-        if (profileImgUri.slice(-1) != "&")
-          setProfileImgUri(
-            "api/img/default?name=" + userData.data.uid + "_profile_img&"
-          );
-        if (profileImgUri.slice(-1) == "&")
-          setProfileImgUri(
-            "api/img/default?name=" + userData.data.uid + "_profile_img"
-          );
-      })
-      .catch((t) => console.log(t));
+    console.log(e.target);
+    // const formData = new FormData();
+    // formData.append("profile", e.target.files[0]);
+    // const api = await axios.create({
+    //   baseURL: `${wifi}`,
+    // });
+    // api
+    //   .post("/api/img/user", formData, {
+    //     data: FormData,
+    //     headers: {
+    //       Authorization: `Bearer ${Auth.getAccessToken()}`,
+    //       "Content-Type": "multipart/form-data",
+    //     },
+    //   })
+    //   .then((res) => {
+    //     if (profileImgUri.slice(-1) != "&")
+    //       setProfileImgUri(
+    //         "api/img/default?name=" + userData.data.uid + "_profile_img&"
+    //       );
+    //     if (profileImgUri.slice(-1) == "&")
+    //       setProfileImgUri(
+    //         "api/img/default?name=" + userData.data.uid + "_profile_img"
+    //       );
+    //   })
+    //   .catch((t) => console.log(t));
   };
 
   const DelResumeBtn = async (e) => {
@@ -79,7 +84,7 @@ const DashboardContainer = ({ match, history }) => {
         e.target.parentElement.id
       );
       {
-        result && getResumeList(Auth.getAccessToken());
+        result && getResumeList();
       }
     } catch (e) {
       console.log(e);

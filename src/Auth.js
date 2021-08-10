@@ -25,6 +25,8 @@ const localStorageAuth = {
   },
   logout() {
     localStorage.removeItem("Auth");
+    console.log(localStorage.getItem("Auth"));
+    localStorage.clear();
   },
   getAccessToken() {
     return localStorage.getItem("Auth");

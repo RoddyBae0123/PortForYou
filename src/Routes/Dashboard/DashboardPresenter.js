@@ -6,6 +6,7 @@ import { Route, Switch, Link } from "react-router-dom";
 import Recruit from "./Side/Recruit";
 import Resume from "./Side/Resume";
 import Room from "./Side/Room";
+import Setting from "./Side/Setting";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faPencilAlt,
@@ -267,6 +268,7 @@ const DashboardPresenter = ({
   alCondition,
   roomCondition,
   setRoomCondition,
+  getUserInfo,
 }) => {
   const [popup, setPopup] = useState(false);
   const delBtnHandler = () => {
@@ -422,7 +424,7 @@ const DashboardPresenter = ({
                 <LinkTitle>Room</LinkTitle>
               </LinkCent>
             </LinkSexy>
-            <LinkSexy to={`${match.path}/study`}>
+            <LinkSexy to={`${match.path}/setting`}>
               <LinkCent>
                 <LinkIcon>
                   <FontAwesomeIcon icon={faCogs} size="2x" />
@@ -501,6 +503,10 @@ const DashboardPresenter = ({
                   ></Room>
                 )}
               ></Route>
+              <Route
+                path={`${match.path}/setting`}
+                render={() => <Setting getUserInfo={getUserInfo} />}
+              />
             </Switch>
           </AnimatePresence>
         </Right>

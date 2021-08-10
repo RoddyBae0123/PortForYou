@@ -1,10 +1,10 @@
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { GroupAddSharp, TrainRounded } from "@material-ui/icons";
+import { GroupAddSharp } from "@material-ui/icons";
 import HowToRegIcon from "@material-ui/icons/HowToReg";
 import { faCodepen } from "@fortawesome/free-brands-svg-icons";
 import { Forum } from "@material-ui/icons";
-
+import { faCogs } from "@fortawesome/free-solid-svg-icons";
 const Container = styled.div`
   display: flex;
   justify-content: center;
@@ -12,7 +12,7 @@ const Container = styled.div`
   align-items: center;
   margin-top: 50px;
   border-bottom: ${(props) => (props.nav ? "1px solid lightgray" : "none")};
-  width: 100%;
+  width: 80%;
 `;
 
 const Title = styled.div`
@@ -46,6 +46,8 @@ const Section = ({ title, message, nav }) => {
         return <FontAwesomeIcon icon={faCodepen} style={{ fontSize: 100 }} />;
       case "Channel":
         return <Forum style={{ fontSize: 100 }} />;
+      case "Setting":
+        return <FontAwesomeIcon icon={faCogs} style={{ fontSize: 90 }} />;
       default:
         break;
     }

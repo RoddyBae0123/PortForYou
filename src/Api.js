@@ -1,6 +1,7 @@
 import axios from "axios";
 import wifi from "./wifi";
 import Auth from "./Auth";
+
 const api = axios.create({
   baseURL: `${wifi}`,
   headers: {
@@ -86,4 +87,10 @@ export const imageApi = {
   `,
       formData
     ),
+  setUserProfileImage: (data) => {
+    const headers = {
+      "Content-type": "multipart/form-data",
+    };
+    return api.post("api/img/user", data, { headers });
+  },
 };
