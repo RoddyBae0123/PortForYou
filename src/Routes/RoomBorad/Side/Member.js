@@ -16,6 +16,8 @@ import List from "../../../Components/List";
 import RecruitDetail from "../../../Components/RecruitDetail";
 import Applicant from "../../../Components/Applicant";
 import Popup from "../../../Components/Popup";
+import Navigation from "../../../Components/Navigation";
+import MemberList from "../../../Components/MemberList";
 const Container = styled.div`
   display: flex;
   align-items: center;
@@ -200,7 +202,24 @@ const Submit = styled.input`
   pointer-events: ${(props) => (props.disabled ? "none" : "auto")};
   background-color: ${(props) => (props.disabled ? "white" : "lightgray")};
 `;
-
+const NewCgry = styled.div`
+  border-top: 1px solid lightgray;
+  width: 100%;
+  margin-top: 45px;
+  position: relative;
+`;
+const Title2 = styled.div`
+  background-color: white;
+  font-size: 20px;
+  color: #4a565e;
+  position: absolute;
+  top: -30px;
+  left: 90px;
+  text-align: center;
+  font-weight: 700;
+  padding: 20px;
+  display: ${(props) => (props.status ? "block" : "none")};
+`;
 const Member = ({
   getPositionList,
   location,
@@ -219,6 +238,7 @@ const Member = ({
   getAnnouncementList,
   getAnn,
   setApplicant,
+  memberListData,
 }) => {
   const {
     state: { idx, where },
@@ -237,7 +257,9 @@ const Member = ({
   const [recruitIdx, setRecruitIdx] = useState(undefined);
   const [disabled, setDisabled] = useState(true);
   const [port, setPort] = useState(undefined);
-
+  const [memberCondition, setMemberCondition] = useState({
+    kind: "Recruit",
+  });
   // this.setState(prevState => ({
   //     todoItems: prevState.todoItems.map(
   //       el => el.key === key? { ...el, status: 'done' }: el
@@ -290,6 +312,7 @@ const Member = ({
       setPort(checkedPort);
     }
   };
+
   const UpDown = (e) => {
     {
       e.target.childNodes.length
@@ -415,6 +438,58 @@ const Member = ({
   //             <FontAwesomeIcon icon={faPlusCircle} style={{fontSize:50}}/>
   //         </RruCreateBtn>)
   // {AnnList&&getAnn(AnnList[0].idx)}
+  const navbar = [
+    {
+      idx: 129,
+      component: (state) =>
+        state ? (
+          <>
+            <NewCgry>
+              <Title2 status={true}>Member</Title2>
+            </NewCgry>
+            <MemberList data={memberListData} />
+          </>
+        ) : null,
+      name: "Member",
+      page: { pno: 1, lastPno: 1 },
+    },
+    {
+      idx: 130,
+      component: (state) =>
+        state ? (
+          <>
+            <NewCgry>
+              <Title2 status={true}>Recruit</Title2>
+            </NewCgry>
+            <>
+              {ann ? (
+                <>
+                  <RecruitOne
+                    annList={[ann]}
+                    type={"Member"}
+                    setRecruitIdx={setRecruitIdx}
+                    setPopup={setRecruitPopup}
+                  ></RecruitOne>
+                  <List applicant={applicant} setPopup={setAppPopup} />
+                </>
+              ) : (
+                <RruCreateBtn onClick={() => setPopup(true)}>
+                  <h2>
+                    There are no registered recruitment. Please make a new one!
+                  </h2>
+                  <FontAwesomeIcon
+                    icon={faPlusCircle}
+                    style={{ fontSize: 50 }}
+                  />
+                </RruCreateBtn>
+              )}
+            </>
+          </>
+        ) : null,
+      name: "Recruit",
+      page: { pno: 1, lastPno: 1 },
+    },
+  ];
 
   return (
     <motion.div
@@ -428,6 +503,8 @@ const Member = ({
           title={"Member"}
           message={"Let's team up and make your dreams come true."}
           nav={false}
+        />
+        {/* 
         />
         <Navbar>
           <NavBtn picked={picked["first"]}>Members</NavBtn>
@@ -452,7 +529,12 @@ const Member = ({
               <FontAwesomeIcon icon={faPlusCircle} style={{ fontSize: 50 }} />
             </RruCreateBtn>
           )}
-        </MemberData>
+        </MemberData> */}
+        <Navigation
+          navbar={navbar}
+          data={memberCondition}
+          change={setMemberCondition}
+        />
       </Container>
       {returnDetail(recruitPopup)}
       {applicant && returnAppDetail(appPopup, setAppPopup, applicant)}

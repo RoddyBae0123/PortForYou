@@ -63,6 +63,7 @@ export const studyApi = {
       },
     }),
   getApplicationByStudyIdx: (idx) => api.get(`api/study/${idx}/applications`),
+  getMembersByStudyIdx: (idx) => api.get(`api/study/${idx}/members`),
   deleteAnnouncement: (idx) => api.delete(`api/announcement/${idx}`),
   declineApplication: (idx) => api.get(`api/application/${idx}/decline`),
   acceptApplication: (idx) => api.get(`api/application/${idx}/accept`),

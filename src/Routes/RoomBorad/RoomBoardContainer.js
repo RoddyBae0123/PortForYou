@@ -20,6 +20,7 @@ const RoomBoardContainer = (props) => {
   const [ann, setAnn] = useState();
   const [applicant, setApplicant] = useState();
   const [status, setStatus] = useState();
+  const [memberList, setMemberList] = useState();
   const getUserInfo = async () => {
     const api = await axios.create({
       baseURL: `${wifi}`,
@@ -172,6 +173,10 @@ const RoomBoardContainer = (props) => {
       console.log(e);
     }
   };
+  const getMemberList = async () => {
+    const { data } = await studyApi.getMembersByStudyIdx(idx);
+    data && setMemberList(data);
+  };
   useEffect(() => {
     getUserInfo();
     getAnnouncementList(idx);
@@ -201,6 +206,11 @@ const RoomBoardContainer = (props) => {
       getAnn={getAnn}
       setApplicant={setApplicant}
       roomIdx={idx}
+      memberListData={{
+        data: memberList,
+        setData: setMemberList,
+        getData: getMemberList,
+      }}
     />
   );
 };

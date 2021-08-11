@@ -235,6 +235,7 @@ const RoomBoardPresenter = ({
   getAnn,
   setApplicant,
   roomIdx,
+  memberListData,
 }) => {
   const [popup, setPopup] = useState(false);
   const delBtnHandler = () => {
@@ -442,6 +443,7 @@ const RoomBoardPresenter = ({
                     getAnnouncementList={getAnnouncementList}
                     getAnn={getAnn}
                     setApplicant={setApplicant}
+                    memberListData={memberListData}
                   ></Member>
                 )}
               ></Route>

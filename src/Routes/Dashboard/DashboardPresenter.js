@@ -250,195 +250,196 @@ const UserInfoBtn = styled.button`
   color: var(--color-text);
 `;
 
-const DashboardPresenter = ({
-  match,
-  data,
-  method,
-  imageHandler,
-  profileImgUri,
-  setData,
-  DelResumeBtn,
-  history,
-  getStudyList,
-  setStudy,
-  study,
-  otherAnnList,
-  getOtherAnnList,
-  setAlcondition,
-  alCondition,
-  roomCondition,
-  setRoomCondition,
-  getUserInfo,
-}) => {
-  const [popup, setPopup] = useState(false);
-  const delBtnHandler = () => {
-    setPopup(false);
-  };
-  const UserInfoBtnHandler = () => {
-    setPopup(true);
-  };
-  const LogoutBtnHandler = () => {
-    Auth.logout();
-    history.push("/signin");
-  };
+const DashboardPresenter = memo(
+  ({
+    match,
+    data,
+    method,
+    imageHandler,
+    profileImgUri,
+    setData,
+    DelResumeBtn,
+    history,
+    getStudyList,
+    setStudy,
+    study,
+    otherAnnList,
+    getOtherAnnList,
+    setAlcondition,
+    alCondition,
+    roomCondition,
+    setRoomCondition,
+    getUserInfo,
+  }) => {
+    const [popup, setPopup] = useState(false);
+    const delBtnHandler = () => {
+      setPopup(false);
+    };
+    const UserInfoBtnHandler = () => {
+      setPopup(true);
+    };
+    const LogoutBtnHandler = () => {
+      Auth.logout();
+      history.push("/signin");
+    };
 
-  return (
-    <>
-      <GoogleFontLoader
-        fonts={[
-          {
-            font: "Roboto",
-            weights: [400, 600],
-          },
-          {
-            font: "Roboto Mono",
-            weights: [400, 700],
-          },
-        ]}
-        subsets={["cyrillic-ext", "greek"]}
-      />
-      <PopupBkg status={popup}>
-        <PopupUser>
-          <DelpopupBtn onClick={delBtnHandler}>
-            <FontAwesomeIcon style={{ fontSize: 35 }} icon={faTimes} />
-          </DelpopupBtn>
-          <PopupBtns>
-            <Makecenter>
-              <FontAwesomeIcon style={{ fontSize: 35 }} icon={faUser} />
-            </Makecenter>
-            <Makecenter>
-              <p>USER INFO</p>
-            </Makecenter>
-          </PopupBtns>
-          <PopupBtns onClick={LogoutBtnHandler}>
-            <Makecenter>
-              <FontAwesomeIcon style={{ fontSize: 35 }} icon={faSignOutAlt} />
-            </Makecenter>
-            <Makecenter>
-              <p>LOG OUT</p>
-            </Makecenter>
-          </PopupBtns>
-        </PopupUser>
-      </PopupBkg>
-      <Back>
-        <Left>
-          <Makecenter style={{ justifyContent: "flex-start" }}>
-            <Title style={{ fontFamily: "Roboto Mono, monospaced" }}>
-              StudyMall
-            </Title>
-            <UserContainer>
-              <UserProfile>
-                <UserImage
-                  profileImgUri={profileImgUri}
-                  style={{ fontFamily: "Roboto Mono, monospaced" }}
-                ></UserImage>
-              </UserProfile>
-              <UserName>Roddy</UserName>
-            </UserContainer>
-            <hr
-              style={{
-                backgroundColor: "var(--color-line)",
-                width: "140px",
-                height: 2,
-                border: "none",
-                margin: "10px 0",
-                opacity: "1",
-              }}
-            />
-            <NabvarCenter position={false}>
-              <UserInfoBtn onClick={UserInfoBtnHandler}>
-                <FontAwesomeIcon icon={faUser} size="2x" />
-              </UserInfoBtn>
-              <Link
-                to="/"
+    return (
+      <>
+        <GoogleFontLoader
+          fonts={[
+            {
+              font: "Roboto",
+              weights: [400, 600],
+            },
+            {
+              font: "Roboto Mono",
+              weights: [400, 700],
+            },
+          ]}
+          subsets={["cyrillic-ext", "greek"]}
+        />
+        <PopupBkg status={popup}>
+          <PopupUser>
+            <DelpopupBtn onClick={delBtnHandler}>
+              <FontAwesomeIcon style={{ fontSize: 35 }} icon={faTimes} />
+            </DelpopupBtn>
+            <PopupBtns>
+              <Makecenter>
+                <FontAwesomeIcon style={{ fontSize: 35 }} icon={faUser} />
+              </Makecenter>
+              <Makecenter>
+                <p>USER INFO</p>
+              </Makecenter>
+            </PopupBtns>
+            <PopupBtns onClick={LogoutBtnHandler}>
+              <Makecenter>
+                <FontAwesomeIcon style={{ fontSize: 35 }} icon={faSignOutAlt} />
+              </Makecenter>
+              <Makecenter>
+                <p>LOG OUT</p>
+              </Makecenter>
+            </PopupBtns>
+          </PopupUser>
+        </PopupBkg>
+        <Back>
+          <Left>
+            <Makecenter style={{ justifyContent: "flex-start" }}>
+              <Title style={{ fontFamily: "Roboto Mono, monospaced" }}>
+                StudyMall
+              </Title>
+              <UserContainer>
+                <UserProfile>
+                  <UserImage
+                    profileImgUri={profileImgUri}
+                    style={{ fontFamily: "Roboto Mono, monospaced" }}
+                  ></UserImage>
+                </UserProfile>
+                <UserName>Roddy</UserName>
+              </UserContainer>
+              <hr
                 style={{
-                  fontSize: "10px",
-                  margin: "0 10px",
-                  color: "var(--color-text)",
+                  backgroundColor: "var(--color-line)",
+                  width: "140px",
+                  height: 2,
+                  border: "none",
+                  margin: "10px 0",
+                  opacity: "1",
                 }}
-              >
-                <FontAwesomeIcon icon={faBell} size="2x" />
-              </Link>
-              <Link
-                to="/"
+              />
+              <NabvarCenter position={false}>
+                <UserInfoBtn onClick={UserInfoBtnHandler}>
+                  <FontAwesomeIcon icon={faUser} size="2x" />
+                </UserInfoBtn>
+                <Link
+                  to="/"
+                  style={{
+                    fontSize: "10px",
+                    margin: "0 10px",
+                    color: "var(--color-text)",
+                  }}
+                >
+                  <FontAwesomeIcon icon={faBell} size="2x" />
+                </Link>
+                <Link
+                  to="/"
+                  style={{
+                    fontSize: "10px",
+                    margin: "0 10px",
+                    color: "var(--color-text)",
+                  }}
+                >
+                  <FontAwesomeIcon icon={faHome} size="2x" />
+                </Link>
+              </NabvarCenter>
+              <hr
                 style={{
-                  fontSize: "10px",
-                  margin: "0 10px",
-                  color: "var(--color-text)",
+                  backgroundColor: "var(--color-line)",
+                  width: "140px",
+                  height: 2,
+                  border: "none",
+                  margin: "10px 0",
+                  opacity: "1",
                 }}
-              >
-                <FontAwesomeIcon icon={faHome} size="2x" />
-              </Link>
-            </NabvarCenter>
-            <hr
-              style={{
-                backgroundColor: "var(--color-line)",
-                width: "140px",
-                height: 2,
-                border: "none",
-                margin: "10px 0",
-                opacity: "1",
-              }}
-            />
-          </Makecenter>
+              />
+            </Makecenter>
 
-          <LinkList>
-            <LinkSexy to={`${match.path}`}>
-              <LinkCent>
-                <LinkIcon>
-                  <FontAwesomeIcon icon={faTable} size="2x" />
-                </LinkIcon>
-              </LinkCent>
-              <LinkCent>
-                <LinkTitle>Main</LinkTitle>
-              </LinkCent>
-            </LinkSexy>
-            <LinkSexy to={`${match.path}/resume`}>
-              <LinkCent>
-                <LinkIcon>
-                  <FontAwesomeIcon icon={faFileInvoice} size="2x" />
-                </LinkIcon>
-              </LinkCent>
-              <LinkCent>
-                <LinkTitle>Resume</LinkTitle>
-              </LinkCent>
-            </LinkSexy>
-            <LinkSexy to={`${match.path}/Recruit`}>
-              <LinkCent>
-                <LinkIcon>
-                  <GroupAddSharp />
-                </LinkIcon>
-              </LinkCent>
-              <LinkCent>
-                <LinkTitle>Recruit</LinkTitle>
-              </LinkCent>
-            </LinkSexy>
+            <LinkList>
+              <LinkSexy to={`${match.path}`}>
+                <LinkCent>
+                  <LinkIcon>
+                    <FontAwesomeIcon icon={faTable} size="2x" />
+                  </LinkIcon>
+                </LinkCent>
+                <LinkCent>
+                  <LinkTitle>Main</LinkTitle>
+                </LinkCent>
+              </LinkSexy>
+              <LinkSexy to={`${match.path}/resume`}>
+                <LinkCent>
+                  <LinkIcon>
+                    <FontAwesomeIcon icon={faFileInvoice} size="2x" />
+                  </LinkIcon>
+                </LinkCent>
+                <LinkCent>
+                  <LinkTitle>Resume</LinkTitle>
+                </LinkCent>
+              </LinkSexy>
+              <LinkSexy to={`${match.path}/Recruit`}>
+                <LinkCent>
+                  <LinkIcon>
+                    <GroupAddSharp />
+                  </LinkIcon>
+                </LinkCent>
+                <LinkCent>
+                  <LinkTitle>Recruit</LinkTitle>
+                </LinkCent>
+              </LinkSexy>
 
-            <LinkSexy to={`${match.path}/room`}>
-              <LinkCent>
-                <LinkIcon>
-                  <FontAwesomeIcon icon={faCodepen} size="2x" />
-                </LinkIcon>
-              </LinkCent>
-              <LinkCent>
-                <LinkTitle>Room</LinkTitle>
-              </LinkCent>
-            </LinkSexy>
-            <LinkSexy to={`${match.path}/setting`}>
-              <LinkCent>
-                <LinkIcon>
-                  <FontAwesomeIcon icon={faCogs} size="2x" />
-                </LinkIcon>
-              </LinkCent>
-              <LinkCent>
-                <LinkTitle>Setting</LinkTitle>
-              </LinkCent>
-            </LinkSexy>
-          </LinkList>
-        </Left>
-        <div></div>
-        <Right style={{ minWidth: 1200 }}>
-          {/* <Navbar>
+              <LinkSexy to={`${match.path}/room`}>
+                <LinkCent>
+                  <LinkIcon>
+                    <FontAwesomeIcon icon={faCodepen} size="2x" />
+                  </LinkIcon>
+                </LinkCent>
+                <LinkCent>
+                  <LinkTitle>Room</LinkTitle>
+                </LinkCent>
+              </LinkSexy>
+              <LinkSexy to={`${match.path}/setting`}>
+                <LinkCent>
+                  <LinkIcon>
+                    <FontAwesomeIcon icon={faCogs} size="2x" />
+                  </LinkIcon>
+                </LinkCent>
+                <LinkCent>
+                  <LinkTitle>Setting</LinkTitle>
+                </LinkCent>
+              </LinkSexy>
+            </LinkList>
+          </Left>
+          <div></div>
+          <Right style={{ minWidth: 1200 }}>
+            {/* <Navbar>
             <NabvarCenter position={true}>
                 <SearchForm>
                         <Input type="text"></Input>
@@ -458,61 +459,62 @@ const DashboardPresenter = ({
                 </NabvarCenter>
 
             </Navbar> */}
-          <AnimatePresence>
-            <Switch>
-              <Route
-                path={`${match.path}/recruit`}
-                component={() => (
-                  <Recruit
-                    getStudyList={getStudyList}
-                    history={history}
-                    otherAnnList={otherAnnList}
-                    getOtherAnnList={getOtherAnnList}
-                    setAlcondition={setAlcondition}
-                    alCondition={alCondition}
-                  />
-                )}
-              ></Route>
+            <AnimatePresence>
+              <Switch>
+                <Route
+                  path={`${match.path}/recruit`}
+                  component={() => (
+                    <Recruit
+                      getStudyList={getStudyList}
+                      history={history}
+                      otherAnnList={otherAnnList}
+                      getOtherAnnList={getOtherAnnList}
+                      setAlcondition={setAlcondition}
+                      alCondition={alCondition}
+                    />
+                  )}
+                ></Route>
 
-              <Route
-                exact
-                path={`${match.path}/resume`}
-                render={() => (
-                  <Resume
-                    data={data}
-                    method={method}
-                    setData={setData}
-                    DelResumeBtn={DelResumeBtn}
-                  />
-                )}
-              ></Route>
-              <Route
-                path={`${match.path}/resume/:idx`}
-                component={ResumeDetail}
-              ></Route>
-              <Route
-                path={`${match.path}/room`}
-                render={() => (
-                  <Room
-                    getStudyList={getStudyList}
-                    setStudy={setStudy}
-                    study={study}
-                    history={history}
-                    roomCondition={roomCondition}
-                    setRoomCondition={setRoomCondition}
-                  ></Room>
-                )}
-              ></Route>
-              <Route
-                path={`${match.path}/setting`}
-                render={() => <Setting getUserInfo={getUserInfo} />}
-              />
-            </Switch>
-          </AnimatePresence>
-        </Right>
-      </Back>
-    </>
-  );
-};
+                <Route
+                  exact
+                  path={`${match.path}/resume`}
+                  render={() => (
+                    <Resume
+                      data={data}
+                      method={method}
+                      setData={setData}
+                      DelResumeBtn={DelResumeBtn}
+                    />
+                  )}
+                ></Route>
+                <Route
+                  path={`${match.path}/resume/:idx`}
+                  component={ResumeDetail}
+                ></Route>
+                <Route
+                  path={`${match.path}/room`}
+                  render={() => (
+                    <Room
+                      getStudyList={getStudyList}
+                      setStudy={setStudy}
+                      study={study}
+                      history={history}
+                      roomCondition={roomCondition}
+                      setRoomCondition={setRoomCondition}
+                    ></Room>
+                  )}
+                ></Route>
+                <Route
+                  path={`${match.path}/setting`}
+                  render={() => <Setting getUserInfo={getUserInfo} />}
+                />
+              </Switch>
+            </AnimatePresence>
+          </Right>
+        </Back>
+      </>
+    );
+  }
+);
 
-export default memo(DashboardPresenter);
+export default DashboardPresenter;

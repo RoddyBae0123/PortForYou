@@ -6,7 +6,7 @@ import wifi from "../../wifi";
 import { Link } from "react-router-dom";
 import { useAsync } from "react-async";
 import { studyApi, portFolioApi, userApi } from "../../Api";
-const DashboardContainer = ({ match, history }) => {
+const DashboardContainer = memo(({ match, history }) => {
   const [data, setData] = useState(undefined); //resume data
   const [profileImgUri, setProfileImgUri] = useState(undefined); //change profile
   const [userData, setUserData] = useState(undefined); //user information
@@ -161,6 +161,6 @@ const DashboardContainer = ({ match, history }) => {
       ></DashboardPresenter>
     </>
   );
-};
+});
 
-export default memo(DashboardContainer);
+export default DashboardContainer;

@@ -23,9 +23,11 @@ const SigninContainer = (props) => {
     result && console.log(result.data.message);
 
     if (result && result.status === 200) {
+      localStorage.clear();
       auth.setTokenToLocalstorage(result.data.message);
+      window.location.replace("/dashboard/resume");
 
-      push("/dashboard/resume");
+      // push("/dashboard/resume");
     }
   };
   useEffect(Isresult, [result]);

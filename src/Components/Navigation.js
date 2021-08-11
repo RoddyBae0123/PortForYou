@@ -79,7 +79,7 @@ const Navigation = ({ navbar, change, data, additup }) => {
     navbar &&
       navbar.map((e) => {
         copy.push(
-          data.kind === e.name.toLowerCase()
+          data.kind.toLowerCase() === e.name.toLowerCase()
             ? { checked: true }
             : { checked: false }
         );
