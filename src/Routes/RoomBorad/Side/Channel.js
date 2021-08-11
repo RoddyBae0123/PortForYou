@@ -78,7 +78,7 @@ const Channel = (match) => {
     >
       <Container>
         <SockJsClient
-          url="http://localhost:8080/pfy/stomp"
+          url="http://3.37.208.251:8080/pfy/stomp"
           topics={[`/sub/chat/room/${roomId}`]}
           onMessage={(msg) => {
             addMessage(msg);
