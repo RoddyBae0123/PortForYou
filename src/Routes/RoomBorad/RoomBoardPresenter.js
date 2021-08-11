@@ -214,6 +214,7 @@ const UserInfoBtn = styled.button`
   color: var(--color-text2);
 `;
 const RoomBoardPresenter = ({
+  userData,
   match,
   history,
   profileImgUri,
@@ -444,7 +445,10 @@ const RoomBoardPresenter = ({
                   ></Member>
                 )}
               ></Route>
-              <Route path={`${match.path}/channel`} component={Channel}></Route>
+              <Route
+                path={`${match.path}/channel/:idx`}
+                component={Channel}
+              ></Route>
               <Route
                 path={`${match.path}/calender`}
                 component={Calender}

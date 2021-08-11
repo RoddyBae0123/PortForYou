@@ -11,7 +11,7 @@ const RoomBoardContainer = (props) => {
   const [userData, setUserData] = useState(undefined); //user information
   const [position, setPosition] = useState([]);
   const { match, location, history } = props;
-  match && console.log(match);
+
   const {
     state: { idx },
   } = location;
@@ -118,7 +118,6 @@ const RoomBoardContainer = (props) => {
     try {
       const { data } = await studyApi.getAnnouncementList(idx);
       {
-        data && console.log(data);
       }
       {
         data.length ? getAnn(data[0].idx) : setAnn(undefined);
@@ -137,7 +136,6 @@ const RoomBoardContainer = (props) => {
     try {
       const { data } = await studyApi.getAnnouncement(idx);
       {
-        data && console.log(data);
       }
       if (data) {
         var copyData = clonedeep(data);
@@ -177,11 +175,11 @@ const RoomBoardContainer = (props) => {
   useEffect(() => {
     getUserInfo();
     getAnnouncementList(idx);
-    console.log(idx);
   }, []);
 
   return (
     <RoomBoardPresenter
+      userData={userData}
       location={location}
       match={match}
       history={history}
