@@ -1,14 +1,24 @@
 import { useEffect } from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import "../../src/Routes/RoomBorad/Side/Channel.css";
 
 const Message = ({ msg }) => {
+  const sendDate = msg.sendDate.split("T");
+  const hourMinuteSecond = sendDate[1].split(":");
+  const rendingDate = hourMinuteSecond[0] + ":" + hourMinuteSecond[1];
   return (
-    <tr style={{ height: "15px" }}>
-      <td style={{ width: "100px", height: "15px" }}>{msg.user.username}</td>
-      <td style={{ width: "250px", height: "15px" }}>{msg.message}</td>
-      <td style={{ width: "150px", height: "15px" }}>{msg.sendDate}</td>
-    </tr>
+    <div className="message-box">
+      <div className="message-box-top">
+        <div
+          className="message-box-top-img"
+          style={{ backgroundImage: "url(" + msg.user.img + ")" }}
+        ></div>
+        <div className="message-box-top-name">{msg.user.username}</div>
+        <div className="message-box-top-date">{rendingDate}</div>
+      </div>
+      <div className="message-box-bottom">{msg.message}</div>
+    </div>
   );
 };
 

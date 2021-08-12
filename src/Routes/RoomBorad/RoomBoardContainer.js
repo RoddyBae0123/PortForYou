@@ -34,9 +34,7 @@ const RoomBoardContainer = (props) => {
       })
       .then((res) => {
         setUserData(res);
-        setProfileImgUri(
-          "api/img/default?name=" + res.data.uid + "_profile_img"
-        );
+        setProfileImgUri(res.data.img);
       })
       .catch((e) => {
         console.log(e);
@@ -49,33 +47,6 @@ const RoomBoardContainer = (props) => {
       content: "",
       Position: [],
     });
-  };
-  const setProfileImage = async (e) => {
-    e.preventDefault();
-    const formData = new FormData();
-    formData.append("profile", e.target.files[0]);
-    const api = await axios.create({
-      baseURL: `${wifi}`,
-    });
-    api
-      .post("/api/img/user", formData, {
-        data: FormData,
-        headers: {
-          Authorization: `Bearer ${Auth.getAccessToken()}`,
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((res) => {
-        if (profileImgUri.slice(-1) != "&")
-          setProfileImgUri(
-            "api/img/default?name=" + userData.data.uid + "_profile_img&"
-          );
-        if (profileImgUri.slice(-1) == "&")
-          setProfileImgUri(
-            "api/img/default?name=" + userData.data.uid + "_profile_img"
-          );
-      })
-      .catch((t) => console.log(t));
   };
 
   const getPositionList = async () => {

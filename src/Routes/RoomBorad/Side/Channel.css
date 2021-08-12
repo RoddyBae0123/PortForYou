@@ -1,0 +1,127 @@
+.channel-container {
+  height: 100vh;
+  overflow: hidden;
+}
+.channel-title {
+  width: 100%;
+  height: 90px;
+  position: sticky;
+  background-color: white;
+}
+.channel-title-img {
+  font-size: 50;
+  float: left;
+  margin: 25px 0 0 30px;
+  top: 10%;
+}
+.channel-title-title {
+  font-size: 24px;
+  margin: 33px 0 0 20px;
+  float: left;
+}
+.channel-title-connect {
+  font-size: 24px;
+  margin: 33px 0 0 20px;
+  float: left;
+}
+.channel-title-connect-circle {
+  margin-top: 9px;
+  width: 13px;
+  float: left;
+  height: 13px;
+  background-color: green;
+  border-radius: 15px;
+}
+.channel-title-disconnect-circle {
+  margin-top: 9px;
+  width: 13px;
+  float: left;
+  height: 13px;
+  background-color: red;
+  border-radius: 15px;
+}
+.channel-title-connect-description {
+  float: left;
+  font-size: 12px;
+  line-height: 30px;
+  margin-left: 5px;
+}
+
+.channel-wrapper {
+  width: 100%;
+  height: calc(100% - 120px);
+}
+
+.message-wrapper {
+  height: 90%;
+  min-height: 300px;
+  overflow: auto;
+}
+
+.message-form {
+  height: 10%;
+  border-top: none;
+}
+.message-form-nav {
+  width: 100%;
+  height: 30px;
+  border: 1px solid gray;
+}
+.message-form-text {
+  border: none;
+  width: 95%;
+  height: 100%;
+  padding: 10px;
+}
+.message-form-text:focus {
+  outline: none;
+}
+.message-form-submit {
+  border: none;
+  width: 5%;
+  height: 100%;
+}
+.message-form-submit:focus {
+  outline: none;
+}
+
+/* Message Component */
+.message-box {
+  background-color: RGB(230, 230, 230);
+  min-height: 50px;
+  margin: 0 10px 10px 10px;
+  border-radius: 10px;
+}
+.message-box-top {
+  padding: 10px 0 0 10px;
+}
+.message-box-top-img {
+  width: 30px;
+  height: 30px;
+  float: left;
+  background-size: 100% auto;
+  background-position: center center;
+  background-repeat: no-repeat;
+  border-radius: 5px;
+}
+.message-box-top-name {
+  margin-left: 5px;
+  font-size: 20px;
+  color: black;
+  font-weight: bold;
+  float: left;
+  line-height: 30px;
+}
+.message-box-top-date {
+  float: left;
+  margin: 5px 0 0 10px;
+  font-size: 12px;
+  line-height: 30px;
+}
+.message-box-bottom {
+  width: 100%;
+  overflow: hidden;
+  white-space: normal;
+  word-break: break-all;
+  padding: 10px;
+}

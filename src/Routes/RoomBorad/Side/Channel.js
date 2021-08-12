@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import styled from "styled-components";
 import Section from "../../../Components/Section";
-import Popup from "../../../Components/Popup";
 import SockJsClient from "react-stomp";
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -9,6 +8,10 @@ import wifi from "../../../wifi";
 import Auth from "../../../Auth";
 import Message from "../../../Components/Message";
 import { userApi } from "../../../Api";
+import jquery from "jquery";
+import $ from "jquery";
+import { Forum, LineWeight } from "@material-ui/icons";
+import "./Channel.css";
 
 const Container = styled.div`
   display: flex;
@@ -43,9 +46,9 @@ const Channel = (match) => {
 
   const addMessage = (msg) => {
     let messageList_ = [...messageList];
-    console.log(messageList_);
     messageList_.push(<Message msg={msg}></Message>);
     setMessageList(messageList_);
+    $(".message-wrapper").scrollTop($(".message-wrapper")[0].scrollHeight);
   };
 
   const sendMessage = (msg) => {
@@ -54,23 +57,29 @@ const Channel = (match) => {
 
   const messageSubmitHandler = (e) => {
     e.preventDefault();
-    console.log(userData.data.uid);
+
     sendMessage(`
       {"room": {"rid":"${roomId}"},
       "user": {"uid":${userData.data.uid}},
       "message": "${inputMessage.value}",
       "type": "TALK"},
     `);
+
     setInputMessage({ value: "" });
   };
 
   const connectedHandler = () => {
-    sendMessage(`
-    {"room": {"rid":"${roomId}"},
-    "user": {"uid":${userData.data.uid}},
-    "message": "",
-    "type": "ENTER"},
-  `);
+    setConnected("connected");
+    if (userData) {
+      sendMessage(`
+      {"room": {"rid":"${roomId}"},
+      "user": {"uid":${userData.data.uid}},
+      "message": "",
+      "type": "ENTER"},
+    `);
+    } else {
+      console.log("no userData");
+    }
   };
 
   const inputMessageHandler = (e) => {
@@ -82,8 +91,9 @@ const Channel = (match) => {
       exit={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       initial={{ opacity: 0 }}
+      style={{ height: "100%" }}
     >
-      <Container>
+      <Container className="channel-container">
         <SockJsClient
           url="http://3.37.208.251:8080/pfy/stomp"
           topics={[`/sub/chat/room/${roomId}`]}
@@ -94,48 +104,43 @@ const Channel = (match) => {
             setClientRef(client);
           }}
           onConnect={() => {
-            setConnected("connected");
             connectedHandler();
           }}
           onDisconnect={() => {
             setConnected("disconnected");
           }}
         ></SockJsClient>
-        <Section
-          title={"Channel"}
-          message={"Have a chat with your team members."}
-          nav={false}
-        />
-        <div className="channel-wrapper">
-          {connected}
-          <div
-            className="table-wrapper"
-            style={{ height: "400px", border: "1px solid black" }}
-          >
-            <table
-              style={{
-                width: "800px",
-              }}
-            >
-              <thead>
-                <tr style={{ borderBottom: "2px solid black" }}>
-                  <th>username</th>
-                  <th>message</th>
-                  <th>senddate</th>
-                </tr>
-              </thead>
-              <tbody>{messageList}</tbody>
-            </table>
-          </div>
+        <div className="channel-title">
+          <Forum style={{ fontSize: "50px" }} className="channel-title-img" />
+          <div className="channel-title-title">Channel</div>
+          <div className="channel-title-connect">
+            {connected == "connected" ? (
+              <div className="channel-title-connect-circle"></div>
+            ) : (
+              <div className="channel-title-disconnect-circle"></div>
+            )}
 
-          <form style={{ marginTop: "10px" }} onSubmit={messageSubmitHandler}>
+            <div className="channel-title-connect-description">{connected}</div>
+          </div>
+        </div>
+        <div className="channel-wrapper">
+          <div className="message-wrapper">{messageList}</div>
+
+          <form className="message-form" onSubmit={messageSubmitHandler}>
+            <div className="message-form-nav">
+              <div className="add-image"></div>
+              <div className="add-file"></div>
+            </div>
             <input
-              type="text"
-              style={{ width: "700px", marginRight: "20px" }}
+              className="message-form-text"
               value={inputMessage.value}
               onChange={inputMessageHandler}
             ></input>
-            <input value="전송" type="submit" style={{ width: "70px" }}></input>
+            <input
+              className="message-form-submit"
+              value="전송"
+              type="submit"
+            ></input>
           </form>
         </div>
       </Container>

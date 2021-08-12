@@ -77,7 +77,7 @@ const UserImage = styled.div`
   border-radius: 9px;
   text-align: center;
   line-height: 100px;
-  background-image: url("${wifi}${(props) => props.profileImgUri}");
+  background-image: url("${(props) => props.profileImgUri}");
   background-size: 100% auto;
   background-position: center center;
   background-repeat: no-repeat;
