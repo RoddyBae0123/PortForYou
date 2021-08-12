@@ -49,9 +49,7 @@ const Channel = (match) => {
   };
 
   const sendMessage = (msg) => {
-    console.log(clientRef);
     clientRef.sendMessage(`/pub/chat/message`, msg);
-    console.log(msg);
   };
 
   const messageSubmitHandler = (e) => {
@@ -64,6 +62,15 @@ const Channel = (match) => {
       "type": "TALK"},
     `);
     setInputMessage({ value: "" });
+  };
+
+  const connectedHandler = () => {
+    sendMessage(`
+    {"room": {"rid":"${roomId}"},
+    "user": {"uid":${userData.data.uid}},
+    "message": "",
+    "type": "ENTER"},
+  `);
   };
 
   const inputMessageHandler = (e) => {
@@ -88,6 +95,7 @@ const Channel = (match) => {
           }}
           onConnect={() => {
             setConnected("connected");
+            connectedHandler();
           }}
           onDisconnect={() => {
             setConnected("disconnected");
