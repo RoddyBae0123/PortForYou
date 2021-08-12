@@ -1,7 +1,11 @@
 import React, { useEffect } from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCrown, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCrown,
+  faEllipsisV,
+  faUserAlt,
+} from "@fortawesome/free-solid-svg-icons";
 
 const Container = styled.div`
   width: 100%;
@@ -56,80 +60,43 @@ const Position = styled.div`
   align-items: center;
   width: 90px;
   height: 30px;
-  font-size: 15px;
+  font-size: 10px;
   font-weight: 100;
   border-radius: 10px;
   border: 1px solid rgb(216, 216, 216);
 `;
 
 const MemberList = ({ data }) => {
+  data.data && console.log(data.data);
+
   useEffect(() => {
     data.getData();
-    data.data && console.log(data.data);
   }, []);
   return (
     <Container>
       <Ul>
-        <Li>
-          <Card>
-            <UserBtn left={"10px"}>
-              <FontAwesomeIcon icon={faCrown}></FontAwesomeIcon>
-            </UserBtn>
-            <UserBtn right={"10px"}>
-              <FontAwesomeIcon icon={faEllipsisV}></FontAwesomeIcon>
-            </UserBtn>
-            <UserImg src="http://i30.tcafe2a.com/2001/20200101230849_99c85d1bada6e91c3c07a371af1d6c1b_wdu2.jpg"></UserImg>
-            <span style={{ fontSize: 45 }}>Roddy</span>
-            <Position>
-              <span>BACKEND</span>
-            </Position>
-          </Card>
-        </Li>
-        <Li>
-          <Card>
-            <UserBtn left={"10px"}>
-              <FontAwesomeIcon icon={faCrown}></FontAwesomeIcon>
-            </UserBtn>
-            <UserBtn right={"10px"}>
-              <FontAwesomeIcon icon={faEllipsisV}></FontAwesomeIcon>
-            </UserBtn>
-            <UserImg src="http://i30.tcafe2a.com/2001/20200101230849_99c85d1bada6e91c3c07a371af1d6c1b_wdu2.jpg"></UserImg>
-            <span style={{ fontSize: 45 }}>Roddy</span>
-            <Position>
-              <span>BACKEND</span>
-            </Position>
-          </Card>
-        </Li>
-        <Li>
-          <Card>
-            <UserBtn left={"10px"}>
-              <FontAwesomeIcon icon={faCrown}></FontAwesomeIcon>
-            </UserBtn>
-            <UserBtn right={"10px"}>
-              <FontAwesomeIcon icon={faEllipsisV}></FontAwesomeIcon>
-            </UserBtn>
-            <UserImg src="http://i30.tcafe2a.com/2001/20200101230849_99c85d1bada6e91c3c07a371af1d6c1b_wdu2.jpg"></UserImg>
-            <span style={{ fontSize: 45 }}>Roddy</span>
-            <Position>
-              <span>BACKEND</span>
-            </Position>
-          </Card>
-        </Li>
-        <Li>
-          <Card>
-            <UserBtn left={"10px"}>
-              <FontAwesomeIcon icon={faCrown}></FontAwesomeIcon>
-            </UserBtn>
-            <UserBtn right={"10px"}>
-              <FontAwesomeIcon icon={faEllipsisV}></FontAwesomeIcon>
-            </UserBtn>
-            <UserImg src="http://i30.tcafe2a.com/2001/20200101230849_99c85d1bada6e91c3c07a371af1d6c1b_wdu2.jpg"></UserImg>
-            <span style={{ fontSize: 45 }}>Roddy</span>
-            <Position>
-              <span>BACKEND</span>
-            </Position>
-          </Card>
-        </Li>
+        {data.data &&
+          data.data.map((e, idx) => (
+            <Li key={idx}>
+              <Card>
+                <UserBtn left={"10px"}>
+                  {e.position.name == `ROOM MANAGER` ? (
+                    <FontAwesomeIcon icon={faCrown}></FontAwesomeIcon>
+                  ) : (
+                    <FontAwesomeIcon icon={faUserAlt}></FontAwesomeIcon>
+                  )}
+                </UserBtn>
+                <UserBtn right={"10px"}>
+                  <FontAwesomeIcon icon={faEllipsisV}></FontAwesomeIcon>
+                </UserBtn>
+                <UserImg src="http://i30.tcafe2a.com/2001/20200101230849_99c85d1bada6e91c3c07a371af1d6c1b_wdu2.jpg"></UserImg>
+                <span style={{ fontSize: 45 }}>{e.user.username}</span>
+                <Position>
+                  <span>{e.position.name}</span>
+                </Position>
+              </Card>
+            </Li>
+          ))}
       </Ul>
     </Container>
   );

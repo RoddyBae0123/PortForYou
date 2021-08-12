@@ -79,6 +79,13 @@ export const AuthApi = {
 
 export const userApi = {
   getUserInfo: () => api.get("api/userInfo"),
+  updateUserInfo: (data) => api.post("api/userInfo", data),
+  deleteUser: (password) => {
+    console.log(password);
+    return api.delete("api/userInfo", {
+      password: password.password,
+    });
+  },
 };
 
 export const imageApi = {

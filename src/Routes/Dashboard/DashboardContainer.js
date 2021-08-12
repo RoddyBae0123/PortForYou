@@ -158,6 +158,7 @@ const DashboardContainer = memo(({ match, history }) => {
         alCondition={alCondition}
         roomCondition={roomCondition}
         setRoomCondition={setRoomCondition}
+        userData={userData}
       ></DashboardPresenter>
     </>
   );

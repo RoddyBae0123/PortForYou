@@ -208,17 +208,6 @@ const Message = styled.span`
 `;
 
 const Applicant = (applicant, getApplication) => {
-  applicant && console.log(applicant);
-  const [portfolio, setPortfolio] = useState();
-
-  const getPortFolio = async (idx) => {
-    try {
-      const { data } = await portFolioApi.getPortFolio(idx);
-      data && setPortfolio(data);
-    } catch (e) {
-      console.log("noData");
-    }
-  };
   const controlBtnHandler = async (e) => {
     try {
       let res;
@@ -271,19 +260,11 @@ const Applicant = (applicant, getApplication) => {
       </>
     );
 
-  {
-    applicant && console.log(applicant.idx);
-  }
-
-  useState(() => {
-    applicant && getPortFolio(applicant.portfolio.idx);
-  }, []);
-
   return (
-    portfolio && (
+    applicant && (
       <Container>
         <Title>
-          <Img src={portfolio.img}></Img>
+          <Img src={applicant.portfolio.img}></Img>
           <Name>
             {applicant.portfolio.user.name} /{" "}
             <Small>{applicant.position.name}</Small>{" "}
@@ -301,7 +282,7 @@ const Applicant = (applicant, getApplication) => {
           </PortSection>
           <PortSection>
             <PortTitle>Content</PortTitle>
-            <PortContents>{portfolio.content}</PortContents>
+            <PortContents>{applicant.portfolio.content}</PortContents>
           </PortSection>
           <PortSection>
             <PortTitle>Education & Position</PortTitle>
@@ -312,11 +293,11 @@ const Applicant = (applicant, getApplication) => {
                     <FontAwesomeIcon icon={faGraduationCap}></FontAwesomeIcon>
                   </MakeCenter>
                   <MakeCenter style={{ fontSize: 20 }}>
-                    {portfolio.education.name}
+                    {applicant.portfolio.education.name}
                   </MakeCenter>
                 </EduPosOne>
                 <EduPosOne display={"flex"} style={{ fontSize: 25 }}>
-                  {portfolio.position.name}
+                  {applicant.portfolio.position.name}
                 </EduPosOne>
               </EduAndPos>
             </PortContents>
@@ -325,7 +306,7 @@ const Applicant = (applicant, getApplication) => {
             <PortTitle>Project</PortTitle>
             <PortContents style={{ opacity: 1 }}>
               <ProjectUl>
-                {portfolio.project.map((e) => (
+                {applicant.portfolio.project.map((e) => (
                   <ProjectLi key={e.idx}>
                     <Project>
                       <MakeCenter
@@ -374,7 +355,7 @@ const Applicant = (applicant, getApplication) => {
             <PortTitle>Stack</PortTitle>
             <PortContents style={{ opacity: 1 }}>
               <StackUl>
-                {portfolio.tech.map((e) => (
+                {applicant.portfolio.tech.map((e) => (
                   <StackLi key={e.idx}>
                     <Stack>
                       <StackLogo>

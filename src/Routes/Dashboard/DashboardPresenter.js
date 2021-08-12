@@ -270,6 +270,7 @@ const DashboardPresenter = memo(
     roomCondition,
     setRoomCondition,
     getUserInfo,
+    userData,
   }) => {
     const [popup, setPopup] = useState(false);
     const delBtnHandler = () => {
@@ -506,7 +507,7 @@ const DashboardPresenter = memo(
                 ></Route>
                 <Route
                   path={`${match.path}/setting`}
-                  render={() => <Setting getUserInfo={getUserInfo} />}
+                  render={() => <Setting getUserInfo={getUserInfo} userData={userData}/>}
                 />
               </Switch>
             </AnimatePresence>

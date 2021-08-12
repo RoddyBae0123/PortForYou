@@ -30,7 +30,7 @@ const PopupUser = styled.div`
   flex-direction: column;
   align-items: center;
   position: relative;
-  overflow-y: scroll;
+  overflow-y: ${(props) => (props.over ? "none" : "scroll")};
 `;
 const DelpopupBtn = styled.button`
   display: ${(props) => (props.second ? "none" : "block")};
@@ -46,7 +46,7 @@ const DelpopupBtn = styled.button`
   transition: all 200ms ease-in-out;
 `;
 
-const Popup = ({ status, component, second, size, setPopup }) => {
+const Popup = ({ status, component, second, size, setPopup, notover }) => {
   const [sec, setSec] = useState(true);
   const [change, setChange] = useState(false);
   const timeout = () => {
@@ -66,7 +66,7 @@ const Popup = ({ status, component, second, size, setPopup }) => {
 
   return sec ? (
     <PopupBkg status={status} change={change}>
-      <PopupUser width={size.width} height={size.height}>
+      <PopupUser width={size.width} height={size.height} notover={notover}>
         <DelpopupBtn second={second} onClick={() => setPopup(false)}>
           <FontAwesomeIcon style={{ fontSize: 35 }} icon={faTimes} />
         </DelpopupBtn>

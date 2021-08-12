@@ -2,9 +2,14 @@ import Section from "../../../Components/Section";
 import styled from "styled-components";
 import { motion } from "framer-motion";
 import { useEffect, useState, useRef } from "react";
-import { imageApi } from "../../../Api";
+import { imageApi, userApi, AuthApi } from "../../../Api";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCloudUploadAlt } from "@fortawesome/free-solid-svg-icons";
+import {
+  faCloudUploadAlt,
+  faSkullCrossbones,
+} from "@fortawesome/free-solid-svg-icons";
+import Popup from "../../../Components/Popup";
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -55,6 +60,8 @@ const Input = styled.input`
   padding: 0 20px;
   outline: none;
   font-weight: 500;
+  pointer-events: ${(props) => (props.pointer ? "none" : "auto")};
+  opacity: ${(props) => (props.pointer ? 0.3 : 1)};
 `;
 
 const Wrap = styled.div`
@@ -116,19 +123,55 @@ const DeleteBtn = styled.button`
   transition: all 300ms ease;
   color: red;
 `;
-const Setting = ({ getUserInfo }) => {
-  const [userInfo, setUserInfo] = useState({
-    pw: "",
-    pn: "",
-    site: "",
-    img: undefined,
+const Status = styled.h3`
+  color: ${(props) => props.color};
+  font-size: 10px;
+  margin-top: 10px;
+`;
+
+const DelContainer = styled.div`
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+`;
+
+const DelTitle = styled.div`
+  text-align: center;
+  font-size: 30px;
+`;
+const RealDelBtn = styled.button`
+  width: 120px;
+  height: 60px;
+  border: 3px solid red;
+  color: red;
+  font-size: 20px;
+  font-weight: 500;
+  border-radius: 15px;
+`;
+
+const Setting = ({ getUserInfo, userData }) => {
+  const clonedeep = require("lodash.clonedeep");
+  const [delCondition, setDelCondition] = useState({
+    status: false,
+    password: "",
   });
-  const [image, SetImage] = useState();
+  const [delPopup, setDelPopup] = useState();
+  const [userInfo, setUserInfo] = useState(
+    userData && {
+      name: userData.data.name,
+      password: userData.data.password,
+      phone: userData.data.phone,
+      site: userData.data.site,
+    }
+  );
+
   const formData = new FormData();
   const ref = useRef();
-
+  userInfo && console.log(userInfo.name.length);
   const setProfileImage = async (e) => {
-    console.log(e.target.files[0]);
     try {
       formData.append("profile", e.target.files[0]);
       const res = await imageApi.setUserProfileImage(formData);
@@ -138,22 +181,92 @@ const Setting = ({ getUserInfo }) => {
     } finally {
       formData.delete("profile");
     }
-    //   try {
-    //     if (e.target.files[0]) {
-    //       e.preventDefault();
-    //       formData.append("profile", e.target.nextSibling.files[0]);
-    //       const res = await imageApi.setUserProfileImage(formData);
-    //       formData.delete("profile");
-    //       // ref.current.value = "";
-    //       res && getUserInfo();
-    //     }
-    //   } catch (e) {
-    //     // ref.current.value = "";
-    //     formData.delete("profile");
-    //   }
   };
 
-  useEffect(() => {}, []);
+  const changeValue = (e) => {
+    const copy = clonedeep(userInfo);
+    copy[e.target.dataset.type] = e.target.value;
+    setUserInfo(copy);
+  };
+  const setValue = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await userApi.updateUserInfo({
+        [e.target.dataset.type]: userInfo[e.target.dataset.type],
+      });
+      data && getUserInfo();
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const statusReturn = () => {
+    return <Status color="green">Change completed</Status>;
+  };
+
+  const popupReturn = () => {
+    return (
+      <Popup
+        status={true}
+        component={DeleteReturn}
+        size={{ width: "500px", height: "500px" }}
+        setPopup={setDelPopup}
+        notover={true}
+      ></Popup>
+    );
+  };
+
+  const DeleteReturn = () => (
+    <DelContainer>
+      <DelTitle>
+        <FontAwesomeIcon
+          icon={faSkullCrossbones}
+          style={{ fontSize: 100, marginBottom: 20 }}
+        />
+        <h3>User Withdrawal</h3>
+      </DelTitle>
+      {realDelBtnReturn(delCondition.status)}
+    </DelContainer>
+  );
+
+  const realDelBtnReturn = (condition) =>
+    condition ? (
+      <RealDelBtn onClick={() => deleteUser(delCondition.password)}>
+        Delete
+      </RealDelBtn>
+    ) : (
+      <Input
+        placeholder="Please enter password"
+        style={{ width: 300, height: 50 }}
+        type="password"
+        onChange={(e) => login(e.target.value)}
+      ></Input>
+    );
+
+  const login = async (pw) => {
+    try {
+      const { data } = await AuthApi.getLoginToken(userData.data.username, pw);
+      {
+        data &&
+          setDelCondition({
+            status: true,
+            password: pw,
+          });
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const deleteUser = async (password) => {
+    console.log(password);
+    try {
+      const res = await userApi.deleteUser({ password });
+      res && console.log("i'm deleted");
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   return (
     <motion.div
@@ -168,76 +281,135 @@ const Setting = ({ getUserInfo }) => {
           message={"Set the member information."}
           nav={true}
         />
-        <UserSetting style={{ marginTop: "50px" }}>
-          <UserTitle>
-            <h2 style={{ margin: "20px 0 " }}>User Information</h2>
-          </UserTitle>
-          <FormSection style={{ marginTop: "50px" }}>
-            <h2 style={{ margin: "15px 0 " }}>Password</h2>
-            <Form>
-              <InputBox>
-                <Input type="password" value="2313" />
-              </InputBox>
-              <InputBox>
-                <Input type="submit" value="RESET" />
-              </InputBox>
-            </Form>
-          </FormSection>
-          <FormSection style={{ marginTop: "50px" }}>
-            <h2 style={{ margin: "15px 0 " }}>PhoneNumber</h2>
-            <Form>
-              <InputBox>
-                <Input type="text" value="01051529445" />
-              </InputBox>
-              <InputBox>
-                <Input type="submit" value="RESET" />
-              </InputBox>
-            </Form>
-          </FormSection>
-          <FormSection style={{ marginTop: "50px" }}>
-            <h2 style={{ margin: "15px 0 " }}>Site</h2>
-            <Form>
-              <InputBox>
-                <Input type="text" value="www.naver.com" />
-              </InputBox>
-              <InputBox>
-                <Input type="submit" value="RESET" />
-              </InputBox>
-            </Form>
-          </FormSection>
-        </UserSetting>
-        <UserSetting style={{ marginTop: "50px" }}>
-          <UserTitle>
-            <h2 style={{ margin: "20px 0 " }}>User Image</h2>
-          </UserTitle>
-          <Wrap>
-            <WrapTitle>
-              <Title>Please upload an image of a square image.</Title>
-            </WrapTitle>
-            <Label for="input-file">
-              <FontAwesomeIcon icon={faCloudUploadAlt}></FontAwesomeIcon>
-              <h2 style={{ fontSize: 20 }}>Upload</h2>
-            </Label>
-            <Input
-              style={{ display: "none" }}
-              type="file"
-              id="input-file"
-              ref={ref}
-              onChange={setProfileImage}
-            ></Input>
-          </Wrap>
-        </UserSetting>
-        <UserSetting style={{ marginTop: "50px" }}>
-          <UserTitle>
-            <h2 style={{ margin: "20px 0 " }}>User Withdrawal</h2>
-          </UserTitle>
-          <Wrap style={{ borderColor: "red" }}>
-            <WrapTitle style={{ color: "red" }}>
-              <Title>Dangerous Zone</Title>
-            </WrapTitle>
-            <DeleteBtn>Delete</DeleteBtn>
-          </Wrap>
-        </UserSetting>
+        {userInfo && (
+          <>
+            <UserSetting style={{ marginTop: "50px" }}>
+              <UserTitle>
+                <h2 style={{ margin: "20px 0 " }}>User Information</h2>
+              </UserTitle>
+              <FormSection style={{ marginTop: "50px" }}>
+                <h2 style={{ margin: "15px 0 " }}>name</h2>
+                <Form onkeydown="return event.key != 'Enter';">
+                  <InputBox>
+                    <Input
+                      type="text"
+                      value={userInfo.name}
+                      data-type="name"
+                      onChange={changeValue}
+                    />
+                  </InputBox>
+                  <InputBox>
+                    <Input
+                      type="submit"
+                      value="RESET"
+                      data-type="name"
+                      onClick={setValue}
+                      pointer={!(userInfo.name.length > 1)}
+                    />
+                  </InputBox>
+                </Form>
+                {/* {statusReturn()} */}
+              </FormSection>
+              <FormSection style={{ marginTop: "50px" }}>
+                <h2 style={{ margin: "15px 0 " }}>Password</h2>
+                <Form>
+                  <InputBox>
+                    <Input
+                      type="password"
+                      value={userInfo.password}
+                      data-type="password"
+                      onChange={changeValue}
+                      placeholder="Please type new password"
+                    />
+                  </InputBox>
+                  <InputBox>
+                    <Input
+                      type="submit"
+                      value="RESET"
+                      data-type="password"
+                      onClick={setValue}
+                    />
+                  </InputBox>
+                </Form>
+              </FormSection>
+              <FormSection style={{ marginTop: "50px" }}>
+                <h2 style={{ margin: "15px 0 " }}>PhoneNumber</h2>
+                <Form>
+                  <InputBox>
+                    <Input
+                      type="text"
+                      value={userInfo.phone}
+                      data-type="phone"
+                      onChange={changeValue}
+                    />
+                  </InputBox>
+                  <InputBox>
+                    <Input
+                      type="submit"
+                      value="RESET"
+                      data-type="phone"
+                      onClick={setValue}
+                    />
+                  </InputBox>
+                </Form>
+              </FormSection>
+              <FormSection style={{ marginTop: "50px" }}>
+                <h2 style={{ margin: "15px 0 " }}>Site</h2>
+                <Form>
+                  <InputBox>
+                    <Input
+                      type="text"
+                      value={userInfo.site}
+                      data-type="site"
+                      onChange={changeValue}
+                    />
+                  </InputBox>
+                  <InputBox>
+                    <Input
+                      type="submit"
+                      value="RESET"
+                      data-type="site"
+                      onClick={setValue}
+                    />
+                  </InputBox>
+                </Form>
+              </FormSection>
+            </UserSetting>
+            <UserSetting style={{ marginTop: "50px" }}>
+              <UserTitle>
+                <h2 style={{ margin: "20px 0 " }}>User Image</h2>
+              </UserTitle>
+              <Wrap>
+                <WrapTitle>
+                  <Title>Please upload an image of a square image.</Title>
+                </WrapTitle>
+                <Label for="input-file">
+                  <FontAwesomeIcon icon={faCloudUploadAlt}></FontAwesomeIcon>
+                  <h2 style={{ fontSize: 20 }}>Upload</h2>
+                </Label>
+                <Input
+                  style={{ display: "none" }}
+                  type="file"
+                  id="input-file"
+                  ref={ref}
+                  onChange={setProfileImage}
+                ></Input>
+              </Wrap>
+            </UserSetting>
+            <UserSetting style={{ marginTop: "50px" }}>
+              <UserTitle>
+                <h2 style={{ margin: "20px 0 " }}>User Withdrawal</h2>
+              </UserTitle>
+              <Wrap style={{ borderColor: "red" }}>
+                <WrapTitle style={{ color: "red" }}>
+                  <Title>Dangerous Zone</Title>
+                </WrapTitle>
+                <DeleteBtn onClick={() => setDelPopup(true)}>Delete</DeleteBtn>
+              </Wrap>
+            </UserSetting>
+          </>
+        )}
+        {delPopup && popupReturn()}
       </Container>
     </motion.div>
   );
