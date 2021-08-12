@@ -26,6 +26,24 @@ const Channel = (match) => {
   const [inputMessage, setInputMessage] = useState({ value: "" });
   const [userData, setUserData] = useState(undefined);
   const [connected, setConnected] = useState("disconnected");
+  const [fired, setFired] = useState(false);
+
+  // $(".message-wrapper").scroll(() => {
+  //   if (!fired && $(".message-wrapper").scrollTop() == 0) {
+  //     if (messageList[0] != null) {
+  //       // console.log(messageList[0].key);
+  //       getMessages(1);
+  //       setFired(true);
+  //     }
+  //   }
+  // });
+
+  const componentDidMount = useEffect(async () => {
+    const data = await userApi.getUserInfo();
+    setUserData(data);
+    getRoomId();
+    getMessages();
+  }, []);
 
   const getRoomId = async () => {
     const api = axios.create({
@@ -38,15 +56,28 @@ const Channel = (match) => {
     setRoomId(data.data.rid);
   };
 
-  const componentDidMount = useEffect(async () => {
-    getRoomId();
-    const data = await userApi.getUserInfo();
-    setUserData(data);
-  }, []);
+  const getMessages = async (idx) => {
+    const api = axios.create({
+      baseURL: `${wifi}`,
+      headers: {
+        Authorization: `Bearer ${Auth.getAccessToken()}`,
+      },
+    });
+    api
+      .get(`/study/${match.match.params.idx}/room/messages`, { idx: idx })
+      .then((res) => {
+        let messageList_ = [...messageList];
+        res.data.map((i) => {
+          messageList_.unshift(<Message msg={i} key={i.idx}></Message>);
+        });
+        setMessageList(messageList_);
+        $(".message-wrapper").scrollTop($(".message-wrapper")[0].scrollHeight);
+      });
+  };
 
   const addMessage = (msg) => {
     let messageList_ = [...messageList];
-    messageList_.push(<Message msg={msg}></Message>);
+    messageList_.push(<Message msg={msg} key={msg.idx}></Message>);
     setMessageList(messageList_);
     $(".message-wrapper").scrollTop($(".message-wrapper")[0].scrollHeight);
   };
@@ -64,22 +95,27 @@ const Channel = (match) => {
       "message": "${inputMessage.value}",
       "type": "TALK"},
     `);
-
     setInputMessage({ value: "" });
   };
 
-  const connectedHandler = () => {
+  const connectedHandler = async () => {
     setConnected("connected");
-    if (userData) {
-      sendMessage(`
-      {"room": {"rid":"${roomId}"},
-      "user": {"uid":${userData.data.uid}},
-      "message": "",
-      "type": "ENTER"},
-    `);
-    } else {
-      console.log("no userData");
-    }
+    // setTimeout(() => {
+    //   if (userData) {
+    //     sendMessage(`
+    //   {"room": {"rid":"${roomId}"},
+    //   "user": {"uid":${userData.data.uid}},
+    //   "message": "",
+    //   "type": "ENTER"},
+    // `);
+    //   } else {
+    //     console.log("no userData");
+    //   }
+    // }, 800);
+  };
+
+  const disconnectedHandler = () => {
+    setConnected("disconnected");
   };
 
   const inputMessageHandler = (e) => {
@@ -95,7 +131,7 @@ const Channel = (match) => {
     >
       <Container className="channel-container">
         <SockJsClient
-          url="http://3.37.208.251:8080/pfy/stomp"
+          url={`${wifi}pfy/stomp`}
           topics={[`/sub/chat/room/${roomId}`]}
           onMessage={(msg) => {
             addMessage(msg);
@@ -107,7 +143,7 @@ const Channel = (match) => {
             connectedHandler();
           }}
           onDisconnect={() => {
-            setConnected("disconnected");
+            disconnectedHandler();
           }}
         ></SockJsClient>
         <div className="channel-title">
