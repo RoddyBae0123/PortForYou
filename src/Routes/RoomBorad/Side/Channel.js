@@ -27,6 +27,19 @@ const Channel = (match) => {
   const [userData, setUserData] = useState(undefined);
   const [connected, setConnected] = useState("disconnected");
 
+  const componentDidMount = useEffect(async () => {
+    const data = await userApi.getUserInfo();
+    setUserData(data);
+    getRoomId();
+    getMessages();
+  }, []);
+
+  const getPreviousMessage = async () => {
+    if (messageList[0] != null) {
+      await getMessages(messageList[0].key);
+    }
+  };
+
   const getRoomId = async () => {
     const api = axios.create({
       baseURL: `${wifi}`,
@@ -38,15 +51,40 @@ const Channel = (match) => {
     setRoomId(data.data.rid);
   };
 
-  const componentDidMount = useEffect(async () => {
-    getRoomId();
-    const data = await userApi.getUserInfo();
-    setUserData(data);
-  }, []);
+  const getMessages = async (idx) => {
+    const api = axios.create({
+      baseURL: `${wifi}`,
+      headers: {
+        Authorization: `Bearer ${Auth.getAccessToken()}`,
+      },
+    });
+    api
+      .get(`/study/${match.match.params.idx}/room/messages`, {
+        params: { "last-idx": idx },
+      })
+      .then((res) => {
+        let messageList_ = [...messageList];
+        const prevSize = messageList.length;
+        res.data.map((i) => {
+          messageList_.unshift(<Message msg={i} key={i.idx}></Message>);
+        });
+        setMessageList(messageList_);
+        if (idx == null) {
+          $(".message-wrapper").scrollTop(
+            $(".message-wrapper")[0].scrollHeight
+          );
+        } else {
+          $(".message-wrapper").scrollTop(
+            $(".message-wrapper")[0].scrollHeight *
+              (1 - prevSize / messageList_.length)
+          );
+        }
+      });
+  };
 
   const addMessage = (msg) => {
     let messageList_ = [...messageList];
-    messageList_.push(<Message msg={msg}></Message>);
+    messageList_.push(<Message msg={msg} key={msg.idx}></Message>);
     setMessageList(messageList_);
     $(".message-wrapper").scrollTop($(".message-wrapper")[0].scrollHeight);
   };
@@ -64,22 +102,27 @@ const Channel = (match) => {
       "message": "${inputMessage.value}",
       "type": "TALK"},
     `);
-
     setInputMessage({ value: "" });
   };
 
-  const connectedHandler = () => {
+  const connectedHandler = async () => {
     setConnected("connected");
-    if (userData) {
-      sendMessage(`
-      {"room": {"rid":"${roomId}"},
-      "user": {"uid":${userData.data.uid}},
-      "message": "",
-      "type": "ENTER"},
-    `);
-    } else {
-      console.log("no userData");
-    }
+    // setTimeout(() => {
+    //   if (userData) {
+    //     sendMessage(`
+    //   {"room": {"rid":"${roomId}"},
+    //   "user": {"uid":${userData.data.uid}},
+    //   "message": "",
+    //   "type": "ENTER"},
+    // `);
+    //   } else {
+    //     console.log("no userData");
+    //   }
+    // }, 800);
+  };
+
+  const disconnectedHandler = () => {
+    setConnected("disconnected");
   };
 
   const inputMessageHandler = (e) => {
@@ -95,7 +138,7 @@ const Channel = (match) => {
     >
       <Container className="channel-container">
         <SockJsClient
-          url="http://3.37.208.251:8080/pfy/stomp"
+          url={`${wifi}pfy/stomp`}
           topics={[`/sub/chat/room/${roomId}`]}
           onMessage={(msg) => {
             addMessage(msg);
@@ -107,7 +150,7 @@ const Channel = (match) => {
             connectedHandler();
           }}
           onDisconnect={() => {
-            setConnected("disconnected");
+            disconnectedHandler();
           }}
         ></SockJsClient>
         <div className="channel-title">
@@ -124,10 +167,16 @@ const Channel = (match) => {
           </div>
         </div>
         <div className="channel-wrapper">
-          <div className="message-wrapper">{messageList}</div>
+          <div className="message-wrapper">
+            <div className="prev-message" onClick={getPreviousMessage}>
+              이전 메시지 불러오기
+            </div>
+            {messageList}
+          </div>
 
           <form className="message-form" onSubmit={messageSubmitHandler}>
             <div className="message-form-nav">
+              navigation
               <div className="add-image"></div>
               <div className="add-file"></div>
             </div>
