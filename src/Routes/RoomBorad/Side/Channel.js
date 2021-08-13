@@ -26,17 +26,6 @@ const Channel = (match) => {
   const [inputMessage, setInputMessage] = useState({ value: "" });
   const [userData, setUserData] = useState(undefined);
   const [connected, setConnected] = useState("disconnected");
-  const [fired, setFired] = useState(false);
-
-  // $(".message-wrapper").scroll(() => {
-  //   if (!fired && $(".message-wrapper").scrollTop() == 0) {
-  //     if (messageList[0] != null) {
-  //       // console.log(messageList[0].key);
-  //       getMessages(1);
-  //       setFired(true);
-  //     }
-  //   }
-  // });
 
   const componentDidMount = useEffect(async () => {
     const data = await userApi.getUserInfo();
@@ -44,6 +33,12 @@ const Channel = (match) => {
     getRoomId();
     getMessages();
   }, []);
+
+  const getPreviousMessage = async () => {
+    if (messageList[0] != null) {
+      await getMessages(messageList[0].key);
+    }
+  };
 
   const getRoomId = async () => {
     const api = axios.create({
@@ -64,14 +59,26 @@ const Channel = (match) => {
       },
     });
     api
-      .get(`/study/${match.match.params.idx}/room/messages`, { idx: idx })
+      .get(`/study/${match.match.params.idx}/room/messages`, {
+        params: { "last-idx": idx },
+      })
       .then((res) => {
         let messageList_ = [...messageList];
+        const prevSize = messageList.length;
         res.data.map((i) => {
           messageList_.unshift(<Message msg={i} key={i.idx}></Message>);
         });
         setMessageList(messageList_);
-        $(".message-wrapper").scrollTop($(".message-wrapper")[0].scrollHeight);
+        if (idx == null) {
+          $(".message-wrapper").scrollTop(
+            $(".message-wrapper")[0].scrollHeight
+          );
+        } else {
+          $(".message-wrapper").scrollTop(
+            $(".message-wrapper")[0].scrollHeight *
+              (1 - prevSize / messageList_.length)
+          );
+        }
       });
   };
 
@@ -160,10 +167,16 @@ const Channel = (match) => {
           </div>
         </div>
         <div className="channel-wrapper">
-          <div className="message-wrapper">{messageList}</div>
+          <div className="message-wrapper">
+            <div className="prev-message" onClick={getPreviousMessage}>
+              이전 메시지 불러오기
+            </div>
+            {messageList}
+          </div>
 
           <form className="message-form" onSubmit={messageSubmitHandler}>
             <div className="message-form-nav">
+              navigation
               <div className="add-image"></div>
               <div className="add-file"></div>
             </div>
