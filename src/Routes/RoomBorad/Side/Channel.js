@@ -12,11 +12,13 @@ import jquery from "jquery";
 import $ from "jquery";
 import { Forum, LineWeight } from "@material-ui/icons";
 import "./Channel.css";
+import Chat from "../../../Components/Chat";
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
 `;
 
 const Channel = (match) => {
@@ -30,7 +32,7 @@ const Channel = (match) => {
   const componentDidMount = useEffect(async () => {
     const data = await userApi.getUserInfo();
     setUserData(data);
-    getRoomId();
+    getRoomId(); //complete
     getMessages();
   }, []);
 
@@ -49,7 +51,7 @@ const Channel = (match) => {
     });
     const data = await api.get(`/study/${match.match.params.idx}/room`);
     setRoomId(data.data.rid);
-  };
+  }; //complete
 
   const getMessages = async (idx) => {
     const api = axios.create({
@@ -63,6 +65,7 @@ const Channel = (match) => {
         params: { "last-idx": idx },
       })
       .then((res) => {
+        console.log(res);
         let messageList_ = [...messageList];
         const prevSize = messageList.length;
         res.data.map((i) => {
@@ -83,9 +86,12 @@ const Channel = (match) => {
   };
 
   const addMessage = (msg) => {
-    let messageList_ = [...messageList];
-    messageList_.push(<Message msg={msg} key={msg.idx}></Message>);
-    setMessageList(messageList_);
+    // let messageList_ = [...messageList];
+    // messageList_.push(<Message msg={msg} key={msg.idx}></Message>);
+    setMessageList([
+      ...messageList,
+      <Message msg={msg} key={msg.idx}></Message>,
+    ]);
     $(".message-wrapper").scrollTop($(".message-wrapper")[0].scrollHeight);
   };
 
@@ -136,7 +142,7 @@ const Channel = (match) => {
       initial={{ opacity: 0 }}
       style={{ height: "100%" }}
     >
-      <Container className="channel-container">
+      <Container>
         <SockJsClient
           url={`${wifi}pfy/stomp`}
           topics={[`/sub/chat/room/${roomId}`]}
@@ -152,8 +158,9 @@ const Channel = (match) => {
           onDisconnect={() => {
             disconnectedHandler();
           }}
-        ></SockJsClient>
-        <div className="channel-title">
+        />
+        <Chat />
+        {/* <div className="channel-title">
           <Forum style={{ fontSize: "50px" }} className="channel-title-img" />
           <div className="channel-title-title">Channel</div>
           <div className="channel-title-connect">
@@ -169,7 +176,7 @@ const Channel = (match) => {
         <div className="channel-wrapper">
           <div className="message-wrapper">
             <div className="prev-message" onClick={getPreviousMessage}>
-              ì´ì „ ë©”ì‹œì§€ ë¶ˆëŸ¬ì˜¤ê¸°
+              ?´? „ ë©”ì‹œì§? ë¶ˆëŸ¬?˜¤ê¸?
             </div>
             {messageList}
           </div>
@@ -187,11 +194,11 @@ const Channel = (match) => {
             ></input>
             <input
               className="message-form-submit"
-              value="ì „ì†¡"
+              value="? „?†¡"
               type="submit"
             ></input>
           </form>
-        </div>
+        </div> */}
       </Container>
     </motion.div>
   );

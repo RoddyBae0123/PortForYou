@@ -9,7 +9,7 @@ import { studyApi, portFolioApi, userApi } from "../../Api";
 import { connect } from "react-redux";
 
 const DashboardContainer = memo((props) => {
-  console.log(props);
+  // console.log(props);
   const [data, setData] = useState(undefined); //resume data
   const [profileImgUri, setProfileImgUri] = useState(undefined); //change profile
   const [userData, setUserData] = useState(undefined); //user information

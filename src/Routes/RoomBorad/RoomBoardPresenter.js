@@ -23,7 +23,7 @@ import Calender from "./Side/Calender";
 import Channel from "./Side/Channel";
 import Member from "./Side/Member";
 import HowToRegIcon from "@material-ui/icons/HowToReg";
-
+import Channel2 from "./Side/Channel2";
 const Back = styled.div`
   display: grid;
   grid-template-columns: 220px 1fr;

@@ -67,6 +67,11 @@ export const studyApi = {
   deleteAnnouncement: (idx) => api.delete(`api/announcement/${idx}`),
   declineApplication: (idx) => api.get(`api/application/${idx}/decline`),
   acceptApplication: (idx) => api.get(`api/application/${idx}/accept`),
+  getChatId: (idx) => api.get(`/study/${idx}/room`),
+  getMessages: (idx, mIdx) =>
+    api.get(`/study/${idx}/room/messages`, {
+      params: { "last-idx": mIdx },
+    }),
 };
 
 export const AuthApi = {
@@ -80,12 +85,10 @@ export const AuthApi = {
 export const userApi = {
   getUserInfo: () => api.get("api/userInfo"),
   updateUserInfo: (data) => api.post("api/userInfo", data),
-  deleteUser: (password) => {
-    console.log(password);
-    return api.delete("api/userInfo", {
-      password: password.password,
-    });
-  },
+  deleteUser: (password) =>
+    api.delete("api/userInfo", {
+      data: { password: password },
+    }),
 };
 
 export const imageApi = {

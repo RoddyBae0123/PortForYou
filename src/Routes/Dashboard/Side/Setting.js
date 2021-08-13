@@ -37,7 +37,7 @@ const FormSection = styled.div`
   font-weight: 500;
 `;
 
-const Form = styled.form`
+const Form = styled.div`
   display: grid;
   width: 600px;
   grid-template-columns: 0.7fr 0.3fr;
@@ -162,7 +162,7 @@ const Setting = ({ getUserInfo, userData }) => {
   const [userInfo, setUserInfo] = useState(
     userData && {
       name: userData.data.name,
-      password: userData.data.password,
+      password: "",
       phone: userData.data.phone,
       site: userData.data.site,
     }
@@ -170,7 +170,6 @@ const Setting = ({ getUserInfo, userData }) => {
 
   const formData = new FormData();
   const ref = useRef();
-  userInfo && console.log(userInfo.name.length);
   const setProfileImage = async (e) => {
     try {
       formData.append("profile", e.target.files[0]);
@@ -259,15 +258,13 @@ const Setting = ({ getUserInfo, userData }) => {
   };
 
   const deleteUser = async (password) => {
-    console.log(password);
     try {
-      const res = await userApi.deleteUser({ password });
+      const res = await userApi.deleteUser(password);
       res && console.log("i'm deleted");
     } catch (e) {
       console.log(e);
     }
   };
-
   return (
     <motion.div
       exit={{ opacity: 0 }}
@@ -289,7 +286,7 @@ const Setting = ({ getUserInfo, userData }) => {
               </UserTitle>
               <FormSection style={{ marginTop: "50px" }}>
                 <h2 style={{ margin: "15px 0 " }}>name</h2>
-                <Form onkeydown="return event.key != 'Enter';">
+                <Form>
                   <InputBox>
                     <Input
                       type="text"
@@ -328,6 +325,7 @@ const Setting = ({ getUserInfo, userData }) => {
                       value="RESET"
                       data-type="password"
                       onClick={setValue}
+                      pointer={!(userInfo.password.length > 10)}
                     />
                   </InputBox>
                 </Form>
@@ -349,6 +347,7 @@ const Setting = ({ getUserInfo, userData }) => {
                       value="RESET"
                       data-type="phone"
                       onClick={setValue}
+                      pointer={!(userInfo.phone.length > 10)}
                     />
                   </InputBox>
                 </Form>
@@ -370,6 +369,7 @@ const Setting = ({ getUserInfo, userData }) => {
                       value="RESET"
                       data-type="site"
                       onClick={setValue}
+                      pointer={!(userInfo.site.length > 5)}
                     />
                   </InputBox>
                 </Form>
