@@ -6,7 +6,10 @@ import wifi from "../../wifi";
 import { Link } from "react-router-dom";
 import { useAsync } from "react-async";
 import { studyApi, portFolioApi, userApi } from "../../Api";
-const DashboardContainer = memo(({ match, history }) => {
+import { connect } from "react-redux";
+
+const DashboardContainer = memo((props) => {
+  console.log(props);
   const [data, setData] = useState(undefined); //resume data
   const [profileImgUri, setProfileImgUri] = useState(undefined); //change profile
   const [userData, setUserData] = useState(undefined); //user information
@@ -140,7 +143,7 @@ const DashboardContainer = memo(({ match, history }) => {
   return (
     <>
       <DashboardPresenter
-        match={match}
+        match={props.match}
         data={data}
         method={getResumeList}
         profileImgUri={profileImgUri}
@@ -149,7 +152,7 @@ const DashboardContainer = memo(({ match, history }) => {
         setData={setData}
         DelResumeBtn={DelResumeBtn}
         getStudyList={getStudyList}
-        history={history}
+        history={props.history}
         setStudy={setStudy}
         study={study}
         otherAnnList={otherAnnList}
@@ -164,4 +167,9 @@ const DashboardContainer = memo(({ match, history }) => {
   );
 });
 
-export default DashboardContainer;
+const getCurrentState = (state, ownProps) => {
+  console.log(state, ownProps);
+
+  return state;
+};
+export default connect(getCurrentState)(DashboardContainer);
