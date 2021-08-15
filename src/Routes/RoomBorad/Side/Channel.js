@@ -2,12 +2,12 @@ import { motion } from "framer-motion";
 import styled from "styled-components";
 import Section from "../../../Components/Section";
 import SockJsClient from "react-stomp";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import wifi from "../../../wifi";
 import Auth from "../../../Auth";
 import Message from "../../../Components/Message";
-import { userApi } from "../../../Api";
+import { studyApi, userApi } from "../../../Api";
 import jquery from "jquery";
 import $ from "jquery";
 import { Forum, LineWeight } from "@material-ui/icons";
@@ -28,17 +28,25 @@ const Channel = (match) => {
   const [inputMessage, setInputMessage] = useState({ value: "" });
   const [userData, setUserData] = useState(undefined);
   const [connected, setConnected] = useState("disconnected");
-
-  const componentDidMount = useEffect(async () => {
-    const data = await userApi.getUserInfo();
-    setUserData(data);
-    getRoomId(); //complete
-    getMessages();
+  const [roomData, setRoomData] = useState();
+  const typeInput = useRef();
+  const chatBoard = useRef();
+  useEffect(async () => {
+    try {
+      setMessageList([]);
+      const data = await userApi.getUserInfo();
+      setUserData(data);
+      getRoomId(); //complete
+      getMessages();
+      getStudy();
+    } catch (e) {
+      console.log(e);
+    }
   }, []);
 
   const getPreviousMessage = async () => {
     if (messageList[0] != null) {
-      await getMessages(messageList[0].key);
+      const data = await getMessages(messageList[0].key);
     }
   };
 
@@ -49,9 +57,27 @@ const Channel = (match) => {
         Authorization: `Bearer ${Auth.getAccessToken()}`,
       },
     });
-    const data = await api.get(`/study/${match.match.params.idx}/room`);
-    setRoomId(data.data.rid);
+    const { data } = await api.get(`/study/${match.match.params.idx}/room`);
+    setRoomId(data.rid);
   }; //complete
+
+  const getStudy = async () => {
+    try {
+      const { data } = await studyApi.getStudy(match.match.params.idx);
+      data && setRoomData(data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const getHeight = () => {
+    var height = 0;
+    for (let i = 1; i < 31; i++) {
+      height += chatBoard.current.childNodes[i].scrollHeight;
+    }
+    console.log(height);
+    return height;
+  };
 
   const getMessages = async (idx) => {
     const api = axios.create({
@@ -65,6 +91,7 @@ const Channel = (match) => {
         params: { "last-idx": idx },
       })
       .then((res) => {
+        setMessageList([]);
         console.log(res);
         let messageList_ = [...messageList];
         const prevSize = messageList.length;
@@ -72,27 +99,23 @@ const Channel = (match) => {
           messageList_.unshift(<Message msg={i} key={i.idx}></Message>);
         });
         setMessageList(messageList_);
+
         if (idx == null) {
-          $(".message-wrapper").scrollTop(
-            $(".message-wrapper")[0].scrollHeight
-          );
+          chatBoard.current.scrollTop = chatBoard.current.scrollHeight;
         } else {
-          $(".message-wrapper").scrollTop(
-            $(".message-wrapper")[0].scrollHeight *
-              (1 - prevSize / messageList_.length)
-          );
+          console.log(chatBoard);
+          chatBoard.current.scrollTop = getHeight();
         }
       });
   };
 
   const addMessage = (msg) => {
-    // let messageList_ = [...messageList];
-    // messageList_.push(<Message msg={msg} key={msg.idx}></Message>);
+    console.log(msg);
     setMessageList([
       ...messageList,
       <Message msg={msg} key={msg.idx}></Message>,
     ]);
-    $(".message-wrapper").scrollTop($(".message-wrapper")[0].scrollHeight);
+    chatBoard.current.scrollTop = chatBoard.current.scrollHeight;
   };
 
   const sendMessage = (msg) => {
@@ -102,29 +125,20 @@ const Channel = (match) => {
   const messageSubmitHandler = (e) => {
     e.preventDefault();
 
-    sendMessage(`
+    if (inputMessage.value.length) {
+      sendMessage(`
       {"room": {"rid":"${roomId}"},
       "user": {"uid":${userData.data.uid}},
       "message": "${inputMessage.value}",
       "type": "TALK"},
     `);
-    setInputMessage({ value: "" });
+      setInputMessage({ value: "" });
+      typeInput.current.value = "";
+    }
   };
 
   const connectedHandler = async () => {
     setConnected("connected");
-    // setTimeout(() => {
-    //   if (userData) {
-    //     sendMessage(`
-    //   {"room": {"rid":"${roomId}"},
-    //   "user": {"uid":${userData.data.uid}},
-    //   "message": "",
-    //   "type": "ENTER"},
-    // `);
-    //   } else {
-    //     console.log("no userData");
-    //   }
-    // }, 800);
   };
 
   const disconnectedHandler = () => {
@@ -159,46 +173,18 @@ const Channel = (match) => {
             disconnectedHandler();
           }}
         />
-        <Chat />
-        {/* <div className="channel-title">
-          <Forum style={{ fontSize: "50px" }} className="channel-title-img" />
-          <div className="channel-title-title">Channel</div>
-          <div className="channel-title-connect">
-            {connected == "connected" ? (
-              <div className="channel-title-connect-circle"></div>
-            ) : (
-              <div className="channel-title-disconnect-circle"></div>
-            )}
-
-            <div className="channel-title-connect-description">{connected}</div>
-          </div>
-        </div>
-        <div className="channel-wrapper">
-          <div className="message-wrapper">
-            <div className="prev-message" onClick={getPreviousMessage}>
-              ?´? „ ë©”ì‹œì§? ë¶ˆëŸ¬?˜¤ê¸?
-            </div>
-            {messageList}
-          </div>
-
-          <form className="message-form" onSubmit={messageSubmitHandler}>
-            <div className="message-form-nav">
-              navigation
-              <div className="add-image"></div>
-              <div className="add-file"></div>
-            </div>
-            <input
-              className="message-form-text"
-              value={inputMessage.value}
-              onChange={inputMessageHandler}
-            ></input>
-            <input
-              className="message-form-submit"
-              value="? „?†¡"
-              type="submit"
-            ></input>
-          </form>
-        </div> */}
+        <Chat
+          data={{
+            messageList,
+            userData,
+            inputMessageHandler,
+            messageSubmitHandler,
+            typeInput,
+            chatBoard,
+            getPreviousMessage,
+            roomData,
+          }}
+        />
       </Container>
     </motion.div>
   );

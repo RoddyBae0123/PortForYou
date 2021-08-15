@@ -347,7 +347,7 @@ const Setting = ({ getUserInfo, userData }) => {
                       value="RESET"
                       data-type="phone"
                       onClick={setValue}
-                      pointer={!(userInfo.phone.length > 10)}
+                      pointer={!(userInfo.phone && userInfo.phone.length > 10)}
                     />
                   </InputBox>
                 </Form>
@@ -369,7 +369,7 @@ const Setting = ({ getUserInfo, userData }) => {
                       value="RESET"
                       data-type="site"
                       onClick={setValue}
-                      pointer={!(userInfo.site.length > 5)}
+                      pointer={!(userInfo.site && userInfo.site.length > 5)}
                     />
                   </InputBox>
                 </Form>

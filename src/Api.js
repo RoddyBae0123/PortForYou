@@ -34,6 +34,7 @@ export const portFolioApi = {
 
 export const studyApi = {
   getCategoryList: () => api.get("api/resource/categories"),
+  getStudy: (idx) => api.get(`api/study/${idx}`),
   getStudyList: (applied) => api.get(`api/user/studies?applied=${applied}`),
   SaveAnnouncement: (data) =>
     api.post(`api/study/${data.study.idx}/announcement`, {
