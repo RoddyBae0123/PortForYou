@@ -106,3 +106,13 @@ export const imageApi = {
     return api.post("api/img/user", data, { headers });
   },
 };
+
+export const boardApi = {
+  getBoardList: (idx) => api.get(`api/study/${idx}/boards`),
+  setBoard: ({ studyIdx, name, content, idx }) =>
+    api.post(`api/study/${studyIdx}/board`, {
+      name,
+      content,
+      idx,
+    }),
+};

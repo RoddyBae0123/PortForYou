@@ -4,13 +4,17 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import wifi from "../../wifi";
 import Auth from "../../Auth";
-import { portFolioApi, studyApi } from "../../Api";
+import { portFolioApi, studyApi, boardApi } from "../../Api";
+import { connect } from "react-redux";
+import { actionCreators } from "../../store";
 
 const RoomBoardContainer = (props) => {
   const [profileImgUri, setProfileImgUri] = useState(undefined); //change profile
   const [userData, setUserData] = useState(undefined); //user information
   const [position, setPosition] = useState([]);
-  const { match, location, history } = props;
+  const { match, location, history, addToDo, ...rest } = props;
+
+  console.log(rest);
 
   const {
     state: { idx },
@@ -148,9 +152,34 @@ const RoomBoardContainer = (props) => {
     const { data } = await studyApi.getMembersByStudyIdx(idx);
     data && setMemberList(data);
   };
+  const getBoardList = async () => {
+    try {
+      const { data } = await boardApi.getBoardList(idx);
+      addToDo("data", "boardList", data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const setBoardList = async ({ studyIdx, idx, name, content }) => {
+    try {
+      const { data } = await boardApi.setBoard({
+        studyIdx,
+        name,
+        content,
+        idx,
+      });
+      data && getBoardList();
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   useEffect(() => {
     getUserInfo();
     getAnnouncementList(idx);
+    getBoardList();
+    addToDo("setData", "setBoardList", setBoardList);
   }, []);
 
   return (
@@ -185,5 +214,15 @@ const RoomBoardContainer = (props) => {
     />
   );
 };
+const getCurrentState = (state, ownProps) => {
+  console.log(state, ownProps);
 
-export default RoomBoardContainer;
+  return state;
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addToDo: (dataType, dataName, data) =>
+      dispatch(actionCreators.addToDo(dataType, dataName, data)),
+  };
+};
+export default connect(getCurrentState, mapDispatchToProps)(RoomBoardContainer);

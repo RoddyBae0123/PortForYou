@@ -13,6 +13,8 @@ import $ from "jquery";
 import { Forum, LineWeight } from "@material-ui/icons";
 import "./Channel.css";
 import Chat from "../../../Components/Chat";
+import { connect } from "react-redux";
+import { actionCreators } from "../../../store";
 
 const Container = styled.div`
   display: flex;
@@ -21,7 +23,7 @@ const Container = styled.div`
   justify-content: center;
 `;
 
-const Channel = (match) => {
+const Channel = ({ match, addToDo }) => {
   const [roomId, setRoomId] = useState(undefined);
   const [messageList, setMessageList] = useState([]);
   const [clientRef, setClientRef] = useState(undefined);
@@ -57,14 +59,17 @@ const Channel = (match) => {
         Authorization: `Bearer ${Auth.getAccessToken()}`,
       },
     });
-    const { data } = await api.get(`/study/${match.match.params.idx}/room`);
+    const { data } = await api.get(`/study/${match.params.idx}/room`);
     setRoomId(data.rid);
+    data && addToDo("data", "roomId", data);
   }; //complete
 
   const getStudy = async () => {
     try {
-      const { data } = await studyApi.getStudy(match.match.params.idx);
+      const { data } = await studyApi.getStudy(match.params.idx);
       data && setRoomData(data);
+      console.log(addToDo);
+      data && addToDo("data", "room", data);
     } catch (e) {
       console.log(e);
     }
@@ -87,7 +92,7 @@ const Channel = (match) => {
       },
     });
     api
-      .get(`/study/${match.match.params.idx}/room/messages`, {
+      .get(`/study/${match.params.idx}/room/messages`, {
         params: { "last-idx": idx },
       })
       .then((res) => {
@@ -189,5 +194,16 @@ const Channel = (match) => {
     </motion.div>
   );
 };
+const getCurrentState = (state, ownProps) => {
+  console.log(state, ownProps);
 
-export default Channel;
+  return state;
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addToDo: (dataType, dataName, data) =>
+      dispatch(actionCreators.addToDo(dataType, dataName, data)),
+  };
+};
+export default connect(getCurrentState, mapDispatchToProps)(Channel);

@@ -3,17 +3,27 @@ import { createStore } from "redux";
 const ADD = "ADD";
 const DELETE = "DELETE";
 
-const addToDo = (text) => {
+const addToDo = (dataType, dataName, data) => {
   return {
     type: ADD,
-    text,
+    dataName,
+    data,
+    dataType,
   };
 };
 
-const reducer = (state = [{ fuck: "fuck" }], action) => {
+const reducer = (state = {}, action) => {
+  console.log(action);
+
   switch (action.type) {
     case ADD:
-      return [{ text: action.text, id: Date.now() }, ...state];
+      return {
+        ...state,
+        [action.dataType]: {
+          ...state[action.dataType],
+          [action.dataName]: action.data,
+        },
+      };
     case DELETE:
       return state.filter((toDo) => toDo !== action.id);
     default:
@@ -23,4 +33,9 @@ const reducer = (state = [{ fuck: "fuck" }], action) => {
 
 const store = createStore(reducer);
 
+store.subscribe(() => console.log(store.getState()));
 export default store;
+
+export const actionCreators = {
+  addToDo,
+};
