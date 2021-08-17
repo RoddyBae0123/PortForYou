@@ -3,11 +3,14 @@ import { connect } from "react-redux";
 import Popup from "../../../Components/Popup";
 import { actionCreators } from "../../../store";
 import { useState, useEffect } from "react";
+import { KeyboardArrowDown } from "@material-ui/icons";
 
 const Container = styled.div`
-  display: grid;
-  grid-template-columns: 0.75fr 0.25fr;
+  display: flex;
   width: 100%;
+  flex-direction: column;
+
+  align-items: center;
   height: 100vh;
 `;
 
@@ -18,70 +21,48 @@ const Text = styled.span`
   display: inline-flex;
 `;
 
-const Left = styled.div`
-  display: grid;
-  grid-template-rows: 0.1fr 0.55fr 0.35fr;
-  height: 100%;
-  width: 80%;
-`;
-const Right = styled.div`
-  width: 100%;
-  height: 100%;
-`;
-
 const Flex = styled.div`
   display: flex;
   width: 100%;
-  height: 100%;
   justify-content: ${(props) => props.setting.justify};
   align-items: ${(props) => props.setting.align};
   flex-direction: ${(props) => props.setting.dir};
 `;
 
 const DashBoard = styled.div`
-  width: 80%;
-  height: 90%;
-  border-radius: 20px;
-  box-shadow: 0 3px 6px lightgray;
-  position: relative;
-  display: ${(props) => (props.list ? "flex" : "block")};
-  justify-content: center;
-  align-items: center;
+  width: 100%;
+  height: 500px;
 `;
 
 const CreateBoard = styled.button`
-  width: ${(props) => (props.list ? "50px" : "200px")};
-  height: ${(props) => (props.list ? "25px" : "100px")};
+  width: 60px;
+  height: 30px;
   border-radius: 20px;
   /* box-shadow: 0 3px 6px lightgray; */
   /* 2px solid lightgray */
-  border: ${(props) => (props.list ? "2px solid lightgray" : "none")};
-  position: ${(props) => (props.list ? "absolute" : "static")};
-  box-shadow: ${(props) => (props.list ? "none" : "0 3px 6px lightgray")};
-  right: 15px;
-  top: 10px;
+  border: 2px solid lightgray;
+
+  font-size: 5px;
 `;
 
 const BoardList = styled.div`
-  padding: 50px;
+  margin-top: 30px;
   width: 100%;
   height: 100%;
-  display: grid;
-  grid-template-rows: 0.9fr 0.1fr;
-  row-gap: 15px;
 `;
 
 const BoardUl = styled.ul`
   display: grid;
-  grid-template-rows: 16.666fr 16.666fr 16.666fr 16.666fr 16.666fr 16.666fr;
+  grid-auto-rows: 60px;
   row-gap: 10px;
 `;
 const BoardLi = styled.li`
   display: grid;
-  grid-template-columns: 0.1fr 0.4fr 0.3fr 0.2fr;
+  grid-template-columns: 0.4fr 0.2fr 0.2fr 0.1fr 0.1fr;
   width: 100%;
-  box-shadow: ${(props) => (props.header ? "none" : "0 3px 6px lightgray")};
-  border-radius: 15px;
+  background-color: ${(props) =>
+    props.header ? "transparent" : "rgba(216, 216, 216, 0.2)"};
+  height: ${(props) => (props.header ? "50%" : "100%")};
 `;
 
 const PageBtn = styled.button`
@@ -136,6 +117,16 @@ const Submit = styled.input`
   }
   transition: all 300ms ease;
 `;
+
+const MovetoDetail = styled.button`
+  font-size: 15px;
+  &:hover {
+    color: lightblue;
+  }
+  background-color: transparent;
+  font-weight: 500;
+  transition: all 300ms ease;
+`;
 const Board = ({ data, setData, match }) => {
   const {
     params: { idx: studyIdx },
@@ -143,14 +134,20 @@ const Board = ({ data, setData, match }) => {
   const [boardPopup, setBoardPopup] = useState(false);
   const [disabled, setDisabled] = useState(true);
   const [value, setValue] = useState({ name: "", content: "" });
+  const [now, setNow] = useState([]);
+
+  //   useEffect(() => {
+  //     data && paging(1);
+  //   }, []);
+
   useEffect(() => {
     if (value.name.length > 10 && value.content.length > 10) {
       setDisabled(false);
     }
-
-    console.log(disabled);
   }, [value]);
-
+  useEffect(() => {
+    boardPopup == false && setValue({ name: "", content: "" });
+  }, [boardPopup]);
   const popupContents = () => (
     <Flex
       setting={{
@@ -158,6 +155,7 @@ const Board = ({ data, setData, match }) => {
         align: "center",
         dir: "column",
       }}
+      style={{ height: "100%" }}
       as={"form"}
     >
       <Text size={"50px"} weight={"700"} as={"span"}>
@@ -227,7 +225,10 @@ const Board = ({ data, setData, match }) => {
         });
   };
 
-  const submitHandler = () => {
+  const submitHandler = (e) => {
+    e.preventDefault();
+    setBoardPopup(false);
+    setValue({ name: "", content: "" });
     setData.setBoardList({
       studyIdx,
       name: value.name,
@@ -235,350 +236,166 @@ const Board = ({ data, setData, match }) => {
     });
   };
 
+  const paging = (e) => {
+    try {
+      for (let i = 5 * e - 5; i < 5 * e; i++) {
+        if (data.boardList[i] == null) {
+          break;
+        }
+        setNow([...now, data.boardList[i]]);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
   return (
     <>
       {data && data.boardList ? (
         <Container>
-          <Flex setting={{ justify: "center", align: "flex-end", dir: "rows" }}>
-            <Left>
-              <Flex
-                setting={{
-                  justify: "flex-start",
-                  align: "center",
-                  dir: "rows",
-                }}
-              >
-                <Text size={"30px"} weight={"800"}>
-                  Our Board
-                </Text>
-              </Flex>
-              <Flex
-                setting={{
-                  justify: "flex-start",
-                  align: "center",
-                  dir: "rows",
-                }}
-              >
-                <DashBoard list={!data.boardList.length}>
-                  <CreateBoard
-                    onClick={() => setBoardPopup(true)}
-                    list={!data.boardList.length}
-                  >
-                    {!data.boardList.length ? "Create a Board" : "CREATE"}
-                  </CreateBoard>
-                  {!data.boardList.length ? null : (
-                    <BoardList>
-                      <BoardUl>
-                        <BoardLi header={true}>
-                          <span></span>
-                          <Text size={"17px"} weight={"800"}>
-                            Title
-                          </Text>
-                          <Text size={"17px"} weight={"800"}>
-                            Author
-                          </Text>
-                          <Text size={"17px"} weight={"800"}>
-                            Day
-                          </Text>
-                        </BoardLi>
-                        <BoardLi>
-                          <Flex
-                            setting={{
-                              justify: "center",
-                              align: "center",
-                              dir: "rows",
-                            }}
-                          >
-                            <Text size={"12px"} weight={"500"}>
-                              1
-                            </Text>
-                          </Flex>
-                          <Flex
-                            setting={{
-                              justify: "flex-start",
-                              align: "center",
-                              dir: "rows",
-                            }}
-                          >
-                            <Text size={"15px"} weight={"500"}>
-                              Title of Dashboard
-                            </Text>
-                          </Flex>
-                          <Flex
-                            setting={{
-                              justify: "flex-start",
-                              align: "center",
-                              dir: "rows",
-                            }}
-                          >
-                            <ChatImg
-                              size={"25px"}
-                              url={
-                                "http://3.37.208.251:8080/api/img/default/33_profile_img"
-                              }
-                            />
-                            <Text
-                              size={"15px"}
-                              weight={"400"}
-                              style={{ marginLeft: 15 }}
-                            >
-                              Yuri
-                            </Text>
-                          </Flex>
-                          <Flex
-                            setting={{
-                              justify: "flex-start",
-                              align: "center",
-                              dir: "rows",
-                            }}
-                          >
-                            <Text size={"15px"} weight={"400"}>
-                              2021/08/16
-                            </Text>
-                          </Flex>
-                        </BoardLi>
-                        <BoardLi>
-                          <Flex
-                            setting={{
-                              justify: "center",
-                              align: "center",
-                              dir: "rows",
-                            }}
-                          >
-                            <Text size={"12px"} weight={"500"}>
-                              1
-                            </Text>
-                          </Flex>
-                          <Flex
-                            setting={{
-                              justify: "flex-start",
-                              align: "center",
-                              dir: "rows",
-                            }}
-                          >
-                            <Text size={"15px"} weight={"500"}>
-                              Title of Dashboard
-                            </Text>
-                          </Flex>
-                          <Flex
-                            setting={{
-                              justify: "flex-start",
-                              align: "center",
-                              dir: "rows",
-                            }}
-                          >
-                            <ChatImg
-                              size={"25px"}
-                              url={
-                                "http://3.37.208.251:8080/api/img/default/33_profile_img"
-                              }
-                            />
-                            <Text
-                              size={"15px"}
-                              weight={"400"}
-                              style={{ marginLeft: 15 }}
-                            >
-                              Yuri
-                            </Text>
-                          </Flex>
-                          <Flex
-                            setting={{
-                              justify: "flex-start",
-                              align: "center",
-                              dir: "rows",
-                            }}
-                          >
-                            <Text size={"15px"} weight={"400"}>
-                              2021/08/16
-                            </Text>
-                          </Flex>
-                        </BoardLi>
-                        <BoardLi>
-                          <Flex
-                            setting={{
-                              justify: "center",
-                              align: "center",
-                              dir: "rows",
-                            }}
-                          >
-                            <Text size={"12px"} weight={"500"}>
-                              1
-                            </Text>
-                          </Flex>
-                          <Flex
-                            setting={{
-                              justify: "flex-start",
-                              align: "center",
-                              dir: "rows",
-                            }}
-                          >
-                            <Text size={"15px"} weight={"500"}>
-                              Title of Dashboard
-                            </Text>
-                          </Flex>
-                          <Flex
-                            setting={{
-                              justify: "flex-start",
-                              align: "center",
-                              dir: "rows",
-                            }}
-                          >
-                            <ChatImg
-                              size={"25px"}
-                              url={
-                                "http://3.37.208.251:8080/api/img/default/33_profile_img"
-                              }
-                            />
-                            <Text
-                              size={"15px"}
-                              weight={"400"}
-                              style={{ marginLeft: 15 }}
-                            >
-                              Yuri
-                            </Text>
-                          </Flex>
-                          <Flex
-                            setting={{
-                              justify: "flex-start",
-                              align: "center",
-                              dir: "rows",
-                            }}
-                          >
-                            <Text size={"15px"} weight={"400"}>
-                              2021/08/16
-                            </Text>
-                          </Flex>
-                        </BoardLi>
-                        <BoardLi>
-                          <Flex
-                            setting={{
-                              justify: "center",
-                              align: "center",
-                              dir: "rows",
-                            }}
-                          >
-                            <Text size={"12px"} weight={"500"}>
-                              1
-                            </Text>
-                          </Flex>
-                          <Flex
-                            setting={{
-                              justify: "flex-start",
-                              align: "center",
-                              dir: "rows",
-                            }}
-                          >
-                            <Text size={"15px"} weight={"500"}>
-                              Title of Dashboard
-                            </Text>
-                          </Flex>
-                          <Flex
-                            setting={{
-                              justify: "flex-start",
-                              align: "center",
-                              dir: "rows",
-                            }}
-                          >
-                            <ChatImg
-                              size={"25px"}
-                              url={
-                                "http://3.37.208.251:8080/api/img/default/33_profile_img"
-                              }
-                            />
-                            <Text
-                              size={"15px"}
-                              weight={"400"}
-                              style={{ marginLeft: 15 }}
-                            >
-                              Yuri
-                            </Text>
-                          </Flex>
-                          <Flex
-                            setting={{
-                              justify: "flex-start",
-                              align: "center",
-                              dir: "rows",
-                            }}
-                          >
-                            <Text size={"15px"} weight={"400"}>
-                              2021/08/16
-                            </Text>
-                          </Flex>
-                        </BoardLi>
-                        <BoardLi>
-                          <Flex
-                            setting={{
-                              justify: "center",
-                              align: "center",
-                              dir: "rows",
-                            }}
-                          >
-                            <Text size={"12px"} weight={"500"}>
-                              1
-                            </Text>
-                          </Flex>
-                          <Flex
-                            setting={{
-                              justify: "flex-start",
-                              align: "center",
-                              dir: "rows",
-                            }}
-                          >
-                            <Text size={"15px"} weight={"500"}>
-                              Title of Dashboard
-                            </Text>
-                          </Flex>
-                          <Flex
-                            setting={{
-                              justify: "flex-start",
-                              align: "center",
-                              dir: "rows",
-                            }}
-                          >
-                            <ChatImg
-                              size={"25px"}
-                              url={
-                                "http://3.37.208.251:8080/api/img/default/33_profile_img"
-                              }
-                            />
-                            <Text
-                              size={"15px"}
-                              weight={"400"}
-                              style={{ marginLeft: 15 }}
-                            >
-                              Yuri
-                            </Text>
-                          </Flex>
-                          <Flex
-                            setting={{
-                              justify: "flex-start",
-                              align: "center",
-                              dir: "rows",
-                            }}
-                          >
-                            <Text size={"15px"} weight={"400"}>
-                              2021/08/16
-                            </Text>
-                          </Flex>
-                        </BoardLi>
-                      </BoardUl>
-                      <Flex
-                        setting={{
-                          justify: "space-evenly",
-                          align: "center",
-                          dir: "rows",
-                        }}
-                      >
-                        <PageBtn>1</PageBtn>
-                      </Flex>
-                    </BoardList>
-                  )}
-                </DashBoard>
-              </Flex>
-            </Left>
+          <Flex
+            setting={{
+              justify: "space-between",
+              align: "flex-end",
+              dir: "rows",
+            }}
+            style={{
+              width: "80%",
+              padding: "30px 0",
+              borderBottom: "2px solid lightgray",
+            }}
+          >
+            <Text size={"40px"} weight={"700"}>
+              Our Board
+            </Text>
+            <CreateBoard
+              onClick={() => setBoardPopup(true)}
+              list={!data.boardList.length}
+            >
+              CREATE
+            </CreateBoard>
           </Flex>
-
-          <Right></Right>
+          <Flex
+            setting={{
+              justify: "flex-start",
+              align: "center",
+              dir: "rows",
+            }}
+            style={{ width: "80%" }}
+          >
+            <DashBoard>
+              {!data.boardList.length ? null : (
+                <BoardList>
+                  <BoardLi header={true} as={"lable"} style={{ height: 50 }}>
+                    <Text
+                      size={"20px"}
+                      weight={"800"}
+                      style={{ marginLeft: 20 }}
+                    >
+                      Title
+                    </Text>
+                    <Text size={"20px"} weight={"800"}>
+                      Author
+                    </Text>
+                    <Text size={"20px"} weight={"800"}>
+                      Day
+                    </Text>
+                    <Text size={"20px"} weight={"800"}>
+                      Views
+                    </Text>
+                  </BoardLi>
+                  <BoardUl>
+                    {data.boardList.map((e) => (
+                      <BoardLi>
+                        <Flex
+                          setting={{
+                            justify: "flex-start",
+                            align: "center",
+                            dir: "rows",
+                          }}
+                          style={{ height: "100%" }}
+                        >
+                          <Text
+                            size={"15px"}
+                            weight={"500"}
+                            style={{ marginLeft: 20 }}
+                          >
+                            <MovetoDetail> {e.name}</MovetoDetail>
+                          </Text>
+                        </Flex>
+                        <Flex
+                          setting={{
+                            justify: "flex-start",
+                            align: "center",
+                            dir: "rows",
+                          }}
+                          style={{ height: "100%" }}
+                        >
+                          <ChatImg
+                            size={"25px"}
+                            url={
+                              "http://3.37.208.251:8080/api/img/default/33_profile_img"
+                            }
+                          />
+                          <Text
+                            size={"15px"}
+                            weight={"400"}
+                            style={{ marginLeft: 15 }}
+                          >
+                            Yuri
+                          </Text>
+                        </Flex>
+                        <Flex
+                          setting={{
+                            justify: "flex-start",
+                            align: "center",
+                            dir: "rows",
+                          }}
+                          style={{ height: "100%" }}
+                        >
+                          <Text size={"15px"} weight={"400"}>
+                            2021/08/16
+                          </Text>
+                        </Flex>
+                        <Flex
+                          setting={{
+                            justify: "flex-start",
+                            align: "center",
+                            dir: "rows",
+                          }}
+                          style={{ height: "100%" }}
+                        >
+                          <Text size={"15px"} weight={"400"}>
+                            16
+                          </Text>
+                        </Flex>
+                        <Flex
+                          setting={{
+                            justify: "center",
+                            align: "center",
+                            dir: "rows",
+                          }}
+                          style={{ height: "100%" }}
+                        >
+                          <Text size={"15px"} weight={"400"} as={"button"}>
+                            <KeyboardArrowDown />
+                          </Text>
+                        </Flex>
+                      </BoardLi>
+                    ))}
+                  </BoardUl>
+                  <Flex
+                    setting={{
+                      justify: "space-evenly",
+                      align: "center",
+                      dir: "rows",
+                    }}
+                  >
+                    <PageBtn>1</PageBtn>
+                  </Flex>
+                </BoardList>
+              )}
+            </DashBoard>
+          </Flex>
         </Container>
       ) : (
         <div>waiting</div>
