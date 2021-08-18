@@ -161,6 +161,15 @@ const RoomBoardContainer = (props) => {
     }
   };
 
+  const getBoard = async (idx) => {
+    try {
+      const { data } = await boardApi.getBoard(idx);
+      addToDo("data", "board", data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const setBoardList = async ({ studyIdx, idx, name, content }) => {
     try {
       const { data } = await boardApi.setBoard({
@@ -180,6 +189,7 @@ const RoomBoardContainer = (props) => {
     getAnnouncementList(idx);
     getBoardList();
     addToDo("setData", "setBoardList", setBoardList);
+    addToDo("getData", "getBoard", getBoard);
   }, []);
 
   return (

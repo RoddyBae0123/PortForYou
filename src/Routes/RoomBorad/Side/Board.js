@@ -4,6 +4,7 @@ import Popup from "../../../Components/Popup";
 import { actionCreators } from "../../../store";
 import { useState, useEffect } from "react";
 import { KeyboardArrowDown } from "@material-ui/icons";
+import { Link } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -118,7 +119,7 @@ const Submit = styled.input`
   transition: all 300ms ease;
 `;
 
-const MovetoDetail = styled.button`
+const MovetoDetail = styled(Link)`
   font-size: 15px;
   &:hover {
     color: lightblue;
@@ -131,6 +132,7 @@ const Board = ({ data, setData, match }) => {
   const {
     params: { idx: studyIdx },
   } = match;
+  console.log(match);
   const [boardPopup, setBoardPopup] = useState(false);
   const [disabled, setDisabled] = useState(true);
   const [value, setValue] = useState({ name: "", content: "" });
@@ -319,7 +321,14 @@ const Board = ({ data, setData, match }) => {
                             weight={"500"}
                             style={{ marginLeft: 20 }}
                           >
-                            <MovetoDetail> {e.name}</MovetoDetail>
+                            <MovetoDetail
+                              to={{
+                                pathname: `/roomboard/boardDetail/${e.idx}`,
+                                state: { idx: studyIdx, where: "room" },
+                              }}
+                            >
+                              {e.name}
+                            </MovetoDetail>
                           </Text>
                         </Flex>
                         <Flex
