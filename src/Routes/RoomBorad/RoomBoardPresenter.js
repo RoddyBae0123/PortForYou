@@ -18,12 +18,13 @@ import { faCodepen } from "@fortawesome/free-brands-svg-icons";
 import { AnimatePresence, motion } from "framer-motion";
 import { Forum, Chat } from "@material-ui/icons";
 import Auth from "../../Auth";
+import Post from "./Side/Post";
 import Board from "./Side/Board";
 import Calender from "./Side/Calender";
 import Channel from "./Side/Channel";
 import Member from "./Side/Member";
 import HowToRegIcon from "@material-ui/icons/HowToReg";
-import BoardDetail from "./Side/BoardDetail";
+import PostDetail from "./Side/PostDetail";
 const Back = styled.div`
   display: grid;
   grid-template-columns: 220px 1fr;
@@ -422,10 +423,16 @@ const RoomBoardPresenter = ({
               <Route
                 path={`${match.path}/board/:idx`}
                 component={Board}
+                exact
               ></Route>
               <Route
-                path={`${match.path}/boardDetail/:idx`}
-                component={BoardDetail}
+                path={`${match.path}/board/post/:idx`}
+                component={Post}
+                exact
+              ></Route>
+              <Route
+                path={`${match.path}/board/postdetail/:idx`}
+                component={PostDetail}
               ></Route>
               <Route
                 path={`${match.path}/member/:idx`}

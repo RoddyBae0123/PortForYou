@@ -1,8 +1,9 @@
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { connect } from "react-redux";
 import Popup from "../../../Components/Popup";
-import { actionCreators } from "../../../store";
-import { useState, useEffect } from "react";
+import Loader from "react-loader-spinner";
+import { boardApi } from "../../../Api";
 import { KeyboardArrowDown } from "@material-ui/icons";
 import { Link } from "react-router-dom";
 
@@ -10,16 +11,8 @@ const Container = styled.div`
   display: flex;
   width: 100%;
   flex-direction: column;
-
   align-items: center;
   height: 100vh;
-`;
-
-const Text = styled.span`
-  font-size: ${(props) => props.size};
-  font-weight: ${(props) => props.weight};
-  color: rgb(74, 86, 94);
-  display: inline-flex;
 `;
 
 const Flex = styled.div`
@@ -30,60 +23,11 @@ const Flex = styled.div`
   flex-direction: ${(props) => props.setting.dir};
 `;
 
-const DashBoard = styled.div`
-  width: 100%;
-  height: 500px;
-`;
-
-const CreateBoard = styled.button`
-  width: 60px;
-  height: 30px;
-  border-radius: 20px;
-  /* box-shadow: 0 3px 6px lightgray; */
-  /* 2px solid lightgray */
-  border: 2px solid lightgray;
-
-  font-size: 5px;
-`;
-
-const BoardList = styled.div`
-  margin-top: 30px;
-  width: 100%;
-  height: 100%;
-`;
-
-const BoardUl = styled.ul`
-  display: grid;
-  grid-auto-rows: 60px;
-  row-gap: 10px;
-`;
-const BoardLi = styled.li`
-  display: grid;
-  grid-template-columns: 0.4fr 0.2fr 0.2fr 0.1fr 0.1fr;
-  width: 100%;
-  background-color: ${(props) =>
-    props.header ? "transparent" : "rgba(216, 216, 216, 0.2)"};
-  height: ${(props) => (props.header ? "50%" : "100%")};
-`;
-
-const PageBtn = styled.button`
-  width: 20px;
-  height: 20px;
-  border: 1px solid lightgray;
-  border-radius: 10px;
+const Text = styled.span`
+  font-size: ${(props) => props.size};
+  font-weight: ${(props) => props.weight};
   color: rgb(74, 86, 94);
-  font-size: 9px;
-`;
-
-const ChatImg = styled.div`
-  width: ${(props) => props.size};
-  height: ${(props) => props.size};
-  border-radius: 100%;
-  box-shadow: 0 3px 6px lightgray;
-  background-image: ${(props) => `url(${props.url})`};
-  background-position: center center;
-  background-repeat: no-repeat;
-  background-size: 100% auto;
+  display: inline-flex;
 `;
 
 const InputWrap = styled.div`
@@ -119,37 +63,76 @@ const Submit = styled.input`
   transition: all 300ms ease;
 `;
 
-const MovetoDetail = styled(Link)`
-  font-size: 15px;
-  &:hover {
-    color: lightblue;
-  }
-  background-color: transparent;
-  font-weight: 500;
-  transition: all 300ms ease;
+const Ul = styled.ul`
+  width: 100%;
+  display: grid;
+  grid-template-columns: 0.25fr 0.25fr 0.25fr 0.25fr;
+  grid-auto-rows: 150px;
+  grid-gap: 20px;
 `;
-const Board = ({ data, setData, match }) => {
+const Li = styled.li`
+  width: 100%;
+  height: 100%;
+`;
+
+const BoardOne = styled.div`
+  display: grid;
+  grid-template-rows: 25% 25% 25% 25%;
+  background-color: rgba(216, 216, 216, 0.2);
+  row-gap: 1px;
+  width: 100%;
+  height: 100%;
+  box-shadow: 0 3px 6px lightgray;
+`;
+
+const CreateBoard = styled.button`
+  width: 60px;
+  height: 30px;
+  border-radius: 20px;
+  /* box-shadow: 0 3px 6px lightgray; */
+  /* 2px solid lightgray */
+  border: 2px solid lightgray;
+
+  font-size: 5px;
+`;
+const Board = ({ data, setData, match, getData }) => {
   const {
     params: { idx: studyIdx },
   } = match;
-  console.log(match);
   const [boardPopup, setBoardPopup] = useState(false);
   const [disabled, setDisabled] = useState(true);
   const [value, setValue] = useState({ name: "", content: "" });
-  const [now, setNow] = useState([]);
-
-  //   useEffect(() => {
-  //     data && paging(1);
-  //   }, []);
-
+  const [post, setPost] = useState({});
+  const [setting, setSetting] = useState(false);
   useEffect(() => {
-    if (value.name.length > 10 && value.content.length > 10) {
+    data && getPrepost();
+  }, [data]);
+  console.log(post);
+  useEffect(() => {
+    if (value.name.length > 2 && value.content.length > 10) {
       setDisabled(false);
     }
   }, [value]);
   useEffect(() => {
     boardPopup == false && setValue({ name: "", content: "" });
   }, [boardPopup]);
+
+  const getPrepost = async () => {
+    try {
+      data.boardList.map(async (e) => {
+        const res = await boardApi.getPosts(e.idx);
+
+        setPost((prevState) => ({
+          [e.idx]: res.data.slice(0, 3),
+          ...prevState,
+        }));
+      });
+      setSetting(true);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   const popupContents = () => (
     <Flex
       setting={{
@@ -238,21 +221,19 @@ const Board = ({ data, setData, match }) => {
     });
   };
 
-  const paging = (e) => {
+  const delBtnHandler = async (e) => {
     try {
-      for (let i = 5 * e - 5; i < 5 * e; i++) {
-        if (data.boardList[i] == null) {
-          break;
-        }
-        setNow([...now, data.boardList[i]]);
-      }
+      const res = await boardApi.deleteBoard(e.target.id);
+
+      res && getData.getBoardList();
     } catch (e) {
       console.log(e);
     }
+    // const data = await boardApi();
   };
   return (
     <>
-      {data && data.boardList ? (
+      {data && setting && data.boardList ? (
         <Container>
           <Flex
             setting={{
@@ -269,10 +250,7 @@ const Board = ({ data, setData, match }) => {
             <Text size={"40px"} weight={"700"}>
               Our Board
             </Text>
-            <CreateBoard
-              onClick={() => setBoardPopup(true)}
-              list={!data.boardList.length}
-            >
+            <CreateBoard onClick={() => setBoardPopup(true)}>
               CREATE
             </CreateBoard>
           </Flex>
@@ -282,142 +260,120 @@ const Board = ({ data, setData, match }) => {
               align: "center",
               dir: "rows",
             }}
-            style={{ width: "80%" }}
+            style={{ width: "80%", marginTop: "35px" }}
           >
-            <DashBoard>
-              {!data.boardList.length ? null : (
-                <BoardList>
-                  <BoardLi header={true} as={"lable"} style={{ height: 50 }}>
-                    <Text
-                      size={"20px"}
-                      weight={"800"}
-                      style={{ marginLeft: 20 }}
+            <Ul>
+              {data.boardList.map((e) => (
+                <Li key={e.idx}>
+                  <BoardOne>
+                    <Flex
+                      setting={{
+                        justify: "space-between",
+                        align: "center",
+                        dir: "rows",
+                      }}
+                      style={{ background: "transparent", padding: "0 10px" }}
                     >
-                      Title
-                    </Text>
-                    <Text size={"20px"} weight={"800"}>
-                      Author
-                    </Text>
-                    <Text size={"20px"} weight={"800"}>
-                      Day
-                    </Text>
-                    <Text size={"20px"} weight={"800"}>
-                      Views
-                    </Text>
-                  </BoardLi>
-                  <BoardUl>
-                    {data.boardList.map((e) => (
-                      <BoardLi>
-                        <Flex
-                          setting={{
-                            justify: "flex-start",
-                            align: "center",
-                            dir: "rows",
+                      <Text size={"20px"} weight={"700"}>
+                        <Link
+                          to={{
+                            pathname: `/roomboard/board/post/${e.idx}`,
+                            state: { idx: studyIdx, where: "room" },
                           }}
-                          style={{ height: "100%" }}
                         >
-                          <Text
-                            size={"15px"}
-                            weight={"500"}
-                            style={{ marginLeft: 20 }}
-                          >
-                            <MovetoDetail
-                              to={{
-                                pathname: `/roomboard/boardDetail/${e.idx}`,
-                                state: { idx: studyIdx, where: "room" },
-                              }}
-                            >
-                              {e.name}
-                            </MovetoDetail>
-                          </Text>
-                        </Flex>
-                        <Flex
-                          setting={{
-                            justify: "flex-start",
-                            align: "center",
-                            dir: "rows",
-                          }}
-                          style={{ height: "100%" }}
-                        >
-                          <ChatImg
-                            size={"25px"}
-                            url={
-                              "http://3.37.208.251:8080/api/img/default/33_profile_img"
-                            }
-                          />
-                          <Text
-                            size={"15px"}
-                            weight={"400"}
-                            style={{ marginLeft: 15 }}
-                          >
-                            Yuri
-                          </Text>
-                        </Flex>
-                        <Flex
-                          setting={{
-                            justify: "flex-start",
-                            align: "center",
-                            dir: "rows",
-                          }}
-                          style={{ height: "100%" }}
-                        >
-                          <Text size={"15px"} weight={"400"}>
-                            2021/08/16
-                          </Text>
-                        </Flex>
-                        <Flex
-                          setting={{
-                            justify: "flex-start",
-                            align: "center",
-                            dir: "rows",
-                          }}
-                          style={{ height: "100%" }}
-                        >
-                          <Text size={"15px"} weight={"400"}>
-                            16
-                          </Text>
-                        </Flex>
-                        <Flex
-                          setting={{
-                            justify: "center",
-                            align: "center",
-                            dir: "rows",
-                          }}
-                          style={{ height: "100%" }}
-                        >
-                          <Text size={"15px"} weight={"400"} as={"button"}>
-                            <KeyboardArrowDown />
-                          </Text>
-                        </Flex>
-                      </BoardLi>
-                    ))}
-                  </BoardUl>
-                  <Flex
-                    setting={{
-                      justify: "space-evenly",
-                      align: "center",
-                      dir: "rows",
-                    }}
-                  >
-                    <PageBtn>1</PageBtn>
-                  </Flex>
-                </BoardList>
-              )}
-            </DashBoard>
+                          {e.name.length > 15
+                            ? e.name.substring(0, 15) + "..."
+                            : e.name}
+                        </Link>
+                      </Text>
+                      <Text
+                        size={"10px"}
+                        weight={"900"}
+                        as={"button"}
+                        id={e.idx}
+                        onClick={delBtnHandler}
+                      >
+                        X
+                      </Text>
+                    </Flex>
+                    <Flex
+                      setting={{
+                        justify: "flex-start",
+                        align: "center",
+                        dir: "rows",
+                      }}
+                      style={{
+                        background: "white",
+                        color: "black",
+                        padding: "0 10px",
+                      }}
+                    >
+                      <Text size={"10px"} weight={"400"}>
+                        {post[e.idx] && post[e.idx][0].title}
+                      </Text>
+                    </Flex>
+
+                    <Flex
+                      setting={{
+                        justify: "flex-start",
+                        align: "center",
+                        dir: "rows",
+                      }}
+                      style={{
+                        background: "white",
+                        color: "black",
+                        padding: "0 10px",
+                      }}
+                    >
+                      <Text size={"10px"} weight={"400"}>
+                        {post[e.idx] && post[e.idx][1]
+                          ? post[e.idx][1].title
+                          : "none"}
+                      </Text>
+                    </Flex>
+
+                    <Flex
+                      setting={{
+                        justify: "flex-start",
+                        align: "center",
+                        dir: "rows",
+                      }}
+                      style={{
+                        background: "white",
+                        color: "black",
+                        padding: "0 10px",
+                      }}
+                    >
+                      <Text size={"10px"} weight={"400"}>
+                        {post[e.idx] && post[e.idx][2]
+                          ? post[e.idx][2].title
+                          : "none"}
+                      </Text>
+                    </Flex>
+                  </BoardOne>
+                </Li>
+              ))}
+            </Ul>
           </Flex>
         </Container>
       ) : (
-        <div>waiting</div>
+        <Container style={{ justifyContent: "center" }}>
+          <Loader
+            type="ThreeDots"
+            color="lightgray"
+            height={300}
+            width={300}
+            timeout={10000}
+          />
+        </Container>
       )}
       {returnCreateBoard(boardPopup)}
     </>
   );
 };
-
 const getCurrentState = (state, ownProps) => {
   console.log(state, ownProps);
 
   return state;
 };
-
 export default connect(getCurrentState)(Board);

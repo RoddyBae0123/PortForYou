@@ -116,4 +116,19 @@ export const boardApi = {
       content,
       idx,
     }),
+  getPosts: (idx) => api.get(`api/study/board/${idx}/posts`),
+  savePost: ({ boardIdx, idx, title, content }) =>
+    api.post(`api/study/board/${boardIdx}/post`, {
+      idx,
+      title,
+      content,
+    }),
+  deleteBoard: (idx) => api.delete(`api/study/board/${idx}`),
+  getComments: (idx) => api.get(`api/study/board/post/${idx}/comments`),
+  saveComment: ({ postIdx, idx, content }) =>
+    api.post(`api/study/board/post/${postIdx}/comment`, {
+      idx,
+      content,
+    }),
+  deleteComment: (idx) => api.delete(`api/study/board/post/comment/${idx}`),
 };

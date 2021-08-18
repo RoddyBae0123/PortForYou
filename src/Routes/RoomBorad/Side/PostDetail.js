@@ -41,7 +41,7 @@ const Board = styled.main`
   background-color: rgba(216, 216, 216, 0.2);
 `;
 
-const BoardDetail = ({ data, setData, match, getData, history }) => {
+const PostDetail = ({ data, setData, match, getData, history }) => {
   const {
     params: { idx: boardIdx },
   } = match;
@@ -49,9 +49,33 @@ const BoardDetail = ({ data, setData, match, getData, history }) => {
   const { goBack } = history;
 
   const [board, setBoard] = useState();
+  const [comment, setComment] = useState();
   useEffect(() => {
     getBoard(boardIdx);
+    getComment(boardIdx);
   }, []);
+
+  const getComment = async (idx) => {
+    try {
+      const { data } = await boardApi.getComments(idx);
+      setComment(data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const saveComment = async ({ idx, content }) => {
+    try {
+      console.log(content);
+      const { data } = await boardApi.saveComment({
+        postIdx: boardIdx,
+        idx,
+        content,
+      });
+      data && getComment(boardIdx);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   const getBoard = async (idx) => {
     try {
@@ -93,7 +117,7 @@ const BoardDetail = ({ data, setData, match, getData, history }) => {
       </Flex>
       <Board>
         <Text size={"35px"} weight={"700"} style={{ marginBottom: 20 }}>
-          I'm king of Newyork
+          {board.name}
         </Text>
         <Flex
           setting={{
@@ -126,15 +150,7 @@ const BoardDetail = ({ data, setData, match, getData, history }) => {
           weight={"400"}
           style={{ marginBottom: 40, lineHeight: "27px" }}
         >
-          Lorem Ipsum is simply dummy text of the printing and typesetting
-          industry. Lorem Ipsum has been the industry's standard dummy text ever
-          since the 1500s, when an unknown printer took a galley of type and
-          scrambled it to make a type specimen book. It has survived not only
-          five centuries, but also the leap into electronic typesetting,
-          remaining essentially unchanged. It was popularised in the 1960s with
-          the release of Letraset sheets containing Lorem Ipsum passages, and
-          more recently with desktop publishing software like Aldus PageMaker
-          including versions of Lorem Ipsum.
+          {board.content}
         </Text>
         <Flex
           setting={{
@@ -189,7 +205,7 @@ const BoardDetail = ({ data, setData, match, getData, history }) => {
           </Text>
         </Flex>
       </Board>
-      <Comment />
+      <Comment magic={{ saveComment, comment }} />
     </Container>
   ) : (
     <div>fuck</div>
@@ -201,4 +217,4 @@ const getCurrentState = (state, ownProps) => {
 
   return state;
 };
-export default connect(getCurrentState)(BoardDetail);
+export default connect(getCurrentState)(PostDetail);

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -86,7 +86,17 @@ const SubmitBtn = styled.button`
   background-color: rgba(216, 216, 216, 0.8);
 `;
 
-const Comment = ({ data }) => {
+const Comment = ({ magic }) => {
+  const { saveComment, comment } = magic;
+  const InputData = useRef();
+
+  const submitHandler = (e) => {
+    if (InputData.current.value.length) {
+      saveComment({ content: InputData.current.value });
+      InputData.current.value = "";
+    }
+  };
+
   return (
     <Container>
       <Flex
@@ -103,136 +113,73 @@ const Comment = ({ data }) => {
       >
         <Text size={"25px"} weight={"500"}>
           <FontAwesomeIcon icon={faComments} />
-          <Text size={"25px"} weight={"500"} style={{ marginLeft: 20 }}>
+          <Text size={"25px"} weight={"700"} style={{ marginLeft: 20 }}>
             Comments
           </Text>
         </Text>
       </Flex>
-      <Ul>
-        <Li>
-          <CommentEntire>
-            <Flex
-              setting={{
-                justify: "flex-start",
-                align: "flex-start",
-                dir: "rows",
-              }}
-            >
-              <CommentImg
-                size={"50px"}
-                url={
-                  "https://pbs.twimg.com/profile_images/1401366945354588160/nXCZ621D.jpg"
-                }
-              />
-            </Flex>
-            <CommentSub>
+      {comment ? (
+        <Ul>
+          <Li>
+            <CommentEntire>
               <Flex
                 setting={{
                   justify: "flex-start",
-                  align: "center",
+                  align: "flex-start",
                   dir: "rows",
                 }}
               >
-                <Text
-                  size={"25px"}
-                  weight={"400"}
-                  style={{ marginLeft: 20, opacity: 1 }}
-                >
-                  Yuri Cho
-                </Text>
-                <Text
-                  size={"8px"}
-                  weight={"400"}
-                  style={{ marginLeft: 20, opacity: 0.5 }}
-                >
-                  <FontAwesomeIcon icon={faCircle} />
-                </Text>
-                <Text
-                  size={"12px"}
-                  weight={"400"}
-                  style={{ marginLeft: 20, opacity: 0.5 }}
-                >
-                  5 min ago
-                </Text>
+                <CommentImg
+                  size={"50px"}
+                  url={
+                    "https://pbs.twimg.com/profile_images/1401366945354588160/nXCZ621D.jpg"
+                  }
+                />
               </Flex>
-              <Text
-                size={"20px"}
-                weight={"400"}
-                style={{ opacity: 0.8, marginLeft: 20 }}
-              >
-                Contrary to popular belief, Lorem Ipsum is not simply random
-                text. It has roots in a piece of classical Latin literature from
-                45 BC, making it over 2000 years old. Richard McClintock,
-              </Text>
-            </CommentSub>
-          </CommentEntire>
-        </Li>
-        <Li>
-          <CommentEntire>
-            <Flex
-              setting={{
-                justify: "flex-start",
-                align: "flex-start",
-                dir: "rows",
-              }}
-            >
-              <CommentImg
-                size={"50px"}
-                url={
-                  "https://pbs.twimg.com/profile_images/1401366945354588160/nXCZ621D.jpg"
-                }
-              />
-            </Flex>
-            <CommentSub>
-              <Flex
-                setting={{
-                  justify: "flex-start",
-                  align: "center",
-                  dir: "rows",
-                }}
-              >
-                <Text
-                  size={"25px"}
-                  weight={"400"}
-                  style={{ marginLeft: 20, opacity: 1 }}
+              <CommentSub>
+                <Flex
+                  setting={{
+                    justify: "flex-start",
+                    align: "center",
+                    dir: "rows",
+                  }}
                 >
-                  Yuri Cho
-                </Text>
+                  <Text
+                    size={"25px"}
+                    weight={"500"}
+                    style={{ marginLeft: 20, opacity: 1 }}
+                  >
+                    Yuri Cho
+                  </Text>
+                  <Text
+                    size={"8px"}
+                    weight={"400"}
+                    style={{ marginLeft: 20, opacity: 0.5 }}
+                  >
+                    <FontAwesomeIcon icon={faCircle} />
+                  </Text>
+                  <Text
+                    size={"12px"}
+                    weight={"400"}
+                    style={{ marginLeft: 20, opacity: 0.5 }}
+                  >
+                    5 min ago
+                  </Text>
+                </Flex>
                 <Text
-                  size={"8px"}
+                  size={"20px"}
                   weight={"400"}
-                  style={{ marginLeft: 20, opacity: 0.5 }}
+                  style={{ opacity: 0.8, marginLeft: 20, lineHeight: "130%" }}
                 >
-                  <FontAwesomeIcon icon={faCircle} />
+                  Contrary to popular belief, Lorem Ipsum is not simply random
+                  text. It has roots in a piece of classical Latin literature
+                  from 45 BC, making it over 2000 years old. Richard McClintock,
                 </Text>
-                <Text
-                  size={"12px"}
-                  weight={"400"}
-                  style={{ marginLeft: 20, opacity: 0.5 }}
-                >
-                  5 min ago
-                </Text>
-              </Flex>
-              <Text
-                size={"20px"}
-                weight={"400"}
-                style={{ opacity: 0.8, marginLeft: 20 }}
-              >
-                It is a long established fact that a reader will be distracted
-                by the readable content of a page when looking at its layout.
-                The point of using Lorem Ipsum is that it has a more-or-less
-                normal distribution of letters, as opposed to using 'Content
-                here, content here', making it look like readable English. Many
-                desktop publishing packages and web page editors now use Lorem
-                Ipsum as their default model text, and a search for 'lorem
-                ipsum' will uncover many web sites still in their infancy.
-                Various versions have evolved over the years, sometimes by
-                accident, sometimes on purpose (injected humour and the like).
-              </Text>
-            </CommentSub>
-          </CommentEntire>
-        </Li>
-      </Ul>
+              </CommentSub>
+            </CommentEntire>
+          </Li>
+        </Ul>
+      ) : null}
       <CommentEntire style={{ marginBottom: 40 }}>
         <Flex
           setting={{
@@ -249,8 +196,12 @@ const Comment = ({ data }) => {
           />
         </Flex>
         <InputEntire>
-          <Input type="text" placeholder="Comment on anything you want..." />
-          <SubmitBtn>
+          <Input
+            type="text"
+            placeholder="Comment on anything you want..."
+            ref={InputData}
+          />
+          <SubmitBtn onClick={submitHandler}>
             <FontAwesomeIcon icon={faPaperPlane} />
           </SubmitBtn>
         </InputEntire>

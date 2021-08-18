@@ -184,12 +184,39 @@ const RoomBoardContainer = (props) => {
     }
   };
 
+  const getPosts = async (boardIdx) => {
+    try {
+      const { data } = await boardApi.getPosts(boardIdx);
+      data && addToDo("data", "posts", data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const setPost = async ({ boardIdx, idx, title, content }) => {
+    try {
+      const { data } = await boardApi.savePost({
+        boardIdx,
+        idx,
+        title,
+        content,
+      });
+      data && getPosts(boardIdx);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   useEffect(() => {
     getUserInfo();
     getAnnouncementList(idx);
     getBoardList();
     addToDo("setData", "setBoardList", setBoardList);
     addToDo("getData", "getBoard", getBoard);
+    addToDo("getData", "getBoardList", getBoardList);
+    addToDo("data", "studyIdx", idx);
+    addToDo("setData", "setPost", setPost);
+    addToDo("getData", "getPosts", getPosts);
   }, []);
 
   return (
