@@ -5,7 +5,11 @@ import {
   faComments,
   faCircle,
   faPaperPlane,
+  faTrashAlt,
 } from "@fortawesome/free-solid-svg-icons";
+
+import { connect } from "react-redux";
+import { boardApi } from "../Api";
 const Container = styled.div`
   width: 80%;
 `;
@@ -59,7 +63,6 @@ const CommentImg = styled.div`
 `;
 
 const InputEntire = styled.div`
-  width: 100%;
   background-color: rgba(216, 216, 216, 0.2);
   height: 55px;
   margin-left: 20px;
@@ -86,15 +89,55 @@ const SubmitBtn = styled.button`
   background-color: rgba(216, 216, 216, 0.8);
 `;
 
-const Comment = ({ magic }) => {
-  const { saveComment, comment } = magic;
+const Comment = ({ magic, data }) => {
+  const { saveComment, comment, getComment } = magic;
   const InputData = useRef();
 
+  let date = new Date();
   const submitHandler = (e) => {
     if (InputData.current.value.length) {
       saveComment({ content: InputData.current.value });
       InputData.current.value = "";
     }
+  };
+
+  const delComment = async (e) => {
+    try {
+      const data = await boardApi.deleteComment(e);
+      data && getComment();
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const getAgo = (data) => {
+    let res;
+    const createDate = [
+      [parseInt(data.substring(0, 4)), "year"],
+      [parseInt(data.substring(5, 7)), "month"],
+      [parseInt(data.substring(8, 10)), "date"],
+      [parseInt(data.substring(11, 13)), "hour"],
+      [parseInt(data.substring(14, 16)), "min"],
+    ];
+
+    const nowDate = [
+      date.getFullYear(),
+      date.getMonth() + 1,
+      date.getDate(),
+      date.getHours(),
+      date.getMinutes(),
+    ];
+
+    for (let i = 0; i < 5; i++) {
+      var now = nowDate[i] - createDate[i][0];
+      if (now !== 0) {
+        res = `${now} ${createDate[i][1]}`;
+        break;
+      } else {
+        now = 0;
+      }
+    }
+    return res;
   };
 
   return (
@@ -118,66 +161,74 @@ const Comment = ({ magic }) => {
           </Text>
         </Text>
       </Flex>
-      {comment ? (
+      {comment && comment.length ? (
         <Ul>
-          <Li>
-            <CommentEntire>
-              <Flex
-                setting={{
-                  justify: "flex-start",
-                  align: "flex-start",
-                  dir: "rows",
-                }}
-              >
-                <CommentImg
-                  size={"50px"}
-                  url={
-                    "https://pbs.twimg.com/profile_images/1401366945354588160/nXCZ621D.jpg"
-                  }
-                />
-              </Flex>
-              <CommentSub>
+          {comment.map((e) => (
+            <Li key={e.idx}>
+              <CommentEntire>
                 <Flex
                   setting={{
                     justify: "flex-start",
-                    align: "center",
+                    align: "flex-start",
                     dir: "rows",
                   }}
                 >
-                  <Text
-                    size={"25px"}
-                    weight={"500"}
-                    style={{ marginLeft: 20, opacity: 1 }}
-                  >
-                    Yuri Cho
-                  </Text>
-                  <Text
-                    size={"8px"}
-                    weight={"400"}
-                    style={{ marginLeft: 20, opacity: 0.5 }}
-                  >
-                    <FontAwesomeIcon icon={faCircle} />
-                  </Text>
-                  <Text
-                    size={"12px"}
-                    weight={"400"}
-                    style={{ marginLeft: 20, opacity: 0.5 }}
-                  >
-                    5 min ago
-                  </Text>
+                  <CommentImg size={"50px"} url={e.user.img} />
                 </Flex>
-                <Text
-                  size={"20px"}
-                  weight={"400"}
-                  style={{ opacity: 0.8, marginLeft: 20, lineHeight: "130%" }}
-                >
-                  Contrary to popular belief, Lorem Ipsum is not simply random
-                  text. It has roots in a piece of classical Latin literature
-                  from 45 BC, making it over 2000 years old. Richard McClintock,
-                </Text>
-              </CommentSub>
-            </CommentEntire>
-          </Li>
+                <CommentSub>
+                  <Flex
+                    setting={{
+                      justify: "flex-start",
+                      align: "center",
+                      dir: "rows",
+                    }}
+                  >
+                    <Text
+                      size={"25px"}
+                      weight={"500"}
+                      style={{ marginLeft: 20, opacity: 1 }}
+                    >
+                      {e.user.name}
+                    </Text>
+                    <Text
+                      size={"8px"}
+                      weight={"400"}
+                      style={{ marginLeft: 20, opacity: 0.5 }}
+                    >
+                      <FontAwesomeIcon icon={faCircle} />
+                    </Text>
+                    <Text
+                      size={"12px"}
+                      weight={"400"}
+                      style={{ marginLeft: 20, opacity: 0.5 }}
+                    >
+                      {getAgo(e.regDate)
+                        ? getAgo(e.regDate) + "\nago"
+                        : "just now"}
+                    </Text>
+                    {data.myInfo && e.user.uid === data.myInfo.uid ? (
+                      <Text
+                        size={"12px"}
+                        weight={"400"}
+                        style={{ marginLeft: 20, opacity: 0.5, padding: 0 }}
+                        as={"button"}
+                        onClick={() => delComment(e.idx)}
+                      >
+                        <FontAwesomeIcon icon={faTrashAlt} />
+                      </Text>
+                    ) : null}
+                  </Flex>
+                  <Text
+                    size={"20px"}
+                    weight={"400"}
+                    style={{ opacity: 0.8, marginLeft: 20, lineHeight: "130%" }}
+                  >
+                    {e.content}
+                  </Text>
+                </CommentSub>
+              </CommentEntire>
+            </Li>
+          ))}
         </Ul>
       ) : null}
       <CommentEntire style={{ marginBottom: 40 }}>
@@ -188,12 +239,7 @@ const Comment = ({ magic }) => {
             dir: "rows",
           }}
         >
-          <CommentImg
-            size={"50px"}
-            url={
-              "https://pbs.twimg.com/profile_images/1401366945354588160/nXCZ621D.jpg"
-            }
-          />
+          <CommentImg size={"50px"} url={data.myInfo && data.myInfo.img} />
         </Flex>
         <InputEntire>
           <Input
@@ -209,5 +255,8 @@ const Comment = ({ magic }) => {
     </Container>
   );
 };
+const getCurrentState = (state, ownProps) => {
+  return state;
+};
 
-export default Comment;
+export default connect(getCurrentState)(Comment);

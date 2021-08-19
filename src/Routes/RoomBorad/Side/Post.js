@@ -331,7 +331,7 @@ const Post = ({ data, setData, match, getData }) => {
                             >
                               <MovetoDetail
                                 to={{
-                                  pathname: `/roomboard/boardDetail/${e.idx}`,
+                                  pathname: `/roomboard/board/postdetail/${e.idx}`,
                                   state: { idx: data.studyIdx, where: "room" },
                                 }}
                               >
@@ -347,18 +347,13 @@ const Post = ({ data, setData, match, getData }) => {
                             }}
                             style={{ height: "100%" }}
                           >
-                            <ChatImg
-                              size={"25px"}
-                              url={
-                                "http://3.37.208.251:8080/api/img/default/33_profile_img"
-                              }
-                            />
+                            <ChatImg size={"25px"} url={e.user.img} />
                             <Text
                               size={"15px"}
                               weight={"400"}
                               style={{ marginLeft: 15 }}
                             >
-                              {e.username}
+                              {e.user.name}
                             </Text>
                           </Flex>
                           <Flex

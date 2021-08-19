@@ -31,7 +31,6 @@ const PopupUser = styled.div`
   align-items: center;
   position: relative;
   overflow-y: ${(props) => (props.notover ? "auto" : "scroll")};
-  border-radius: ${(props) => (props.notover ? "20px" : "none")};
 `;
 const DelpopupBtn = styled.button`
   display: ${(props) => (props.second ? "none" : "block")};

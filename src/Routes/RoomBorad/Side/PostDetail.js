@@ -9,6 +9,7 @@ import {
   faTrashAlt,
   faEllipsisH,
 } from "@fortawesome/free-solid-svg-icons";
+import Popup from "../../../Components/Popup";
 
 import Comment from "../../../Components/Comment";
 const Container = styled.div`
@@ -43,21 +44,22 @@ const Board = styled.main`
 
 const PostDetail = ({ data, setData, match, getData, history }) => {
   const {
-    params: { idx: boardIdx },
+    params: { idx: postIdx },
   } = match;
 
   const { goBack } = history;
 
-  const [board, setBoard] = useState();
+  const [post, setPost] = useState();
   const [comment, setComment] = useState();
+  const [delBtnPopup, setDelBtnPopup] = useState(false);
   useEffect(() => {
-    getBoard(boardIdx);
-    getComment(boardIdx);
+    getComment();
+    getPost(postIdx);
   }, []);
 
-  const getComment = async (idx) => {
+  const getComment = async () => {
     try {
-      const { data } = await boardApi.getComments(idx);
+      const { data } = await boardApi.getComments(postIdx);
       setComment(data);
     } catch (e) {
       console.log(e);
@@ -67,146 +69,221 @@ const PostDetail = ({ data, setData, match, getData, history }) => {
     try {
       console.log(content);
       const { data } = await boardApi.saveComment({
-        postIdx: boardIdx,
+        postIdx,
         idx,
         content,
       });
-      data && getComment(boardIdx);
+      data && getComment(postIdx);
     } catch (e) {
       console.log(e);
     }
   };
 
-  const getBoard = async (idx) => {
+  const getPost = async (idx) => {
     try {
-      const { data } = await boardApi.getBoard(idx);
-      data && setBoard(data);
+      const { data } = await boardApi.getPost(idx);
+      data && setPost(data);
     } catch (e) {
       console.log(e);
     }
   };
 
-  return board ? (
-    <Container>
+  const deletePost = async () => {
+    try {
+      const data = await boardApi.deletePost(postIdx);
+      data && history.goBack();
+      data && console.log(data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const returnDelPopup = (what) =>
+    what ? (
+      <Popup
+        status={true}
+        component={delPopupContent}
+        size={{ width: "500px", height: "400px" }}
+        setPopup={setDelBtnPopup}
+        notover={true}
+      />
+    ) : null;
+  const delPopupContent = () => (
+    <Flex
+      setting={{
+        justify: "space-evenly",
+        align: "center",
+        dir: "column",
+      }}
+      style={{ height: "100%" }}
+    >
+      <Text size={"20px"} weight={"700"}>
+        Do you really want to delete this post?
+      </Text>
       <Flex
         setting={{
-          justify: "space-between",
-          align: "flex-end",
+          justify: "space-evenly",
+          align: "center",
           dir: "rows",
-        }}
-        style={{
-          width: "80%",
-          padding: "30px 0",
-          borderBottom: "2px solid lightgray",
         }}
       >
         <Text
-          size={"25px"}
+          size={"20px"}
           weight={"500"}
           as={"button"}
-          onClick={() => goBack()}
-        >
-          <FontAwesomeIcon
-            icon={faLongArrowAltLeft}
-            style={{ marginRight: 20 }}
-          />
-          <Text size={"25px"} weight={"500"}>
-            Back
-          </Text>
-        </Text>
-      </Flex>
-      <Board>
-        <Text size={"35px"} weight={"700"} style={{ marginBottom: 20 }}>
-          {board.name}
-        </Text>
-        <Flex
-          setting={{
-            justify: "flex-start",
-            align: "flex-start",
-            dir: "rows",
+          style={{
+            border: "1px solid lightgray",
+            padding: "10px 20px 10px 20px",
+            borderRadius: 10,
           }}
+          onClick={deletePost}
         >
-          <Text
-            size={"15px"}
-            weight={"400"}
-            style={{
-              marginBottom: 20,
-              paddingRight: 20,
-              borderRight: "1px solid black",
-            }}
-          >
-            Roddy
-          </Text>
-          <Text
-            size={"15px"}
-            weight={"400"}
-            style={{ marginBottom: 20, paddingLeft: 20, opacity: "0.3" }}
-          >
-            37 second ago
-          </Text>
-        </Flex>
+          Yes
+        </Text>
         <Text
           size={"20px"}
-          weight={"400"}
-          style={{ marginBottom: 40, lineHeight: "27px" }}
+          weight={"500"}
+          as={"button"}
+          style={{
+            border: "1px solid lightgray",
+            padding: "10px 20px 10px 20px",
+            borderRadius: 10,
+          }}
+          onClick={() => setDelBtnPopup(false)}
         >
-          {board.content}
+          No
         </Text>
+      </Flex>
+    </Flex>
+  );
+  return post ? (
+    <>
+      <Container>
         <Flex
           setting={{
-            justify: "flex-start",
-            align: "center",
+            justify: "space-between",
+            align: "flex-end",
             dir: "rows",
           }}
           style={{
-            height: 50,
-            paddingBottom: 20,
-            borderBottom: "1px solid black",
+            width: "80%",
+            padding: "30px 0",
+            borderBottom: "2px solid lightgray",
           }}
         >
           <Text
-            size={"15px"}
-            weight={"700"}
-            style={{ opacity: 0.4 }}
+            size={"25px"}
+            weight={"500"}
             as={"button"}
+            onClick={() => goBack()}
           >
-            <FontAwesomeIcon icon={faPaperclip} />
-            <Text size={"15px"} weight={"400"} style={{ marginLeft: 10 }}>
-              0
+            <FontAwesomeIcon
+              icon={faLongArrowAltLeft}
+              style={{ marginRight: 20 }}
+            />
+            <Text size={"25px"} weight={"500"}>
+              Back
             </Text>
           </Text>
         </Flex>
-        <Flex
-          setting={{
-            justify: "flex-end",
-            align: "center",
-            dir: "rows",
-          }}
-          style={{
-            height: 50,
-            paddingTop: 20,
-          }}
-        >
-          <Text
-            size={"15px"}
-            weight={"700"}
-            style={{ opacity: 0.4, marginRight: 15, padding: 0 }}
-            as={"button"}
-          >
-            <FontAwesomeIcon icon={faTrashAlt} />
+        <Board>
+          <Text size={"35px"} weight={"700"} style={{ marginBottom: 20 }}>
+            {post.title}
           </Text>
-          <Text
-            size={"15px"}
-            weight={"700"}
-            style={{ opacity: 0.4, padding: 0 }}
-            as={"button"}
+          <Flex
+            setting={{
+              justify: "flex-start",
+              align: "flex-start",
+              dir: "rows",
+            }}
           >
-            <FontAwesomeIcon icon={faEllipsisH} />
+            <Text
+              size={"15px"}
+              weight={"400"}
+              style={{
+                marginBottom: 20,
+                paddingRight: 20,
+                borderRight: "1px solid black",
+              }}
+            >
+              Roddy
+            </Text>
+            <Text
+              size={"15px"}
+              weight={"400"}
+              style={{ marginBottom: 20, paddingLeft: 20, opacity: "0.3" }}
+            >
+              {post.regDate.substring(0, 10)}
+            </Text>
+          </Flex>
+          <Text
+            size={"20px"}
+            weight={"400"}
+            style={{ marginBottom: 40, lineHeight: "27px" }}
+          >
+            {post.content}
           </Text>
-        </Flex>
-      </Board>
-      <Comment magic={{ saveComment, comment }} />
-    </Container>
+          <Flex
+            setting={{
+              justify: "flex-start",
+              align: "center",
+              dir: "rows",
+            }}
+            style={{
+              height: 50,
+              paddingBottom: 20,
+              borderBottom: "1px solid black",
+            }}
+          >
+            <Text
+              size={"15px"}
+              weight={"700"}
+              style={{ opacity: 0.4 }}
+              as={"button"}
+            >
+              <FontAwesomeIcon icon={faPaperclip} />
+              <Text size={"15px"} weight={"400"} style={{ marginLeft: 10 }}>
+                0
+              </Text>
+            </Text>
+          </Flex>
+          <Flex
+            setting={{
+              justify: "flex-end",
+              align: "center",
+              dir: "rows",
+            }}
+            style={{
+              height: 50,
+              paddingTop: 20,
+            }}
+          >
+            {data.myInfo && data.myInfo.uid === post.user.uid ? (
+              <Text
+                size={"15px"}
+                weight={"700"}
+                style={{ opacity: 0.4, marginRight: 15, padding: 0 }}
+                as={"button"}
+                onClick={() => setDelBtnPopup(true)}
+              >
+                <FontAwesomeIcon icon={faTrashAlt} />
+              </Text>
+            ) : null}
+
+            <Text
+              size={"15px"}
+              weight={"700"}
+              style={{ opacity: 0.4, padding: 0 }}
+              as={"button"}
+            >
+              <FontAwesomeIcon icon={faEllipsisH} />
+            </Text>
+          </Flex>
+        </Board>
+        <Comment magic={{ saveComment, comment, getComment }} />
+      </Container>
+      {returnDelPopup(delBtnPopup)}
+    </>
   ) : (
     <div>fuck</div>
   );

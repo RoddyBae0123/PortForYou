@@ -4,14 +4,14 @@ import axios from "axios";
 import wifi from "../../wifi";
 import { AnimatePresence, motion } from "framer-motion";
 import auth from "../../Auth";
-import { AuthApi } from "../../Api";
-const SigninContainer = (props) => {
+import { connect } from "react-redux";
+import { actionCreators } from "../../store";
+import { AuthApi, userApi } from "../../Api";
+const SigninContainer = ({ history, addToDo }) => {
   const [error, setError] = useState(undefined);
   const [result, setResult] = useState(undefined);
 
-  const {
-    history: { push },
-  } = props;
+  const { push } = history;
   const Iserror = () => {
     if (error === 401) {
       push("/signup");
@@ -25,9 +25,9 @@ const SigninContainer = (props) => {
     if (result && result.status === 200) {
       localStorage.clear();
       auth.setTokenToLocalstorage(result.data.message);
+      setMyInfo();
       window.location.replace("/dashboard/resume");
 
-      // push("/dashboard/resume");
     }
   };
   useEffect(Isresult, [result]);
@@ -43,6 +43,16 @@ const SigninContainer = (props) => {
     }
   };
 
+  const setMyInfo = async () => {
+    try {
+      const { data } = await userApi.getUserInfo();
+      data && console.log(data);
+      data && addToDo("data", "MyInfo", data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <motion.div
       exit={{ opacity: 0 }}
@@ -53,5 +63,15 @@ const SigninContainer = (props) => {
     </motion.div>
   );
 };
+const getCurrentState = (state, ownProps) => {
+  console.log(state, ownProps);
 
-export default SigninContainer;
+  return state;
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addToDo: (dataType, dataName, data) =>
+      dispatch(actionCreators.addToDo(dataType, dataName, data)),
+  };
+};
+export default connect(getCurrentState, mapDispatchToProps)(SigninContainer);

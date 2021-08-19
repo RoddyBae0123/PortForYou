@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import wifi from "../../wifi";
 import Auth from "../../Auth";
-import { portFolioApi, studyApi, boardApi } from "../../Api";
+import { portFolioApi, studyApi, boardApi, userApi } from "../../Api";
 import { connect } from "react-redux";
 import { actionCreators } from "../../store";
 
@@ -26,23 +26,14 @@ const RoomBoardContainer = (props) => {
   const [status, setStatus] = useState();
   const [memberList, setMemberList] = useState();
   const getUserInfo = async () => {
-    const api = await axios.create({
-      baseURL: `${wifi}`,
-    });
-
-    api
-      .get("/api/userInfo", {
-        headers: {
-          Authorization: `Bearer ${Auth.getAccessToken()}`,
-        },
-      })
-      .then((res) => {
-        setUserData(res);
-        setProfileImgUri(res.data.img);
-      })
-      .catch((e) => {
-        console.log(e);
-      });
+    try {
+      const res = await userApi.getUserInfo();
+      res && setUserData(res);
+      res && setProfileImgUri(res.data.img);
+      addToDo("data", "myInfo", res.data);
+    } catch (e) {
+      console.log(e);
+    }
   };
   const save = (e) => {
     setRcSave({
