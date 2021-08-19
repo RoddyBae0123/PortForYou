@@ -206,7 +206,7 @@ const PostDetail = ({ data, setData, match, getData, history }) => {
                 borderRight: "1px solid black",
               }}
             >
-              Roddy
+              {post.user.name}
             </Text>
             <Text
               size={"15px"}

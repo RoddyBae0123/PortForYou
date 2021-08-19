@@ -100,10 +100,13 @@ const Board = ({ data, setData, match, getData }) => {
     params: { idx: studyIdx },
   } = match;
   const [boardPopup, setBoardPopup] = useState(false);
+  const [warningPopup, setWaningPopup] = useState(false);
   const [disabled, setDisabled] = useState(true);
   const [value, setValue] = useState({ name: "", content: "" });
   const [post, setPost] = useState({});
   const [setting, setSetting] = useState(false);
+  const [selected, setSelected] = useState();
+
   useEffect(() => {
     data && getPrepost();
   }, [data]);
@@ -198,6 +201,66 @@ const Board = ({ data, setData, match, getData }) => {
       />
     );
 
+  const warningContents = () => (
+    <Flex
+      setting={{
+        justify: "space-evenly",
+        align: "center",
+        dir: "column",
+      }}
+      style={{ height: "100%" }}
+    >
+      <Text size={"20px"} weight={"700"}>
+        Do you really want to delete this Board?
+      </Text>
+      <Flex
+        setting={{
+          justify: "space-evenly",
+          align: "center",
+          dir: "rows",
+        }}
+      >
+        <Text
+          size={"20px"}
+          weight={"500"}
+          as={"button"}
+          style={{
+            border: "1px solid lightgray",
+            padding: "10px 20px 10px 20px",
+            borderRadius: 10,
+          }}
+          onClick={() => delBtnHandler(selected)}
+        >
+          Yes
+        </Text>
+        <Text
+          size={"20px"}
+          weight={"500"}
+          as={"button"}
+          style={{
+            border: "1px solid lightgray",
+            padding: "10px 20px 10px 20px",
+            borderRadius: 10,
+          }}
+          onClick={() => setWaningPopup(false)}
+        >
+          No
+        </Text>
+      </Flex>
+    </Flex>
+  );
+
+  const returnWarning = (warning) =>
+    warning && (
+      <Popup
+        status={true}
+        size={{ width: "500px", height: "400px" }}
+        setPopup={setWaningPopup}
+        component={warningContents}
+        notover={true}
+      />
+    );
+
   const inputOnchangeHandler = (e) => {
     e.target.dataset.type == "name"
       ? setValue({
@@ -221,19 +284,21 @@ const Board = ({ data, setData, match, getData }) => {
     });
   };
 
-  const delBtnHandler = async (e) => {
+  const delBtnHandler = async (idx) => {
     try {
-      const res = await boardApi.deleteBoard(e.target.id);
+      const res = await boardApi.deleteBoard(idx);
 
       res && getData.getBoardList();
     } catch (e) {
       console.log(e);
+    } finally {
+      setWaningPopup(false);
     }
     // const data = await boardApi();
   };
   return (
     <>
-      {data && setting && data.boardList ? (
+      {data && setting && post && data.boardList ? (
         <Container>
           <Flex
             setting={{
@@ -290,8 +355,10 @@ const Board = ({ data, setData, match, getData }) => {
                         size={"10px"}
                         weight={"900"}
                         as={"button"}
-                        id={e.idx}
-                        onClick={delBtnHandler}
+                        onClick={() => {
+                          setWaningPopup(true);
+                          setSelected(e.idx);
+                        }}
                       >
                         X
                       </Text>
@@ -309,7 +376,9 @@ const Board = ({ data, setData, match, getData }) => {
                       }}
                     >
                       <Text size={"10px"} weight={"400"}>
-                        {post[e.idx] && post[e.idx][0].title}
+                        {post[e.idx] && post[e.idx][0]
+                          ? post[e.idx][0].title
+                          : "none"}
                       </Text>
                     </Flex>
 
@@ -368,6 +437,7 @@ const Board = ({ data, setData, match, getData }) => {
         </Container>
       )}
       {returnCreateBoard(boardPopup)}
+      {returnWarning(warningPopup)}
     </>
   );
 };

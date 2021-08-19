@@ -60,6 +60,7 @@ const Popup = ({ status, component, second, size, setPopup, notover }) => {
       }, second);
     }
   };
+
   useEffect(() => {
     timeout();
   }, []);
