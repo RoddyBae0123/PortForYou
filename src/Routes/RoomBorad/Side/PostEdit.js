@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import styled from "styled-components";
+
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faLongArrowAltLeft,
@@ -8,13 +9,12 @@ import {
   faTrashAlt,
   faEllipsisH,
 } from "@fortawesome/free-solid-svg-icons";
-import ReactSummernote from "react-summernote";
-import "react-summernote/dist/react-summernote.css"; // import styles
-import "react-summernote/lang/summernote-ru-RU"; // you can import any other locale
-import "bootstrap/js/modal";
-import "bootstrap/js/dropdown";
-import "bootstrap/js/tooltip";
-import "bootstrap/dist/css/bootstrap.css";
+import { EditorState, convertToRaw } from "draft-js";
+
+import { imageApi } from "../../../Api";
+import { Editor } from "react-draft-wysiwyg";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import draftToHtml from "draftjs-to-html";
 
 const Container = styled.div`
   display: flex;
@@ -38,7 +38,67 @@ const Text = styled.span`
   color: rgb(74, 86, 94);
   display: inline-flex;
 `;
-const PostEdit = () => {
+
+const MyEdit = styled.div`
+  width: 80%;
+  .wrapper-class {
+    width: 100%;
+    margin: 0 auto;
+    margin-bottom: 4rem;
+    margin-top: 20px;
+    border: 1px solid lightgray;
+  }
+  .editor {
+    height: 500px !important;
+    /* border: 2px solid lightgray !important; */
+    padding: 10px 20px !important;
+    /* border-radius: 2px !important; */
+    &::-webkit-scrollbar {
+      width: 10px;
+      background-color: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: rgb(239, 239, 239);
+    }
+  }
+  .toolbar {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid lightgray;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 10px;
+    margin: 0;
+  }
+`;
+const PostEdit = ({ match, data }) => {
+  const {
+    params: { idx: postIdx },
+  } = match;
+
+  console.log(postIdx);
+  data && console.log(data.post);
+
+  const [edit, setEdit] = useState("");
+
+  const onEditorStateChange = (editor) => {
+    console.log(convertToRaw(editor.getCurrentContent()));
+    setEdit(editor);
+  };
+  const uploadImageCallBack = (file) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const data = new FormData();
+        data.append("img", file);
+        const res = await imageApi.setPostImage(data);
+        res && console.log(res.data.message);
+        resolve({ data: { link: res.data.message } });
+      } catch (e) {
+        console.log(e);
+        reject();
+      }
+    });
+  };
   return (
     <Container>
       <Flex
@@ -63,25 +123,27 @@ const PostEdit = () => {
           </Text>
         </Text>
       </Flex>
-      <ReactSummernote
-        value="Default value"
-        options={{
-          lang: "ru-RU",
-          height: 350,
-          dialogsInBody: true,
-          toolbar: [
-            ["style", ["style"]],
-            ["font", ["bold", "underline", "clear"]],
-            ["fontname", ["fontname"]],
-            ["para", ["ul", "ol", "paragraph"]],
-            ["table", ["table"]],
-            ["insert", ["link", "picture", "video"]],
-            ["view", ["fullscreen", "codeview"]],
-          ],
-        }}
-      />
+      <MyEdit>
+        <Editor
+          editorState={edit}
+          toolbarClassName="toolbar"
+          wrapperClassName="wrapper-class"
+          editorClassName="editor"
+          onEditorStateChange={onEditorStateChange}
+          toolbar={{
+            image: {
+              uploadCallback: uploadImageCallBack,
+              previewImage: true,
+              alt: { present: true, mandatory: false },
+              inputAccept: "image/gif,image/jpeg,image/jpg,image/png,image/svg",
+            },
+          }}
+        />
+      </MyEdit>
     </Container>
   );
 };
-
-export default PostEdit;
+const getCurrentState = (state, ownProps) => {
+  return state;
+};
+export default connect(getCurrentState)(PostEdit);

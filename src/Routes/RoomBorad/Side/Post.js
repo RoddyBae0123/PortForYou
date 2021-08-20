@@ -36,14 +36,16 @@ const DashBoard = styled.div`
   height: 500px;
 `;
 
-const CreateBoard = styled.button`
+const CreateBoard = styled(Link)`
   width: 60px;
   height: 30px;
   border-radius: 20px;
   /* box-shadow: 0 3px 6px lightgray; */
   /* 2px solid lightgray */
   border: 2px solid lightgray;
-
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-size: 5px;
 `;
 
@@ -279,7 +281,12 @@ const Post = ({ data, setData, match, getData }) => {
             <Text size={"40px"} weight={"700"}>
               {board.name}
             </Text>
-            <CreateBoard onClick={() => setBoardPopup(true)}>
+            <CreateBoard
+              to={{
+                pathname: `/roomboard/board/postEdit/create`,
+                state: { idx: data.studyIdx, where: "room" },
+              }}
+            >
               CREATE
             </CreateBoard>
           </Flex>

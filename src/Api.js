@@ -93,6 +93,12 @@ export const userApi = {
 };
 
 export const imageApi = {
+  setPostImage: (data) => {
+    const headers = {
+      "Content-type": "multipart/form-data",
+    };
+    return api.post("api/img/board/post", data, { headers });
+  },
   setPortfolio: (idx, formData) =>
     api.post(
       `api/img/portfolio?portfolio-idx=${idx}

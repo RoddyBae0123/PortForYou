@@ -434,6 +434,7 @@ const RoomBoardPresenter = ({
               <Route
                 path={`${match.path}/board/postEdit/:idx`}
                 component={PostEdit}
+                exact
               ></Route>
               <Route
                 path={`${match.path}/board/postdetail/:idx`}

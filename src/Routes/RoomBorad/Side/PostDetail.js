@@ -12,6 +12,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Popup from "../../../Components/Popup";
 import { Link } from "react-router-dom";
+import { actionCreators } from "../../../store";
 
 import Comment from "../../../Components/Comment";
 const Container = styled.div`
@@ -44,7 +45,7 @@ const Board = styled.main`
   background-color: rgba(216, 216, 216, 0.2);
 `;
 
-const PostDetail = ({ data, setData, match, getData, history }) => {
+const PostDetail = ({ data, setData, match, addToDo, history }) => {
   const {
     params: { idx: postIdx },
   } = match;
@@ -85,6 +86,7 @@ const PostDetail = ({ data, setData, match, getData, history }) => {
     try {
       const { data } = await boardApi.getPost(idx);
       data && setPost(data);
+      data && addToDo("data", "post", data);
     } catch (e) {
       console.log(e);
     }
@@ -311,4 +313,11 @@ const getCurrentState = (state, ownProps) => {
 
   return state;
 };
-export default connect(getCurrentState)(PostDetail);
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addToDo: (dataType, dataName, data) =>
+      dispatch(actionCreators.addToDo(dataType, dataName, data)),
+  };
+};
+export default connect(getCurrentState, mapDispatchToProps)(PostDetail);
