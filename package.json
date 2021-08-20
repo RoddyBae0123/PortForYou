@@ -18,6 +18,7 @@
     "draft-js": "^0.11.7",
     "draftjs-to-html": "^0.9.1",
     "framer-motion": "^4.1.17",
+    "html-to-draftjs": "^1.5.0",
     "jquery": "^3.6.0",
     "navigation": "^5.5.0",
     "navigation-react": "^4.3.0",

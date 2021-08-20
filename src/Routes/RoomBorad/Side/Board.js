@@ -97,7 +97,7 @@ const CreateBoard = styled.button`
 `;
 const Board = ({ data, setData, match, getData }) => {
   const {
-    params: { idx: studyIdx },
+    params: { studyIdx },
   } = match;
   const [boardPopup, setBoardPopup] = useState(false);
   const [warningPopup, setWaningPopup] = useState(false);
@@ -342,7 +342,7 @@ const Board = ({ data, setData, match, getData }) => {
                       <Text size={"20px"} weight={"700"}>
                         <Link
                           to={{
-                            pathname: `/roomboard/board/post/${e.idx}`,
+                            pathname: `/roomboard/${studyIdx}/board/${e.idx}/post`,
                             state: { idx: studyIdx, where: "room" },
                           }}
                         >

@@ -133,7 +133,7 @@ const MovetoDetail = styled(Link)`
 `;
 const Post = ({ data, setData, match, getData }) => {
   const {
-    params: { idx: boardIdx },
+    params: { studyIdx, boardIdx },
   } = match;
 
   const [boardPopup, setBoardPopup] = useState(false);
@@ -283,8 +283,8 @@ const Post = ({ data, setData, match, getData }) => {
             </Text>
             <CreateBoard
               to={{
-                pathname: `/roomboard/board/postEdit/create`,
-                state: { idx: data.studyIdx, where: "room" },
+                pathname: `/roomboard/${studyIdx}/board/${boardIdx}/postDetail/create/postEdit`,
+                state: { idx: studyIdx, where: "room", boardIdx },
               }}
             >
               CREATE
@@ -338,8 +338,8 @@ const Post = ({ data, setData, match, getData }) => {
                             >
                               <MovetoDetail
                                 to={{
-                                  pathname: `/roomboard/board/postdetail/${e.idx}`,
-                                  state: { idx: data.studyIdx, where: "room" },
+                                  pathname: `/roomboard/${studyIdx}/board/${boardIdx}/postdetail/${e.idx}`,
+                                  state: { idx: studyIdx, where: "room" },
                                 }}
                               >
                                 {e.title}

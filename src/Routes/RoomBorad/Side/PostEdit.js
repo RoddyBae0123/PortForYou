@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { connect } from "react-redux";
+import { boardApi } from "../../../Api";
 import styled from "styled-components";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,12 +10,13 @@ import {
   faTrashAlt,
   faEllipsisH,
 } from "@fortawesome/free-solid-svg-icons";
-import { EditorState, convertToRaw } from "draft-js";
+import { EditorState, convertToRaw, ContentState } from "draft-js";
 
 import { imageApi } from "../../../Api";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import draftToHtml from "draftjs-to-html";
+import htmlToDraft from "html-to-draftjs";
 
 const Container = styled.div`
   display: flex;
@@ -44,12 +46,11 @@ const MyEdit = styled.div`
   .wrapper-class {
     width: 100%;
     margin: 0 auto;
-    margin-bottom: 4rem;
     margin-top: 20px;
     border: 1px solid lightgray;
   }
   .editor {
-    height: 500px !important;
+    height: 350px !important;
     /* border: 2px solid lightgray !important; */
     padding: 10px 20px !important;
     /* border-radius: 2px !important; */
@@ -71,18 +72,47 @@ const MyEdit = styled.div`
     margin: 0;
   }
 `;
-const PostEdit = ({ match, data }) => {
+const PostEdit = ({ match, data, location, setData, history }) => {
   const {
-    params: { idx: postIdx },
+    params: { studyIdx, boardIdx, postIdx },
   } = match;
 
-  console.log(postIdx);
-  data && console.log(data.post);
+  useEffect(() => {
+    getPost();
+  }, []);
+
+  const getPost = async () => {
+    try {
+      const { data } = await boardApi.getPost(postIdx);
+      const blocksFromHtml = htmlToDraft(data.content);
+      if (blocksFromHtml) {
+        const { contentBlocks, entityMap } = blocksFromHtml;
+        // https://draftjs.org/docs/api-reference-content-state/#createfromblockarray
+        const contentState = ContentState.createFromBlockArray(
+          contentBlocks,
+          entityMap
+        );
+        // ContentState를 EditorState기반으로 새 개체를 반환.
+        // https://draftjs.org/docs/api-reference-editor-state/#createwithcontent
+        const editorState = EditorState.createWithContent(contentState);
+        setEdit(editorState);
+        setSend({ title: data.title });
+      }
+      // setSend({ title: data.title, content: "" });
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   const [edit, setEdit] = useState("");
+  const [send, setSend] = useState({ title: "" });
+  console.log(send);
 
   const onEditorStateChange = (editor) => {
-    console.log(convertToRaw(editor.getCurrentContent()));
+    setSend({
+      content: draftToHtml(convertToRaw(editor.getCurrentContent())),
+      title: send.title,
+    });
     setEdit(editor);
   };
   const uploadImageCallBack = (file) => {
@@ -99,6 +129,30 @@ const PostEdit = ({ match, data }) => {
       }
     });
   };
+  const submitHandler = (e) => {
+    e.preventDefault();
+    setSend({ title: "", content: "" });
+    try {
+      if (postIdx !== "create") {
+        console.log(boardIdx);
+        setData.setPost({
+          idx: postIdx,
+          boardIdx,
+          title: send.title,
+          content: send.content,
+        });
+      } else {
+        setData.setPost({
+          boardIdx,
+          title: send.title,
+          content: send.content,
+        });
+      }
+      history.goBack();
+    } catch (e) {
+      console.log(e);
+    }
+  };
   return (
     <Container>
       <Flex
@@ -109,11 +163,17 @@ const PostEdit = ({ match, data }) => {
         }}
         style={{
           width: "80%",
-          padding: "30px 0",
+          padding: "25px 0",
           borderBottom: "2px solid lightgray",
+          marginTop: "20px",
         }}
       >
-        <Text size={"25px"} weight={"500"} as={"button"}>
+        <Text
+          size={"25px"}
+          weight={"500"}
+          as={"button"}
+          onClick={() => history.goBack()}
+        >
           <FontAwesomeIcon
             icon={faLongArrowAltLeft}
             style={{ marginRight: 20 }}
@@ -123,6 +183,33 @@ const PostEdit = ({ match, data }) => {
           </Text>
         </Text>
       </Flex>
+      <Flex
+        setting={{
+          justify: "space-between",
+          align: "flex-end",
+          dir: "rows",
+        }}
+        style={{
+          width: "80%",
+          padding: "20px 15px",
+          border: "1px solid lightgray",
+          marginTop: "20px",
+        }}
+      >
+        <Text
+          size={"25px"}
+          weight={"800"}
+          as={"input"}
+          type="text"
+          placeholder="Please type A Title."
+          style={{ border: "none", outline: "none", width: "100%" }}
+          value={send.title}
+          onChange={(e) =>
+            setSend({ title: e.target.value, content: send.content })
+          }
+        />
+      </Flex>
+
       <MyEdit>
         <Editor
           editorState={edit}
@@ -140,6 +227,32 @@ const PostEdit = ({ match, data }) => {
           }}
         />
       </MyEdit>
+      <Flex
+        setting={{
+          justify: "center",
+          align: "center",
+          dir: "rows",
+        }}
+        style={{
+          width: "80%",
+          padding: "20px 10px",
+          marginTop: "10px",
+        }}
+      >
+        <Text
+          size={"15px"}
+          weight={"500"}
+          as={"button"}
+          style={{
+            border: "1px solid lightgray",
+            padding: "10px 30px",
+            borderRadius: "20px",
+          }}
+          onClick={submitHandler}
+        >
+          {postIdx === "create" ? "CREATE" : "EDIT"}
+        </Text>
+      </Flex>
     </Container>
   );
 };

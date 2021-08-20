@@ -47,7 +47,7 @@ const Board = styled.main`
 
 const PostDetail = ({ data, setData, match, addToDo, history }) => {
   const {
-    params: { idx: postIdx },
+    params: { boardIdx, postIdx, studyIdx },
   } = match;
 
   const { goBack } = history;
@@ -271,8 +271,8 @@ const PostDetail = ({ data, setData, match, addToDo, history }) => {
                   as={Link}
                   onClick={() => setDelBtnPopup(true)}
                   to={{
-                    pathname: `/roomboard/board/postEdit/${postIdx}`,
-                    state: { idx: data.studyIdx, where: "room" },
+                    pathname: `/roomboard/${studyIdx}/board/${boardIdx}/postdetail/${postIdx}/postEdit`,
+                    state: { idx: studyIdx, where: "room" },
                   }}
                 >
                   <FontAwesomeIcon icon={faEdit} />

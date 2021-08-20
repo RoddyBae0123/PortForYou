@@ -318,7 +318,7 @@ const RoomBoardPresenter = ({
             <LinkSexy
               state={{ idx: roomIdx }}
               to={{
-                pathname: `/roomboard/board/${roomIdx}`,
+                pathname: `/roomboard/${roomIdx}/board/`,
                 state: { idx: roomIdx, where: "room" },
               }}
             >
@@ -422,22 +422,22 @@ const RoomBoardPresenter = ({
           <AnimatePresence>
             <Switch>
               <Route
-                path={`${match.path}/board/:idx`}
+                path={`${match.path}/:studyIdx/board/`}
                 component={Board}
                 exact
               ></Route>
               <Route
-                path={`${match.path}/board/post/:idx`}
+                path={`${match.path}/:studyIdx/board/:boardIdx/post`}
                 component={Post}
                 exact
               ></Route>
               <Route
-                path={`${match.path}/board/postEdit/:idx`}
+                path={`${match.path}/:studyIdx/board/:boardIdx/postdetail/:postIdx/postEdit`}
                 component={PostEdit}
                 exact
               ></Route>
               <Route
-                path={`${match.path}/board/postdetail/:idx`}
+                path={`${match.path}/:studyIdx/board/:boardIdx/postdetail/:postIdx`}
                 component={PostDetail}
               ></Route>
               <Route
