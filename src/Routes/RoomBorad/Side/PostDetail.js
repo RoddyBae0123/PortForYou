@@ -8,8 +8,10 @@ import {
   faPaperclip,
   faTrashAlt,
   faEllipsisH,
+  faEdit,
 } from "@fortawesome/free-solid-svg-icons";
 import Popup from "../../../Components/Popup";
+import { Link } from "react-router-dom";
 
 import Comment from "../../../Components/Comment";
 const Container = styled.div`
@@ -259,15 +261,30 @@ const PostDetail = ({ data, setData, match, getData, history }) => {
             }}
           >
             {data.myInfo && data.myInfo.uid === post.user.uid ? (
-              <Text
-                size={"15px"}
-                weight={"700"}
-                style={{ opacity: 0.4, marginRight: 15, padding: 0 }}
-                as={"button"}
-                onClick={() => setDelBtnPopup(true)}
-              >
-                <FontAwesomeIcon icon={faTrashAlt} />
-              </Text>
+              <>
+                <Text
+                  size={"15px"}
+                  weight={"700"}
+                  style={{ opacity: 0.4, marginRight: 15, padding: 0 }}
+                  as={Link}
+                  onClick={() => setDelBtnPopup(true)}
+                  to={{
+                    pathname: `/roomboard/board/postEdit/${postIdx}`,
+                    state: { idx: data.studyIdx, where: "room" },
+                  }}
+                >
+                  <FontAwesomeIcon icon={faEdit} />
+                </Text>
+                <Text
+                  size={"15px"}
+                  weight={"700"}
+                  style={{ opacity: 0.4, marginRight: 15, padding: 0 }}
+                  as={"button"}
+                  onClick={() => setDelBtnPopup(true)}
+                >
+                  <FontAwesomeIcon icon={faTrashAlt} />
+                </Text>
+              </>
             ) : null}
 
             <Text

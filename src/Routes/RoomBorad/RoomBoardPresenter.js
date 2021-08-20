@@ -25,6 +25,7 @@ import Channel from "./Side/Channel";
 import Member from "./Side/Member";
 import HowToRegIcon from "@material-ui/icons/HowToReg";
 import PostDetail from "./Side/PostDetail";
+import PostEdit from "./Side/PostEdit";
 const Back = styled.div`
   display: grid;
   grid-template-columns: 220px 1fr;
@@ -429,6 +430,10 @@ const RoomBoardPresenter = ({
                 path={`${match.path}/board/post/:idx`}
                 component={Post}
                 exact
+              ></Route>
+              <Route
+                path={`${match.path}/board/postEdit/:idx`}
+                component={PostEdit}
               ></Route>
               <Route
                 path={`${match.path}/board/postdetail/:idx`}
