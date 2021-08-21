@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { KeyboardArrowDown } from "@material-ui/icons";
 import { Link } from "react-router-dom";
 import { boardApi } from "../../../Api";
+import Loader from "react-loader-spinner";
 
 const Container = styled.div`
   display: flex;
@@ -283,7 +284,7 @@ const Post = ({ data, setData, match, getData }) => {
             </Text>
             <CreateBoard
               to={{
-                pathname: `/roomboard/${studyIdx}/board/${boardIdx}/postDetail/create/postEdit`,
+                pathname: `/roomboard/${studyIdx}/board/${boardIdx}/postdetail/create/postEdit`,
                 state: { idx: studyIdx, where: "room", boardIdx },
               }}
             >
@@ -417,7 +418,15 @@ const Post = ({ data, setData, match, getData }) => {
           </Flex>
         </Container>
       ) : (
-        <div>waiting</div>
+        <Container style={{ justifyContent: "center" }}>
+          <Loader
+            type="ThreeDots"
+            color="lightgray"
+            height={300}
+            width={300}
+            timeout={10000}
+          />
+        </Container>
       )}
       {returnCreateBoard(boardPopup)}
     </>

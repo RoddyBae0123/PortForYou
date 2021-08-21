@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { connect } from "react-redux";
 import { boardApi } from "../../../Api";
 import styled from "styled-components";
@@ -15,6 +15,14 @@ import { Link } from "react-router-dom";
 import { actionCreators } from "../../../store";
 
 import Comment from "../../../Components/Comment";
+import { EditorState, convertToRaw, ContentState } from "draft-js";
+
+import { Editor } from "react-draft-wysiwyg";
+import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
+import draftToHtml from "draftjs-to-html";
+import htmlToDraft from "html-to-draftjs";
+import Loader from "react-loader-spinner";
+
 const Container = styled.div`
   display: flex;
   width: 100%;
@@ -45,6 +53,23 @@ const Board = styled.main`
   background-color: rgba(216, 216, 216, 0.2);
 `;
 
+const MyEdit = styled.div`
+  width: 100%;
+  pointer-events: none;
+  .wrapper-class {
+    width: 100%;
+    margin: 0 auto;
+    margin-top: 20px;
+  }
+  .editor {
+    /* border: 2px solid lightgray !important; */
+    padding: 10px 20px !important;
+    /* border-radius: 2px !important; */
+  }
+  .toolbar {
+    display: none;
+  }
+`;
 const PostDetail = ({ data, setData, match, addToDo, history }) => {
   const {
     params: { boardIdx, postIdx, studyIdx },
@@ -55,10 +80,16 @@ const PostDetail = ({ data, setData, match, addToDo, history }) => {
   const [post, setPost] = useState();
   const [comment, setComment] = useState();
   const [delBtnPopup, setDelBtnPopup] = useState(false);
+  const [edit, setEdit] = useState("");
+
   useEffect(() => {
+    getPost();
+
     getComment();
-    getPost(postIdx);
   }, []);
+
+  const postContent = useRef();
+  postContent.current && console.log(postContent.current.innerHTML);
 
   const getComment = async () => {
     try {
@@ -82,11 +113,24 @@ const PostDetail = ({ data, setData, match, addToDo, history }) => {
     }
   };
 
-  const getPost = async (idx) => {
+  const getPost = async () => {
     try {
-      const { data } = await boardApi.getPost(idx);
+      const { data } = await boardApi.getPost(postIdx);
       data && setPost(data);
       data && addToDo("data", "post", data);
+      const blocksFromHtml = htmlToDraft(data.content);
+      if (blocksFromHtml) {
+        const { contentBlocks, entityMap } = blocksFromHtml;
+        // https://draftjs.org/docs/api-reference-content-state/#createfromblockarray
+        const contentState = ContentState.createFromBlockArray(
+          contentBlocks,
+          entityMap
+        );
+        // ContentState를 EditorState기반으로 새 개체를 반환.
+        // https://draftjs.org/docs/api-reference-editor-state/#createwithcontent
+        const editorState = EditorState.createWithContent(contentState);
+        setEdit(editorState);
+      }
     } catch (e) {
       console.log(e);
     }
@@ -220,13 +264,26 @@ const PostDetail = ({ data, setData, match, addToDo, history }) => {
               {post.regDate.substring(0, 10)}
             </Text>
           </Flex>
-          <Text
-            size={"20px"}
-            weight={"400"}
+          <Flex
+            setting={{
+              justify: "flex-start",
+              align: "flex-start",
+              dir: "column",
+            }}
             style={{ marginBottom: 40, lineHeight: "27px" }}
+            ref={postContent}
           >
-            {post.content}
-          </Text>
+            <MyEdit>
+              <Editor
+                editorState={edit}
+                toolbarClassName="toolbar"
+                wrapperClassName="wrapper-class"
+                editorClassName="editor"
+              />
+            </MyEdit>
+            {/* {postContent.current &&
+              (postContent.current.innerHTML = post.content)} */}
+          </Flex>
           <Flex
             setting={{
               justify: "flex-start",
@@ -304,7 +361,15 @@ const PostDetail = ({ data, setData, match, addToDo, history }) => {
       {returnDelPopup(delBtnPopup)}
     </>
   ) : (
-    <div>fuck</div>
+    <Container style={{ justifyContent: "center", height: "100vh" }}>
+      <Loader
+        type="ThreeDots"
+        color="lightgray"
+        height={300}
+        width={300}
+        timeout={10000}
+      />
+    </Container>
   );
 };
 
@@ -320,4 +385,5 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(actionCreators.addToDo(dataType, dataName, data)),
   };
 };
+
 export default connect(getCurrentState, mapDispatchToProps)(PostDetail);

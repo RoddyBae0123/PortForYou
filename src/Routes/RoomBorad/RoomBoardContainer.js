@@ -14,8 +14,6 @@ const RoomBoardContainer = (props) => {
   const [position, setPosition] = useState([]);
   const { match, location, history, addToDo, ...rest } = props;
 
-  console.log(rest);
-
   const {
     state: { idx },
   } = location;
@@ -63,9 +61,6 @@ const RoomBoardContainer = (props) => {
             ]);
           });
       }
-      {
-        data && console.log(data);
-      }
     } catch (e) {
       console.log(e);
     } finally {
@@ -84,8 +79,7 @@ const RoomBoardContainer = (props) => {
   const getAnnouncementList = async (idx) => {
     try {
       const { data } = await studyApi.getAnnouncementList(idx);
-      {
-      }
+      data && console.log(data);
       {
         data.length ? getAnn(data[0].idx) : setAnn(undefined);
       }
@@ -94,7 +88,7 @@ const RoomBoardContainer = (props) => {
         data.length && setAnnList([...data]);
       }
     } catch (e) {
-      console.log(e);
+      e.response.status === 401 && setAnn("fuck");
     }
   };
   const clonedeep = require("lodash.clonedeep");

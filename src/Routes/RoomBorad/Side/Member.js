@@ -220,6 +220,22 @@ const Title2 = styled.div`
   padding: 20px;
   display: ${(props) => (props.status ? "block" : "none")};
 `;
+
+const Flex = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: ${(props) => props.setting.justify};
+  align-items: ${(props) => props.setting.align};
+  flex-direction: ${(props) => props.setting.dir};
+`;
+
+const Text = styled.span`
+  font-size: ${(props) => props.size};
+  font-weight: ${(props) => props.weight};
+  color: rgb(74, 86, 94);
+  display: inline-flex;
+`;
+
 const Member = ({
   getPositionList,
   location,
@@ -247,9 +263,9 @@ const Member = ({
     first: true,
     second: false,
   });
-  {
-    ann && console.log(ann);
-  }
+
+  console.log(ann);
+
   const [popup, setPopup] = useState(false);
   const [recruitPopup, setRecruitPopup] = useState(false);
   const [appPopup, setAppPopup] = useState({ popup: false, num: undefined });
@@ -463,15 +479,43 @@ const Member = ({
             </NewCgry>
             <>
               {ann ? (
-                <>
-                  <RecruitOne
-                    annList={[ann]}
-                    type={"Member"}
-                    setRecruitIdx={setRecruitIdx}
-                    setPopup={setRecruitPopup}
-                  ></RecruitOne>
-                  <List applicant={applicant} setPopup={setAppPopup} />
-                </>
+                typeof ann === "string" ? (
+                  <Flex
+                    setting={{
+                      justify: "center",
+                      align: "center",
+                      dir: "column",
+                    }}
+                    style={{ marginTop: 35 }}
+                  >
+                    <Flex
+                      setting={{
+                        justify: "center",
+                        align: "center",
+                        dir: "rows",
+                      }}
+                      style={{
+                        height: 250,
+                        borderRadius: 20,
+                        boxShadow: "0 3px 6px lightgray",
+                      }}
+                    >
+                      <Text size={"25px"} weight={"500"}>
+                        You do not have permission. Please go back!
+                      </Text>
+                    </Flex>
+                  </Flex>
+                ) : (
+                  <>
+                    <RecruitOne
+                      annList={[ann]}
+                      type={"Member"}
+                      setRecruitIdx={setRecruitIdx}
+                      setPopup={setRecruitPopup}
+                    ></RecruitOne>
+                    <List applicant={applicant} setPopup={setAppPopup} />
+                  </>
+                )
               ) : (
                 <RruCreateBtn onClick={() => setPopup(true)}>
                   <h2>
@@ -487,7 +531,6 @@ const Member = ({
           </>
         ) : null,
       name: "Recruit",
-      page: { pno: 1, lastPno: 1 },
     },
   ];
 

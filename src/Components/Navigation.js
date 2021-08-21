@@ -132,7 +132,6 @@ const Navigation = ({ navbar, change, data, additup }) => {
       </Page>
     ) : null;
   };
-  st && console.log(st);
   const returnNavbar = () => (
     <Container>
       {st && (
@@ -152,6 +151,7 @@ const Navigation = ({ navbar, change, data, additup }) => {
           <Contents>
             {navbar.map((e, idx) => e.component(st[idx].checked))}
             {navbar &&
+              navbar.page &&
               navbar.map((e, idx) =>
                 returnPage(st[idx].checked, {
                   lastPno: e.page.lastPno,

@@ -103,7 +103,7 @@ const Board = ({ data, setData, match, getData }) => {
   const [warningPopup, setWaningPopup] = useState(false);
   const [disabled, setDisabled] = useState(true);
   const [value, setValue] = useState({ name: "", content: "" });
-  const [post, setPost] = useState({});
+  const [post, setPost] = useState();
   const [setting, setSetting] = useState(false);
   const [selected, setSelected] = useState();
 
@@ -375,7 +375,20 @@ const Board = ({ data, setData, match, getData }) => {
                         padding: "0 10px",
                       }}
                     >
-                      <Text size={"10px"} weight={"400"}>
+                      <Text
+                        size={"10px"}
+                        weight={"400"}
+                        as={Link}
+                        to={{
+                          pathname:
+                            post[e.idx] &&
+                            post[e.idx][0] &&
+                            `/roomboard/${studyIdx}/board/${e.idx}/postDetail/${
+                              post[e.idx][0].idx
+                            }`,
+                          state: { idx: studyIdx, where: "room" },
+                        }}
+                      >
                         {post[e.idx] && post[e.idx][0]
                           ? post[e.idx][0].title
                           : "none"}
@@ -394,7 +407,20 @@ const Board = ({ data, setData, match, getData }) => {
                         padding: "0 10px",
                       }}
                     >
-                      <Text size={"10px"} weight={"400"}>
+                      <Text
+                        size={"10px"}
+                        weight={"400"}
+                        as={Link}
+                        to={{
+                          pathname:
+                            post[e.idx] &&
+                            post[e.idx][1] &&
+                            `/roomboard/${studyIdx}/board/${e.idx}/postDetail/${
+                              post[e.idx][1].idx
+                            }`,
+                          state: { idx: studyIdx, where: "room" },
+                        }}
+                      >
                         {post[e.idx] && post[e.idx][1]
                           ? post[e.idx][1].title
                           : "none"}
@@ -413,7 +439,20 @@ const Board = ({ data, setData, match, getData }) => {
                         padding: "0 10px",
                       }}
                     >
-                      <Text size={"10px"} weight={"400"}>
+                      <Text
+                        size={"10px"}
+                        weight={"400"}
+                        as={Link}
+                        to={{
+                          pathname:
+                            post[e.idx] &&
+                            post[e.idx][2] &&
+                            `/roomboard/${studyIdx}/board/${e.idx}/postDetail/${
+                              post[e.idx][2].idx
+                            }`,
+                          state: { idx: studyIdx, where: "room" },
+                        }}
+                      >
                         {post[e.idx] && post[e.idx][2]
                           ? post[e.idx][2].title
                           : "none"}

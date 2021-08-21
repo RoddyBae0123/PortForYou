@@ -11,7 +11,7 @@ import {
   faEllipsisH,
 } from "@fortawesome/free-solid-svg-icons";
 import { EditorState, convertToRaw, ContentState } from "draft-js";
-
+import Loader from "react-loader-spinner";
 import { imageApi } from "../../../Api";
 import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
@@ -52,7 +52,7 @@ const MyEdit = styled.div`
   .editor {
     height: 350px !important;
     /* border: 2px solid lightgray !important; */
-    padding: 10px 20px !important;
+    padding: 15px 20px !important;
     /* border-radius: 2px !important; */
     &::-webkit-scrollbar {
       width: 10px;
@@ -78,7 +78,7 @@ const PostEdit = ({ match, data, location, setData, history }) => {
   } = match;
 
   useEffect(() => {
-    getPost();
+    postIdx == "create" ? setSend({ title: "" }) : getPost();
   }, []);
 
   const getPost = async () => {
@@ -96,7 +96,10 @@ const PostEdit = ({ match, data, location, setData, history }) => {
         // https://draftjs.org/docs/api-reference-editor-state/#createwithcontent
         const editorState = EditorState.createWithContent(contentState);
         setEdit(editorState);
-        setSend({ title: data.title });
+        setSend({
+          title: data.title,
+          content: data.content,
+        });
       }
       // setSend({ title: data.title, content: "" });
     } catch (e) {
@@ -104,9 +107,8 @@ const PostEdit = ({ match, data, location, setData, history }) => {
     }
   };
 
-  const [edit, setEdit] = useState("");
-  const [send, setSend] = useState({ title: "" });
-  console.log(send);
+  const [edit, setEdit] = useState();
+  const [send, setSend] = useState();
 
   const onEditorStateChange = (editor) => {
     setSend({
@@ -131,7 +133,6 @@ const PostEdit = ({ match, data, location, setData, history }) => {
   };
   const submitHandler = (e) => {
     e.preventDefault();
-    setSend({ title: "", content: "" });
     try {
       if (postIdx !== "create") {
         console.log(boardIdx);
@@ -148,12 +149,15 @@ const PostEdit = ({ match, data, location, setData, history }) => {
           content: send.content,
         });
       }
-      history.goBack();
+      setTimeout(() => {
+        history.goBack();
+        setSend({ title: "", content: "" });
+      }, 500);
     } catch (e) {
       console.log(e);
     }
   };
-  return (
+  return send ? (
     <Container>
       <Flex
         setting={{
@@ -253,6 +257,16 @@ const PostEdit = ({ match, data, location, setData, history }) => {
           {postIdx === "create" ? "CREATE" : "EDIT"}
         </Text>
       </Flex>
+    </Container>
+  ) : (
+    <Container style={{ justifyContent: "center" }}>
+      <Loader
+        type="ThreeDots"
+        color="lightgray"
+        height={300}
+        width={300}
+        timeout={10000}
+      />
     </Container>
   );
 };

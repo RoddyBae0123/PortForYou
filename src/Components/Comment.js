@@ -7,6 +7,7 @@ import {
   faPaperPlane,
   faTrashAlt,
 } from "@fortawesome/free-solid-svg-icons";
+import Loader from "react-loader-spinner";
 
 import { connect } from "react-redux";
 import { boardApi } from "../Api";
@@ -115,7 +116,7 @@ const Comment = ({ magic, data }) => {
     const createDate = [
       [parseInt(data.substring(0, 4)), "year"],
       [parseInt(data.substring(5, 7)), "month"],
-      [parseInt(data.substring(8, 10)), "date"],
+      [parseInt(data.substring(8, 10)), "day"],
       [parseInt(data.substring(11, 13)), "hour"],
       [parseInt(data.substring(14, 16)), "min"],
     ];
@@ -140,7 +141,7 @@ const Comment = ({ magic, data }) => {
     return res;
   };
 
-  return (
+  return comment ? (
     <Container>
       <Flex
         setting={{
@@ -161,7 +162,7 @@ const Comment = ({ magic, data }) => {
           </Text>
         </Text>
       </Flex>
-      {comment && comment.length ? (
+      {comment.length ? (
         <Ul>
           {comment.map((e) => (
             <Li key={e.idx}>
@@ -252,6 +253,16 @@ const Comment = ({ magic, data }) => {
           </SubmitBtn>
         </InputEntire>
       </CommentEntire>
+    </Container>
+  ) : (
+    <Container style={{ justifyContent: "center" }}>
+      <Loader
+        type="ThreeDots"
+        color="lightgray"
+        height={300}
+        width={300}
+        timeout={10000}
+      />
     </Container>
   );
 };
