@@ -18,6 +18,17 @@ import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import draftToHtml from "draftjs-to-html";
 import htmlToDraft from "html-to-draftjs";
 
+import ReactSummernote from "react-summernote";
+import "react-summernote/dist/react-summernote.css";
+import "react-summernote/lang/summernote-ko-KR";
+
+import "bootstrap/js/dist/modal";
+import "bootstrap/js/dist/dropdown";
+import "bootstrap/js/dist/tooltip";
+
+import "bootstrap"; // ibid.
+import "bootstrap/dist/css/bootstrap.css";
+
 const Container = styled.div`
   display: flex;
   width: 100%;
@@ -214,8 +225,7 @@ const PostEdit = ({ match, data, location, setData, history }) => {
         />
       </Flex>
 
-      <MyEdit>
-        <Editor
+      {/* <Editor
           editorState={edit}
           toolbarClassName="toolbar"
           wrapperClassName="wrapper-class"
@@ -229,8 +239,25 @@ const PostEdit = ({ match, data, location, setData, history }) => {
               inputAccept: "image/gif,image/jpeg,image/jpg,image/png,image/svg",
             },
           }}
-        />
-      </MyEdit>
+        /> */}
+      <ReactSummernote
+        value="Default value"
+        options={{
+          lang: "ru-RU",
+          height: 350,
+          dialogsInBody: true,
+          toolbar: [
+            ["style", ["style"]],
+            ["font", ["bold", "underline", "clear"]],
+            ["fontname", ["fontname"]],
+            ["para", ["ul", "ol", "paragraph"]],
+            ["table", ["table"]],
+            ["insert", ["link", "picture", "video"]],
+            ["view", ["fullscreen", "codeview"]],
+          ],
+        }}
+        // onChange={this.onChange}
+      />
       <Flex
         setting={{
           justify: "center",
