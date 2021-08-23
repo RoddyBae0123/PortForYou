@@ -10,24 +10,21 @@ import {
   faTrashAlt,
   faEllipsisH,
 } from "@fortawesome/free-solid-svg-icons";
-import { EditorState, convertToRaw, ContentState } from "draft-js";
 import Loader from "react-loader-spinner";
 import { imageApi } from "../../../Api";
-import { Editor } from "react-draft-wysiwyg";
-import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import draftToHtml from "draftjs-to-html";
-import htmlToDraft from "html-to-draftjs";
 
 import ReactSummernote from "react-summernote";
 import "react-summernote/dist/react-summernote.css";
 import "react-summernote/lang/summernote-ko-KR";
 
-import "bootstrap/js/dist/modal";
+import "bootstrap";
+import "bootstrap/dist/css/bootstrap.css";
 import "bootstrap/js/dist/dropdown";
 import "bootstrap/js/dist/tooltip";
+import "bootstrap/js/dist/modal";
+import "bootstrap/js/dist/tab";
 
-import "bootstrap"; // ibid.
-import "bootstrap/dist/css/bootstrap.css";
+
 
 const Container = styled.div`
   display: flex;
@@ -54,6 +51,27 @@ const Text = styled.span`
 
 const MyEdit = styled.div`
   width: 80%;
+  margin-top: 20px;
+  b {
+    font-weight: 600;
+  }
+  ul {
+    list-style-type: circle;
+    padding: 0 20px;
+  }
+  ol {
+    list-style-type: decimal;
+    padding: 0 20px;
+  }
+  h1 {
+    font-size: 30px;
+    font-weight: 600;
+    padding: 0 15px;
+  }
+
+  .dropdown-menu {
+    list-style: none;
+  }
   .wrapper-class {
     width: 100%;
     margin: 0 auto;
@@ -73,6 +91,12 @@ const MyEdit = styled.div`
       background-color: rgb(239, 239, 239);
     }
   }
+  .note-editable {
+    padding: 20px;
+    width: 100%;
+    max-height: 500px;
+    min-height: 300px;
+  }
   .toolbar {
     width: 100%;
     border: none;
@@ -82,6 +106,13 @@ const MyEdit = styled.div`
     padding: 10px;
     margin: 0;
   }
+  .table-bordered {
+    border: 1px solid #ddd;
+  }
+  th,
+  td {
+    border: 1px solid #ddd;
+  }
 `;
 const PostEdit = ({ match, data, location, setData, history }) => {
   const {
@@ -89,59 +120,41 @@ const PostEdit = ({ match, data, location, setData, history }) => {
   } = match;
 
   useEffect(() => {
-    postIdx == "create" ? setSend({ title: "" }) : getPost();
+    postIdx == "create" ? setTitle("New Post") : getPost();
   }, []);
 
   const getPost = async () => {
     try {
       const { data } = await boardApi.getPost(postIdx);
-      const blocksFromHtml = htmlToDraft(data.content);
-      if (blocksFromHtml) {
-        const { contentBlocks, entityMap } = blocksFromHtml;
-        // https://draftjs.org/docs/api-reference-content-state/#createfromblockarray
-        const contentState = ContentState.createFromBlockArray(
-          contentBlocks,
-          entityMap
-        );
-        // ContentState를 EditorState기반으로 새 개체를 반환.
-        // https://draftjs.org/docs/api-reference-editor-state/#createwithcontent
-        const editorState = EditorState.createWithContent(contentState);
-        setEdit(editorState);
-        setSend({
-          title: data.title,
-          content: data.content,
-        });
-      }
+      // const blocksFromHtml = htmlToDraft(data.content);
+      // if (blocksFromHtml) {
+      //   // const { contentBlocks, entityMap } = blocksFromHtml;
+      //   // // https://draftjs.org/docs/api-reference-content-state/#createfromblockarray
+      //   // const contentState = ContentState.createFromBlockArray(
+      //   //   contentBlocks,
+      //   //   entityMap
+      //   // );
+      //   // // ContentState를 EditorState기반으로 새 개체를 반환.
+      //   // // https://draftjs.org/docs/api-reference-editor-state/#createwithcontent
+      //   // const editorState = EditorState.createWithContent(contentState);
+      //   // setEdit(editorState);
+      //   setSend({
+      //     title: data.title,
+      //     content: data.content,
+      //   });
+      // }
+
+      setTitle(data.title);
+      setContent(data.content);
       // setSend({ title: data.title, content: "" });
     } catch (e) {
       console.log(e);
     }
   };
 
-  const [edit, setEdit] = useState();
-  const [send, setSend] = useState();
+  const [title, setTitle] = useState();
+  const [content, setContent] = useState("");
 
-  const onEditorStateChange = (editor) => {
-    setSend({
-      content: draftToHtml(convertToRaw(editor.getCurrentContent())),
-      title: send.title,
-    });
-    setEdit(editor);
-  };
-  const uploadImageCallBack = (file) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const data = new FormData();
-        data.append("img", file);
-        const res = await imageApi.setPostImage(data);
-        res && console.log(res.data.message);
-        resolve({ data: { link: res.data.message } });
-      } catch (e) {
-        console.log(e);
-        reject();
-      }
-    });
-  };
   const submitHandler = (e) => {
     e.preventDefault();
     try {
@@ -150,25 +163,66 @@ const PostEdit = ({ match, data, location, setData, history }) => {
         setData.setPost({
           idx: postIdx,
           boardIdx,
-          title: send.title,
-          content: send.content,
+          title,
+          content,
         });
       } else {
         setData.setPost({
           boardIdx,
-          title: send.title,
-          content: send.content,
+          title,
+          content,
         });
       }
       setTimeout(() => {
         history.goBack();
-        setSend({ title: "", content: "" });
       }, 500);
     } catch (e) {
       console.log(e);
     }
   };
-  return send ? (
+
+  const onChangeHandler = (content) => {
+    console.log(content);
+    setContent(content);
+    // console.log(send.title);
+    // setSend({
+    //   content: content,
+    //   title: send.title,
+    // });
+  };
+  const uploadImageCallBack = async (file) => {
+    try {
+      console.log(file);
+      const data = new FormData();
+      data.append("img", file[file.length - 1]);
+      const res = await imageApi.setPostImage(data);
+      return res.data.message;
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const onImageUpload = async (images, insertImage) => {
+    for (let i = 0; i < images.length; i++) {
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        insertImage(reader.result);
+      };
+      const data = await uploadImageCallBack(images);
+      insertImage(data);
+    }
+
+    // for (let i = 0; i < images.length; i++) {
+    //   const reader = new FileReader();
+
+    //   reader.onloadend = () => {
+    //     insertImage(reader.result);
+    //   };
+
+    //   reader.readAsDataURL(images[i]);
+    // }
+  };
+  return title ? (
     <Container>
       <Flex
         setting={{
@@ -218,10 +272,8 @@ const PostEdit = ({ match, data, location, setData, history }) => {
           type="text"
           placeholder="Please type A Title."
           style={{ border: "none", outline: "none", width: "100%" }}
-          value={send.title}
-          onChange={(e) =>
-            setSend({ title: e.target.value, content: send.content })
-          }
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
         />
       </Flex>
 
@@ -240,24 +292,47 @@ const PostEdit = ({ match, data, location, setData, history }) => {
             },
           }}
         /> */}
-      <ReactSummernote
-        value="Default value"
-        options={{
-          lang: "ru-RU",
-          height: 350,
-          dialogsInBody: true,
-          toolbar: [
-            ["style", ["style"]],
-            ["font", ["bold", "underline", "clear"]],
-            ["fontname", ["fontname"]],
-            ["para", ["ul", "ol", "paragraph"]],
-            ["table", ["table"]],
-            ["insert", ["link", "picture", "video"]],
-            ["view", ["fullscreen", "codeview"]],
-          ],
-        }}
-        // onChange={this.onChange}
-      />
+      <MyEdit>
+        <ReactSummernote
+          value={content}
+          options={{
+            lang: "ru-RU",
+            height: 350,
+            dialogsInBody: true,
+            fontNamesIgnoreCheck: ["Roboto"],
+            fontNames: [
+              "Roboto",
+              "Arial",
+              "Arial Black",
+              "Comic Sans MS",
+              "Courier New",
+              "Helvetica Neue",
+              "Helvetica",
+              "Impact",
+              "Lucida Grande",
+              "Tahoma",
+              "Times New Roman",
+              "Verdana",
+            ],
+
+            toolbar: [
+              ["style", ["style"]],
+              ["font", ["bold", "underline", "clear"]],
+              ["fontsize", ["fontsize"]],
+              ["fontname", ["fontname"]],
+              ["color", ["color"]],
+              ["para", ["ul", "ol", "paragraph"]],
+              ["table", ["table"]],
+              ["insert", ["link", "picture", "video"]],
+              ["view", ["fullscreen", "codeview"]],
+            ],
+          }}
+          onChange={onChangeHandler}
+          // onChange={this.onChange}
+          onImageUpload={onImageUpload}
+        />
+      </MyEdit>
+
       <Flex
         setting={{
           justify: "center",

@@ -23,6 +23,10 @@ import draftToHtml from "draftjs-to-html";
 import htmlToDraft from "html-to-draftjs";
 import Loader from "react-loader-spinner";
 
+import ReactSummernote from "react-summernote";
+import "react-summernote/dist/react-summernote.css";
+import "react-summernote/lang/summernote-ko-KR";
+
 const Container = styled.div`
   display: flex;
   width: 100%;
@@ -55,18 +59,72 @@ const Board = styled.main`
 
 const MyEdit = styled.div`
   width: 100%;
-  pointer-events: none;
+  margin-top: 20px;
+  b {
+    font-weight: 600;
+  }
+  ul {
+    list-style-type: circle;
+    padding: 0 20px;
+  }
+  ol {
+    list-style-type: decimal;
+    padding: 0 20px;
+  }
+  h1 {
+    font-size: 30px;
+    font-weight: 600;
+    padding: 0 15px;
+  }
+
+  .dropdown-menu {
+    list-style: none;
+  }
   .wrapper-class {
     width: 100%;
     margin: 0 auto;
     margin-top: 20px;
+    border: 1px solid lightgray;
   }
   .editor {
+    height: 350px !important;
     /* border: 2px solid lightgray !important; */
-    padding: 10px 20px !important;
+    padding: 15px 20px !important;
     /* border-radius: 2px !important; */
+    &::-webkit-scrollbar {
+      width: 10px;
+      background-color: transparent;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: rgb(239, 239, 239);
+    }
+  }
+  .note-editable {
+    padding: 20px;
+    width: 100%;
+    max-height: 1000px;
+    height: 100%;
+    min-height: 300px;
+    border: none;
+    pointer-events: none;
   }
   .toolbar {
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid lightgray;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 10px;
+    margin: 0;
+  }
+  .table-bordered {
+    border: 1px solid #ddd;
+  }
+  th,
+  td {
+    border: 1px solid #ddd;
+  }
+  .note-toolbar {
     display: none;
   }
 `;
@@ -89,7 +147,7 @@ const PostDetail = ({ data, setData, match, addToDo, history }) => {
   }, []);
 
   const postContent = useRef();
-  postContent.current && console.log(postContent.current.innerHTML);
+  // postContent.current && console.log(postContent.current.innerHTML);
 
   const getComment = async () => {
     try {
@@ -118,19 +176,19 @@ const PostDetail = ({ data, setData, match, addToDo, history }) => {
       const { data } = await boardApi.getPost(postIdx);
       data && setPost(data);
       data && addToDo("data", "post", data);
-      const blocksFromHtml = htmlToDraft(data.content);
-      if (blocksFromHtml) {
-        const { contentBlocks, entityMap } = blocksFromHtml;
-        // https://draftjs.org/docs/api-reference-content-state/#createfromblockarray
-        const contentState = ContentState.createFromBlockArray(
-          contentBlocks,
-          entityMap
-        );
-        // ContentState를 EditorState기반으로 새 개체를 반환.
-        // https://draftjs.org/docs/api-reference-editor-state/#createwithcontent
-        const editorState = EditorState.createWithContent(contentState);
-        setEdit(editorState);
-      }
+      setEdit(data.content);
+      // const blocksFromHtml = htmlToDraft(data.content);
+      // if (blocksFromHtml) {
+      //   const { contentBlocks, entityMap } = blocksFromHtml;
+      //   // https://draftjs.org/docs/api-reference-content-state/#createfromblockarray
+      //   const contentState = ContentState.createFromBlockArray(
+      //     contentBlocks,
+      //     entityMap
+      //   );
+      //   // ContentState를 EditorState기반으로 새 개체를 반환.
+      //   // https://draftjs.org/docs/api-reference-editor-state/#createwithcontent
+      //   const editorState = EditorState.createWithContent(contentState);
+      //   setEdit(editorState);
     } catch (e) {
       console.log(e);
     }
@@ -274,11 +332,46 @@ const PostDetail = ({ data, setData, match, addToDo, history }) => {
             ref={postContent}
           >
             <MyEdit>
-              <Editor
+              {/* <Editor
                 editorState={edit}
                 toolbarClassName="toolbar"
                 wrapperClassName="wrapper-class"
                 editorClassName="editor"
+              /> */}
+              <ReactSummernote
+                value={edit}
+                options={{
+                  lang: "ru-RU",
+                  height: 350,
+                  dialogsInBody: true,
+                  fontNamesIgnoreCheck: ["Roboto"],
+                  fontNames: [
+                    "Roboto",
+                    "Arial",
+                    "Arial Black",
+                    "Comic Sans MS",
+                    "Courier New",
+                    "Helvetica Neue",
+                    "Helvetica",
+                    "Impact",
+                    "Lucida Grande",
+                    "Tahoma",
+                    "Times New Roman",
+                    "Verdana",
+                  ],
+
+                  toolbar: [
+                    ["style", ["style"]],
+                    ["font", ["bold", "underline", "clear"]],
+                    ["fontsize", ["fontsize"]],
+                    ["fontname", ["fontname"]],
+                    ["color", ["color"]],
+                    ["para", ["ul", "ol", "paragraph"]],
+                    ["table", ["table"]],
+                    ["insert", ["link", "picture", "video"]],
+                    ["view", ["fullscreen", "codeview"]],
+                  ],
+                }}
               />
             </MyEdit>
             {/* {postContent.current &&

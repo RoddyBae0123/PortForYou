@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -6,36 +6,33 @@ import GoogleFontLoader from "react-google-font-loader";
 import wifi from "../../wifi";
 import "./style.css";
 const Back = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 50% 50%;
   width: 100%;
   height: 100vh;
 `;
 
 const Container = styled.div`
   display: grid;
-  grid-template-columns: 50% 50%;
-  width: 1150px;
-  height: 600px;
-  border-radius: 20px;
-  box-shadow: 3px 3px 0vw black;
+  grid-template-rows: 25% 75%;
+  width: 100%;
+  height: 100%;
 `;
 
 const Signup = styled.div`
-  background-color: RGB(255, 211, 181);
-  border-radius: 20px 0 0 20px;
+  background-color: white;
+  border-radius: 0 20px 20px 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
 `;
 const Signin = styled.div`
   background-color: white;
   border-radius: 0 20px 20px 0;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  align-items: center;
 `;
 
 const Warning = styled.p`
@@ -46,12 +43,12 @@ const Warning = styled.p`
 
 const Linkto = styled(Link)`
   display: flex;
-  justify-content: center;
+  align-items: center;
+  width: 100%;
 `;
 const Logo = styled.img`
-  width: 22%;
-  padding-bottom: 10px;
-  border-bottom: 5px solid RGB(255, 140, 148);
+  width: 50px;
+  height: 50px;
 `;
 const Lefttitle = styled.h1`
   text-align: center;
@@ -77,17 +74,15 @@ const Button = styled.button`
 `;
 
 const Righttitle = styled.h1`
-  text-align: center;
-  font-size: 50px;
-  margin: 0px 0 20px 0;
-  font-weight: 600;
-  color: RGB(255, 140, 148);
+  font-size: 35px;
+  margin: 0px 0 10px 0;
+  font-weight: 300;
+  color: var(--color-text-ver1);
 `;
 
 const RightAdd = styled.h3`
-  text-align: center;
-  font-size: 20px;
-  color: RGB(59, 72, 81);
+  font-size: 15px;
+  color: var(--color-text-ver2);
   font-weight: 600;
   margin-bottom: 40px;
 `;
@@ -98,42 +93,74 @@ const Form = styled.form`
   align-items: center;
 `;
 const Inputdef = styled.input`
-  width: 300px;
+  width: 100%;
   height: 56px;
-
   outline: none;
-  background-color: RGB(238, 238, 238);
-  border: none;
+  background-color: var(--color-background);
+  border: 1.5px solid var(--color-border);
+  border-radius: 10px;
   &:focus {
-    background-color: #f4f8f7;
+    background-color: var(--color-background-focus);
   }
   transition: all 300ms ease-in-out;
   font-size: 20px;
   padding: 20px;
 `;
 const Submitdef = styled.input`
-  width: 300px;
+  width: 100%;
   height: 56px;
-  margin: 10px 0 10px 0;
+  margin: 30px 0 10px 0;
   outline: none;
-  background-color: white;
-
-  border: 5px solid RGB(255, 140, 148);
+  background-color: var(--color-button);
+  border: none;
+  border-radius: 10px;
   transition: all 300ms ease-in-out;
   &:hover {
     background-color: RGB(255, 140, 148);
   }
-  border-radius: 20px;
   cursor: pointer;
+  color: white;
+  font-weight: 500;
 `;
-const A = styled.a``;
 const Isiterror = styled.h3`
   opacity: ${(props) => (props.status ? 1 : 0)};
   color: #ff3030;
   margin: 5px 0;
 `;
 
+const Bkg = styled.div`
+  background-image: ${(props) => `url("${props.img}")`};
+  width: 100%;
+  height: 100%;
+  background-position: center center;
+  background-size: cover;
+  /* src="http://3.37.208.251:8080/api/img/default/537f38b1-4802-4d43-93d3-7d250196ca68" */
+`;
+
+const Flex = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: ${(props) => props.setting.justify};
+  align-items: ${(props) => props.setting.align};
+  flex-direction: ${(props) => props.setting.dir};
+`;
+
+const Text = styled.span`
+  font-size: ${(props) => props.size};
+  font-weight: ${(props) => props.weight};
+  color: rgb(74, 86, 94);
+  display: inline-flex;
+`;
+
 const SignupPresenter = ({ push }) => {
+  const image = [
+    "http://3.37.208.251:8080/api/img/default/537f38b1-4802-4d43-93d3-7d250196ca68",
+    "http://3.37.208.251:8080/api/img/default/05f01946-68ae-4f9b-8a77-e6f24b44cab7",
+    "http://3.37.208.251:8080/api/img/default/49b22ec5-cdfd-4223-80a7-2f1e00a5ce7d",
+    "http://3.37.208.251:8080/api/img/default/8292c625-4570-4ad6-98a5-bc71824e9e4e",
+    "https://mblogthumb-phinf.pstatic.net/MjAxOTA2MjdfNjQg/MDAxNTYxNTcwMzQ3MDc0.xOVxrWK4WChc7XFGLKaKTo6u7MyW4lWanGZXcOWeFvAg.QPO7uSTfULJn3gaflZgd7KKFXURydUU-WuLK-wc4QQIg.JPEG.izonestrm/joyuri-20190627-023130-000-resize.jpg?type=w800",
+  ];
+
   const [Errorid, setErrorid] = useState(false);
   const [Errorpw, setErrorpw] = useState(false);
   const [Errorusername, setErrorusername] = useState(false);
@@ -238,7 +265,7 @@ const SignupPresenter = ({ push }) => {
       />
       <Back>
         <Container>
-          <Signup>
+          {/* <Signup>
             <Linkto to="/">
               <Logo src={`${wifi}api/img/default/logo`}></Logo>
             </Linkto>
@@ -250,10 +277,43 @@ const SignupPresenter = ({ push }) => {
             <Linkto to="/signin">
               <Button>SIGN IN</Button>
             </Linkto>
-          </Signup>
+          </Signup> */}
+          <Flex
+            setting={{
+              justify: "flex-start",
+              align: "center",
+              dir: "column",
+            }}
+            style={{ width: "100%", marginTop: 30 }}
+          >
+            <Linkto to="/" style={{ width: 300 }}>
+              <Logo src={`${wifi}api/img/default/logo_transparent`} />
+              <Text
+                size={"25px"}
+                weight={"700"}
+                style={{
+                  marginLeft: 20,
+                  color: `var(--color-text-ver1) `,
+                  fontFamily: "Josefin Sans', cursive",
+                }}
+                className="set"
+              >
+                StudyMall
+              </Text>
+            </Linkto>
+          </Flex>
           <Signin>
-            <Righttitle>Create Account</Righttitle>
-            <RightAdd>Please type the infomation</RightAdd>
+            <Flex
+              setting={{
+                justify: "flex-start",
+                align: "flex-start",
+                dir: "column",
+              }}
+              style={{ width: "300px" }}
+            >
+              <Righttitle>Get started for free</Righttitle>
+              <RightAdd>Free forever. No credit card needed.</RightAdd>
+            </Flex>
             <Form onSubmit={handleSubmit}>
               <Inputdef
                 placeholder="Email"
@@ -296,6 +356,7 @@ const SignupPresenter = ({ push }) => {
             </Form>
           </Signin>
         </Container>
+        <Bkg img={image[Math.floor(Math.random() * image.length)]}></Bkg>
       </Back>
     </>
   );
