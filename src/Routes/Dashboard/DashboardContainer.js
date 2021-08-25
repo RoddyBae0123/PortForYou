@@ -7,6 +7,7 @@ import { Link } from "react-router-dom";
 import { useAsync } from "react-async";
 import { studyApi, portFolioApi, userApi } from "../../Api";
 import { connect } from "react-redux";
+import { actionCreators } from "../../store";
 
 const DashboardContainer = memo((props) => {
   // console.log(props);
@@ -172,4 +173,10 @@ const getCurrentState = (state, ownProps) => {
 
   return state;
 };
-export default connect(getCurrentState)(DashboardContainer);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addToDo: (dataType, dataName, data) =>
+      dispatch(actionCreators.addToDo(dataType, dataName, data)),
+  };
+};
+export default connect(getCurrentState, mapDispatchToProps)(DashboardContainer);

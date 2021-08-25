@@ -184,15 +184,10 @@ const PostEdit = ({ match, data, location, setData, history }) => {
   const onChangeHandler = (content) => {
     console.log(content);
     setContent(content);
-    // console.log(send.title);
-    // setSend({
-    //   content: content,
-    //   title: send.title,
-    // });
+
   };
   const uploadImageCallBack = async (file) => {
     try {
-      console.log(file);
       const data = new FormData();
       data.append("img", file[file.length - 1]);
       const res = await imageApi.setPostImage(data);

@@ -31,13 +31,16 @@ const globalStyles = createGlobalStyle`
 
     /* new color */
     --color-background:rgba(224,231,255,0.2);
-    --color-background-focus:rgba(224,231,255,0.6);
+    --color-background-focus:#E8EDFF;
     --color-border:rgb(224,231,255);
     --color-button:rgb(46,91,255);
     --color-signText:rgb(176,186,201);
+    --color-warning:#FF8484;
+    --color-warningBack:#FCE4E5;
     --color-text-ver1:#2E384D;
     --color-text-ver2:#8798AD;
     --color-text-ver3:#B0BAC9;
+    
   }
 
 `;

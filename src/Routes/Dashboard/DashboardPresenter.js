@@ -1,4 +1,4 @@
-import React, { useEffect, useState, memo } from "react";
+import React, { useEffect, useState, memo, useRef } from "react";
 import styled from "styled-components";
 import GoogleFontLoader from "react-google-font-loader";
 import wifi from "../../wifi";
@@ -18,31 +18,33 @@ import {
   faBell,
   faUser,
   faTimes,
+  faBars,
 } from "@fortawesome/free-solid-svg-icons";
 import { faCodepen } from "@fortawesome/free-brands-svg-icons";
 import { AnimatePresence, motion } from "framer-motion";
 import ResumeDetail from "./Side/ResumeDetail";
 import { GroupAddSharp } from "@material-ui/icons";
 import Auth from "../../Auth";
+import { connect } from "react-redux";
 
 const Back = styled.div`
   display: grid;
-  grid-template-columns: 220px 1fr;
+  grid-template-columns: 50px 1fr;
   height: 100vh;
 `;
 const Left = styled.div`
-  display: grid;
-  grid-template-rows: 1fr 1fr;
   position: fixed;
   top: 0px;
-  background-color: var(--color-theme);
-  width: 220px;
-  border-right: 2px solid var(--color-line);
+  background-color: white;
   z-index: 20;
-  min-height: 100vh;
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  color: var(--color-text-ver3);
 `;
 const Right = styled.div`
-  background-color: white;
+  background-color: var(--color-background);
   height: 100%;
 `;
 
@@ -60,28 +62,21 @@ const UserContainer = styled.div`
   margin: 25px 0;
 `;
 const UserProfile = styled.div`
-  width: 100px;
-  height: 100px;
+  width: 25px;
+  height: 25px;
   position: relative;
-  border-radius: 25px;
-  background-color: white;
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 const UserImage = styled.div`
-  font-size: 20px;
-  font-weight: 600;
-  width: 100px;
-  height: 100px;
-  border-radius: 9px;
-  text-align: center;
-  line-height: 100px;
+  width: 100%;
+  height: 100%;
   background-image: url("${(props) => props.profileImgUri}");
   background-size: 100% auto;
   background-position: center center;
   background-repeat: no-repeat;
-  color: #e4e4e4;
+  border-radius: 100%;
 `;
 
 const UserName = styled.h3`
@@ -105,11 +100,11 @@ const UserProfileEdit = styled.label`
   align-items: center;
   flex-direction: column;
 `;
-const LinkList = styled.div`
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  justify-content: center;
+const LinkList = styled.ul`
+  display: grid;
+  grid-auto-rows: 60px;
+  overflow-x: hidden;
+  width: 50px;
   height: 100%;
 `;
 const LinkTitle = styled.h2`
@@ -118,26 +113,32 @@ const LinkTitle = styled.h2`
 `;
 const LinkSexy = styled(Link)`
   display: grid;
-  grid-template-columns: 60px 90px;
+  grid-template-columns: 50px 150px;
   font-size: 10px;
-  margin: 15px 0;
+  background-color: ${(props) =>
+    props.checked ? "var(--color-background-focus)" : "transparent"};
 `;
 const LinkIcon = styled.div`
   width: 40px;
   height: 40px;
   border-radius: 10px;
-  background-color: #f3f3f3;
   display: flex;
   justify-content: center;
   align-items: center;
   font-size: 10px;
-  color: var(--color-theme);
+  color: var(--color-text-ver3);
 `;
 const LinkCent = styled.div`
   display: flex;
   justify-content: center;
+  width: 100%;
   align-items: center;
   color: var(--color-text);
+  border-left: 3px solid ${(props) => (props.checked ? "blue" : "transparent")};
+  border-right: 3px solid transparent;
+  background-color: ${(props) =>
+    props.checked ? "var(--color-background-focus)" : "transparent"};
+  height: 100%;
 `;
 const Navbar = styled.div`
   height: 60px;
@@ -250,6 +251,29 @@ const UserInfoBtn = styled.button`
   color: var(--color-text);
 `;
 
+const Flex = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: ${(props) => props.setting.justify};
+  align-items: ${(props) => props.setting.align};
+  flex-direction: ${(props) => props.setting.dir};
+`;
+
+const Text = styled.span`
+  font-size: ${(props) => props.size};
+  font-weight: ${(props) => props.weight};
+  color: rgb(74, 86, 94);
+  display: inline-flex;
+`;
+const MenuBtn = styled.button`
+  width: 100%;
+  height: 25px;
+  font-size: 10px;
+  padding: 0 3px;
+  margin: 20px 0;
+  color: var(--color-text-ver3);
+`;
+
 const DashboardPresenter = memo(
   ({
     match,
@@ -272,16 +296,46 @@ const DashboardPresenter = memo(
     getUserInfo,
     userData,
   }) => {
+    console.log(userData);
     const [popup, setPopup] = useState(false);
     const delBtnHandler = () => {
       setPopup(false);
     };
-    const UserInfoBtnHandler = () => {
+    const userInfoBtnHandler = () => {
       setPopup(true);
     };
     const LogoutBtnHandler = () => {
       Auth.logout();
       history.push("/signin");
+    };
+    const setWide = () => {
+      console.log(Lists.current.style.width);
+      if (Lists.current.style.width == "50px") {
+        Lists.current.style.width = "100%";
+      } else {
+        Lists.current.style.width = "50px";
+      }
+    };
+    const Lists = useRef();
+    const { location } = history;
+    const [checked, setChecked] = useState({
+      main: false,
+      room: false,
+      recruit: false,
+      setting: false,
+      resume: false,
+      [location.pathname.substring(11).toLowerCase()]: true,
+    });
+
+    const setEntireChecked = (e) => {
+      setChecked({
+        main: false,
+        room: false,
+        recruit: false,
+        setting: false,
+        resume: false,
+        [e]: true,
+      });
     };
 
     return (
@@ -324,119 +378,171 @@ const DashboardPresenter = memo(
         </PopupBkg>
         <Back>
           <Left>
-            <Makecenter style={{ justifyContent: "flex-start" }}>
-              <Title style={{ fontFamily: "Roboto Mono, monospaced" }}>
-                StudyMall
-              </Title>
-              <UserContainer>
-                <UserProfile>
-                  <UserImage
-                    profileImgUri={profileImgUri}
-                    style={{ fontFamily: "Roboto Mono, monospaced" }}
-                  ></UserImage>
-                </UserProfile>
-                <UserName>Roddy</UserName>
-              </UserContainer>
-              <hr
-                style={{
-                  backgroundColor: "var(--color-line)",
-                  width: "140px",
-                  height: 2,
-                  border: "none",
-                  margin: "10px 0",
-                  opacity: "1",
-                }}
-              />
-              <NabvarCenter position={false}>
-                <UserInfoBtn onClick={UserInfoBtnHandler}>
-                  <FontAwesomeIcon icon={faUser} size="2x" />
-                </UserInfoBtn>
-                <Link
-                  to="/"
-                  style={{
-                    fontSize: "10px",
-                    margin: "0 10px",
-                    color: "var(--color-text)",
-                  }}
-                >
-                  <FontAwesomeIcon icon={faBell} size="2x" />
-                </Link>
-                <Link
-                  to="/"
-                  style={{
-                    fontSize: "10px",
-                    margin: "0 10px",
-                    color: "var(--color-text)",
-                  }}
-                >
-                  <FontAwesomeIcon icon={faHome} size="2x" />
-                </Link>
-              </NabvarCenter>
-              <hr
-                style={{
-                  backgroundColor: "var(--color-line)",
-                  width: "140px",
-                  height: 2,
-                  border: "none",
-                  margin: "10px 0",
-                  opacity: "1",
-                }}
-              />
-            </Makecenter>
+            <Flex
+              setting={{
+                justify: "center",
+                align: "flex-start",
+                dir: "column",
+              }}
+            >
+              <LinkList ref={Lists}>
+                <LinkSexy as={"div"}>
+                  <MenuBtn onClick={setWide}>
+                    <FontAwesomeIcon icon={faBars} size="2x" />
+                  </MenuBtn>
+                  <Flex
+                    setting={{ justify: "center", align: "center", dir: "row" }}
+                  >
+                    <Text size={"15px"} weight={"400"}></Text>
+                  </Flex>
+                </LinkSexy>
 
-            <LinkList>
-              <LinkSexy to={`${match.path}`}>
-                <LinkCent>
-                  <LinkIcon>
-                    <FontAwesomeIcon icon={faTable} size="2x" />
-                  </LinkIcon>
-                </LinkCent>
-                <LinkCent>
-                  <LinkTitle>Main</LinkTitle>
-                </LinkCent>
-              </LinkSexy>
-              <LinkSexy to={`${match.path}/resume`}>
-                <LinkCent>
-                  <LinkIcon>
-                    <FontAwesomeIcon icon={faFileInvoice} size="2x" />
-                  </LinkIcon>
-                </LinkCent>
-                <LinkCent>
-                  <LinkTitle>Resume</LinkTitle>
-                </LinkCent>
-              </LinkSexy>
-              <LinkSexy to={`${match.path}/Recruit`}>
-                <LinkCent>
-                  <LinkIcon>
-                    <GroupAddSharp />
-                  </LinkIcon>
-                </LinkCent>
-                <LinkCent>
-                  <LinkTitle>Recruit</LinkTitle>
-                </LinkCent>
-              </LinkSexy>
+                <LinkSexy as={"button"} style={{ padding: 0 }}>
+                  <LinkCent>
+                    <UserProfile>
+                      <UserImage
+                        onClick={() => setPopup(true)}
+                        profileImgUri={profileImgUri}
+                        style={{ fontFamily: "Roboto Mono, monospaced" }}
+                      ></UserImage>
+                    </UserProfile>
+                  </LinkCent>
+                  <LinkCent>
+                    <LinkTitle>{userData && userData.data.name}</LinkTitle>
+                  </LinkCent>
+                </LinkSexy>
+                <LinkSexy
+                  to={`${match.path}`}
+                  onClick={() => setEntireChecked("main")}
+                  checked={checked.main}
+                >
+                  <LinkCent checked={checked.main}>
+                    <LinkIcon>
+                      <FontAwesomeIcon icon={faTable} size="2x" />
+                    </LinkIcon>
+                  </LinkCent>
+                  <Flex
+                    setting={{ justify: "center", align: "center", dir: "row" }}
+                  >
+                    <Text
+                      size={"15px"}
+                      weight={"500"}
+                      style={{
+                        color: checked.main ? "blue" : "var(--color-text-ver3)",
+                      }}
+                    >
+                      Main
+                    </Text>
+                  </Flex>
+                </LinkSexy>
+                <LinkSexy
+                  to={`${match.path}/resume`}
+                  onClick={() => setEntireChecked("resume")}
+                  checked={checked.resume}
+                >
+                  <LinkCent checked={checked.resume}>
+                    <LinkIcon>
+                      <FontAwesomeIcon icon={faFileInvoice} size="2x" />
+                    </LinkIcon>
+                  </LinkCent>
+                  <Flex
+                    setting={{ justify: "center", align: "center", dir: "row" }}
+                  >
+                    <Text
+                      size={"15px"}
+                      weight={"500"}
+                      style={{
+                        color: checked.resume
+                          ? "blue"
+                          : "var(--color-text-ver3)",
+                      }}
+                    >
+                      Resume
+                    </Text>
+                  </Flex>
+                </LinkSexy>
+                <LinkSexy
+                  to={`${match.path}/Recruit`}
+                  onClick={() => setEntireChecked("recruit")}
+                  checked={checked.recruit}
+                >
+                  <LinkCent checked={checked.recruit}>
+                    <LinkIcon>
+                      <GroupAddSharp />
+                    </LinkIcon>
+                  </LinkCent>
+                  <Flex
+                    setting={{ justify: "center", align: "center", dir: "row" }}
+                  >
+                    <Text
+                      size={"15px"}
+                      weight={"500"}
+                      style={{
+                        color: checked.recruit
+                          ? "blue"
+                          : "var(--color-text-ver3)",
+                      }}
+                    >
+                      Recruit
+                    </Text>
+                  </Flex>
+                </LinkSexy>
 
-              <LinkSexy to={`${match.path}/room`}>
-                <LinkCent>
-                  <LinkIcon>
-                    <FontAwesomeIcon icon={faCodepen} size="2x" />
-                  </LinkIcon>
-                </LinkCent>
-                <LinkCent>
-                  <LinkTitle>Room</LinkTitle>
-                </LinkCent>
-              </LinkSexy>
-              <LinkSexy to={`${match.path}/setting`}>
-                <LinkCent>
-                  <LinkIcon>
-                    <FontAwesomeIcon icon={faCogs} size="2x" />
-                  </LinkIcon>
-                </LinkCent>
-                <LinkCent>
-                  <LinkTitle>Setting</LinkTitle>
-                </LinkCent>
-              </LinkSexy>
-            </LinkList>
+                <LinkSexy
+                  to={`${match.path}/room`}
+                  onClick={() => setEntireChecked("room")}
+                  checked={checked.room}
+                >
+                  <LinkCent checked={checked.room}>
+                    <LinkIcon>
+                      <FontAwesomeIcon icon={faCodepen} size="2x" />
+                    </LinkIcon>
+                  </LinkCent>
+                  <Flex
+                    setting={{ justify: "center", align: "center", dir: "row" }}
+                  >
+                    <Text
+                      size={"15px"}
+                      weight={"500"}
+                      style={{
+                        color: checked.room ? "blue" : "var(--color-text-ver3)",
+                      }}
+                    >
+                      Room
+                    </Text>
+                  </Flex>
+                </LinkSexy>
+                <LinkSexy
+                  to={`${match.path}/setting`}
+                  onClick={() => setEntireChecked("setting")}
+                  checked={checked.setting}
+                >
+                  <LinkCent checked={checked.setting}>
+                    <LinkIcon>
+                      <FontAwesomeIcon icon={faCogs} size="2x" />
+                    </LinkIcon>
+                  </LinkCent>
+                  <Flex
+                    setting={{ justify: "center", align: "center", dir: "row" }}
+                  >
+                    <Text
+                      size={"15px"}
+                      weight={"500"}
+                      style={{
+                        color: checked.setting
+                          ? "blue"
+                          : "var(--color-text-ver3)",
+                      }}
+                    >
+                      Setting
+                    </Text>
+                  </Flex>
+                </LinkSexy>
+              </LinkList>
+            </Flex>
+           
+
+           
           </Left>
           <div></div>
           <Right style={{ minWidth: 1200 }}>
@@ -448,7 +554,7 @@ const DashboardPresenter = memo(
                     </SearchForm>
                 </NabvarCenter>
                 <NabvarCenter position={false}>
-                    <UserInfoBtn onClick={UserInfoBtnHandler}>
+                    <UserInfoBtn onClick={userInfoBtnHandler}>
                         <FontAwesomeIcon icon={faUser} size="2x" />
                     </UserInfoBtn>
                     <Link to ="/" style={{fontSize:"10px",margin:"0 10px"}}>
@@ -507,7 +613,9 @@ const DashboardPresenter = memo(
                 ></Route>
                 <Route
                   path={`${match.path}/setting`}
-                  render={() => <Setting getUserInfo={getUserInfo} userData={userData}/>}
+                  render={() => (
+                    <Setting getUserInfo={getUserInfo} userData={userData} />
+                  )}
                 />
               </Switch>
             </AnimatePresence>

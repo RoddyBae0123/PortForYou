@@ -31,6 +31,15 @@ const PopupUser = styled.div`
   align-items: center;
   position: relative;
   overflow-y: ${(props) => (props.notover ? "auto" : "scroll")};
+
+  &::-webkit-scrollbar {
+    width: 10px;
+    background-color: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: rgb(239, 239, 239);
+    border-radius: 5px;
+  }
 `;
 const DelpopupBtn = styled.button`
   display: ${(props) => (props.second ? "none" : "block")};
