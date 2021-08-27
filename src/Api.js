@@ -139,4 +139,18 @@ export const boardApi = {
       content,
     }),
   deleteComment: (idx) => api.delete(`api/study/board/post/comment/${idx}`),
+  getCalendars: (idx) => api.get(`api/study/${idx}/calendars`),
+  getCalendar: (idx) => api.get(`api/study/calendar/${idx}`),
+  saveCalendar: ({ studyIdx, idx, title, content, fromDate, toDate }) => {
+    console.log(idx, title, content);
+    console.log(`fromDate:${fromDate},toDate:${toDate}`);
+    return api.post(`api/study/${studyIdx}/calendar`, {
+      idx,
+      title,
+      content,
+      fromDate,
+      toDate,
+    });
+  },
+  deleteCalendar: (idx) => api.delete(`api/study/calendar/${idx}`),
 };

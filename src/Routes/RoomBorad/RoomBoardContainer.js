@@ -192,16 +192,27 @@ const RoomBoardContainer = (props) => {
     }
   };
 
+  const getCalendars = async () => {
+    try {
+      const { data } = await boardApi.getCalendars(idx);
+      data && addToDo("data", "calendars", data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   useEffect(() => {
     getUserInfo();
     getAnnouncementList(idx);
     getBoardList();
+    getCalendars();
     addToDo("setData", "setBoardList", setBoardList);
     addToDo("getData", "getBoard", getBoard);
     addToDo("getData", "getBoardList", getBoardList);
     addToDo("data", "studyIdx", idx);
     addToDo("setData", "setPost", setPost);
     addToDo("getData", "getPosts", getPosts);
+    addToDo("getData", "getCalendars", getCalendars);
   }, []);
 
   return (

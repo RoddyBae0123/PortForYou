@@ -700,7 +700,7 @@ const RoomBoardPresenter = ({
                 component={Channel}
               ></Route>
               <Route
-                path={`${match.path}/calender`}
+                path={`${match.path}/calender/:studyIdx`}
                 component={Calender}
               ></Route>
             </Switch>

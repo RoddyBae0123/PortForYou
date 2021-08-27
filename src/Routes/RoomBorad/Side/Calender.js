@@ -1,8 +1,4 @@
-import { Calendar, momentLocalizer } from "react-big-calendar";
-import moment from "moment";
 import { useState, useEffect, useRef } from "react";
-import { Calendar as Fuck } from "react-calendar";
-import "react-calendar/dist/Calendar.css";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -13,7 +9,7 @@ import {
   faEdit,
 } from "@fortawesome/free-solid-svg-icons";
 import Popup from "../../../Components/Popup";
-import { imageApi } from "../../../Api";
+import { boardApi, imageApi } from "../../../Api";
 
 import ReactSummernote from "react-summernote";
 import "react-summernote/dist/react-summernote.css";
@@ -25,6 +21,8 @@ import "bootstrap/js/dist/dropdown";
 import "bootstrap/js/dist/tooltip";
 import "bootstrap/js/dist/modal";
 import "bootstrap/js/dist/tab";
+
+import { connect } from "react-redux";
 
 const Flex = styled.div`
   display: flex;
@@ -131,7 +129,10 @@ const MyEdit = styled.div`
   }
 `;
 
-const Calender = () => {
+const Calender = ({ match, data, getData }) => {
+  const {
+    params: { studyIdx },
+  } = match;
   //day
   const dayjs = require("dayjs");
   const weekday = require("dayjs/plugin/weekday");
@@ -142,13 +143,91 @@ const Calender = () => {
   dayjs.extend(weekday);
   dayjs.extend(isoWeek);
   dayjs.extend(weekOfYear);
-
+  data && console.log(data);
   const today = dayjs();
   const [viewDate, setViewDate] = useState(dayjs());
   const [selectDate, setSelectDate] = useState(dayjs());
   const [createPopup, setCreatePopup] = useState(false);
-  const [date, setDate] = useState({ now: "" });
+  const [date, setDate] = useState({ year: "", month: "", day: "" });
+  const [send, setSend] = useState({ title: "" });
   const [content, setContent] = useState("");
+  const [calendar, setCalendar] = useState([]);
+  const calendarList = document.querySelectorAll(".calendar");
+  useEffect(() => {
+    data && data.calendars && changeCalendar();
+  }, [viewDate]);
+
+  useEffect(() => {
+    data && data.calendars && changeCalendar();
+  }, [data]);
+
+  useEffect(() => {
+    calendarList && setCalendarList();
+  }, [calendar]);
+
+  useEffect(() => {
+    console.log(content);
+  }, [content]);
+
+  useEffect(() => {
+    if (!createPopup) {
+      setSend({});
+      setContent("");
+    }
+  }, [createPopup]);
+
+  const changeCalendar = () => {
+    setCalendar(
+      data.calendars.filter(
+        (e) =>
+          e.fromDate.substring(0, 7) ==
+          `${viewDate.$y}-${
+            viewDate.$M < 9 ? "0" + (viewDate.$M + 1) : viewDate.$M + 1
+          }`
+      )
+    );
+  };
+
+  console.log(calendar);
+
+  const setCalendarList = () => {
+    Array.from(calendarList).map((e) => {
+      e.innerHTML = "";
+      const found = calendar.filter(
+        (element) => element.fromDate.substring(0, 10) === e.id
+      );
+      console.log(found);
+
+      if (found.length) {
+        found.map((element) => {
+          const div = document.createElement("button");
+          div.innerHTML =
+            element.title.length < 7
+              ? element.title
+              : element.title.substring(0, 6) + "...";
+          div.classList.add("calendarOne");
+          e.append(div);
+          div.addEventListener("click", () => {
+            setCreatePopup(true);
+            setSend({ title: element.title, idx: element.idx });
+            setContent(element.content);
+            setDate({
+              year: element.fromDate.substring(0, 4),
+              month: element.fromDate.substring(5, 7),
+              day: element.fromDate.substring(8, 10),
+            });
+          });
+          div.removeEventListener("click", () => {
+            console.log(element.content);
+
+            setCreatePopup(true);
+            setSend({ title: element.title, idx: element.idx });
+            setContent(element.content);
+          });
+        });
+      }
+    });
+  };
 
   const createCalendar = () => {
     const startWeek = viewDate.startOf("month").week();
@@ -191,7 +270,7 @@ const Calender = () => {
                     setting={{
                       justify: "flex-start",
                       align: "flex-start",
-                      dir: "row",
+                      dir: "column",
                     }}
                     key={`${week}_${i}`}
                     className={`relative`}
@@ -224,12 +303,28 @@ const Calender = () => {
                         className={"plus"}
                         onClick={() => {
                           setCreatePopup(true);
-                          setDate({ now: `${current.format("YYYYMMDD")}` });
+                          setDate({
+                            year: `${current.format("YYYY")}`,
+                            month: `${current.format("MM")}`,
+                            day: `${current.format("DD")}`,
+                          });
                         }}
                       >
                         <FontAwesomeIcon icon={faPlus} />
                       </button>
                     </Flex>
+
+                    <Flex
+                      setting={{
+                        justify: "center",
+                        align: "center",
+                        dir: "column",
+                      }}
+                      className="calendar"
+                      id={`${current.format("YYYY")}-${current.format(
+                        "MM"
+                      )}-${current.format("DD")}`}
+                    ></Flex>
                   </Flex>
                 </>
               );
@@ -280,7 +375,9 @@ const Calender = () => {
                   marginBottom: "10px",
                   padding: 0,
                 }}
+                value={send.title}
                 autoFocus
+                onChange={(e) => setSend({ ...send, title: e.target.value })}
               />
               <Text
                 size={"15px"}
@@ -290,7 +387,7 @@ const Calender = () => {
                   letterSpacing: "0.7px",
                 }}
               >
-                DATE:{date.now}
+                DATE:{date.year}/{date.month}/{date.day}
               </Text>
             </Flex>
             <Flex
@@ -306,6 +403,13 @@ const Calender = () => {
                   backColor: "var(--color-background-focus)",
                 }}
                 style={{ marginRight: 10 }}
+                onClick={() =>
+                  submitHandler({
+                    fromDate: `${date.year}-${date.month}-${date.day}T00:00:00`,
+                    toDate: `${date.year}-${date.month}-${date.day}T01:00:00`,
+                    idx: send.idx && send.idx,
+                  })
+                }
               >
                 <FontAwesomeIcon icon={faEdit} />
               </Button>
@@ -314,6 +418,7 @@ const Calender = () => {
                   color: "var(--color-warning)",
                   backColor: "var(--color-warningBack)",
                 }}
+                onClick={() => deleteCalendar(send.idx)}
               >
                 <FontAwesomeIcon icon={faTrashAlt} />
               </Button>
@@ -353,7 +458,7 @@ const Calender = () => {
                   ["view", ["fullscreen", "codeview"]],
                 ],
               }}
-              onChange={onChangeHandler}
+              onChange={(content) => setContent(content)}
               // onChange={this.onChange}
               onImageUpload={onImageUpload}
             />
@@ -374,10 +479,9 @@ const Calender = () => {
       />
     );
 
-  const onChangeHandler = (content) => {
-    console.log(content);
-    setContent(content);
-  };
+  //   const onChangeHandler = (title, content) => {
+  //     setSend({ title: send.title, content: send.content, [title]: content });
+  //   };
 
   const uploadImageCallBack = async (file) => {
     try {
@@ -400,6 +504,34 @@ const Calender = () => {
       insertImage(data);
     }
   };
+
+  const submitHandler = async ({ idx, fromDate, toDate }) => {
+    try {
+      const { data } = await boardApi.saveCalendar({
+        studyIdx,
+        idx,
+        title: send.title,
+        content,
+        fromDate,
+        toDate,
+      });
+      data && getData.getCalendars();
+      data && setCreatePopup(false);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const deleteCalendar = async (idx) => {
+    try {
+      const data = await boardApi.deleteCalendar(idx);
+      data && getData.getCalendars();
+      data && setCreatePopup(false);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <Flex setting={{ justify: "center", align: "center", dir: "column" }}>
       <Flex
@@ -407,7 +539,7 @@ const Calender = () => {
         style={{ width: "80%", margin: "20px 0 " }}
       >
         <Text size={"30px"} weight={"400"}>
-          Calender
+          Calendar
         </Text>
       </Flex>
 
@@ -435,7 +567,10 @@ const Calender = () => {
       </Flex>
 
       <StyledBody>
-        <div className="weeks" style={{ marginBottom: "10px" }}>
+        <div
+          className="weeks"
+          style={{ marginBottom: "10px", minHeight: "100%" }}
+        >
           <Flex setting={{ justify: "center", align: "center", dir: "row" }}>
             <span className="text">SUN</span>
           </Flex>
@@ -464,8 +599,10 @@ const Calender = () => {
     </Flex>
   );
 };
-
-export default Calender;
+const getCurrentState = (state, ownProps) => {
+  return state;
+};
+export default connect(getCurrentState)(Calender);
 
 const StyledHeader = styled.div`
   display: flex;
@@ -505,6 +642,19 @@ const StyledHeader = styled.div`
 const StyledBody = styled.div`
   margin: 20px 0;
 
+  .calendarOne {
+    width: 100%;
+    height: 20px;
+    border: 1px solid var(--color-border);
+    border-radius: 5px;
+    color: blue;
+    font-size: 10px;
+    font-weight: 500;
+  }
+  .calendarOne:not(:first-child) {
+    margin-top: 5px;
+  }
+
   .day--number {
     width: 25px;
     height: 25px;
@@ -538,11 +688,12 @@ const StyledBody = styled.div`
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
     width: 700px;
     column-gap: 10px;
+    min-height: 100px;
   }
   .days {
     display: grid;
     width: 700px;
-    grid-auto-rows: 100px;
+    grid-auto-rows: auto;
     row-gap: 10px;
   }
 
