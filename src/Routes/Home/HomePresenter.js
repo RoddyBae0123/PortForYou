@@ -3,8 +3,12 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import styled from "styled-components";
+import { Link } from "react-router-dom";
+import wifi from "../../wifi";
 
 const Design = styled.div`
+  position: relative;
+
   .vertical-dots {
     right: 30px;
     list-style: none;
@@ -89,11 +93,48 @@ const Text = styled.span`
   display: inline-flex;
 `;
 
+const Linkto = styled(Link)`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  position: fixed;
+  top: 50px;
+  left: 120px;
+`;
+const Logo = styled.img`
+  width: 70px;
+  height: 70px;
+`;
+
+const Container = styled.div`
+  display: grid;
+  grid-template-columns: 40% 60%;
+  width: 100%;
+  height: 100vh;
+`;
+
+const SignUpBtn = styled.button`
+  width: 300px;
+  height: 70px;
+  border-radius: 10px;
+  background-color: blue;
+  color: white;
+  font-size: 32px;
+  font-weight: 600;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &:hover {
+    background-color: "white";
+  }
+`;
 const HomePresenter = () => {
   const [slider, setSlider] = useState();
+  console.log(slider);
   useEffect(() => {
     window.addEventListener("wheel", (e) => {
       slide(e.wheelDelta);
+      //   slider && slider.not(".slick-initialized").slick();
     });
   }, [slider]);
 
@@ -113,17 +154,85 @@ const HomePresenter = () => {
   };
   const slickList = document.querySelector(".slick-list");
   // slickList.style.height = "100vh";
-  console.log(slickList);
+  slickList && slickList.setAttribute("style", "");
   return (
     <Design>
       <Slider {...settings} ref={(slider) => setSlider(slider)}>
         <div>
-          <Flex
-            setting={{ justify: "center", align: "center", dir: "column" }}
-            style={{ height: "100vh" }}
-          >
-            Fuck1
-          </Flex>
+          <Container>
+            <Flex
+              setting={{ justify: "center", align: "center", dir: "column" }}
+              style={{ height: "100%" }}
+            >
+              <Flex
+                setting={{
+                  justify: "flex-start",
+                  align: "flex-start",
+                  dir: "column",
+                }}
+                style={{
+                  height: "60%",
+                  paddingLeft: "120px",
+                }}
+              >
+                <Text
+                  weight={"400"}
+                  size={"33px"}
+                  style={{ color: "black", margin: "20px 0" }}
+                  className={"basic"}
+                >
+                  Let's make up a study <br />
+                  group!
+                </Text>
+                <Text
+                  weight={"100"}
+                  size={"17px"}
+                  style={{
+                    color: "rgba(0,0,0,0.8)",
+                    lineHeight: "25px",
+                    marginBottom: "35px",
+                  }}
+                  className={"basic"}
+                >
+                  Thanks for visiting Studyroom, <br />
+                  Web services to provide study meetings
+                  <br /> We hope you enjoy it!
+                </Text>
+                <SignUpBtn className={"basic"} as={Link} to="/signup">
+                  FREE SIGN UP
+                </SignUpBtn>
+                <Text
+                  weight={"100"}
+                  size={"17px"}
+                  style={{ color: "rgba(0,0,0,0.8)", marginTop: "45px" }}
+                  className={"basic"}
+                >
+                  Get more information from LIMBAE here:
+                </Text>
+                <Text
+                  weight={"500"}
+                  size={"17px"}
+                  style={{ color: "rgba(0,0,0,1)", marginTop: "15px" }}
+                  className={"basic"}
+                >
+                  https://rhkd6351.gitbook.io/limbae/
+                </Text>
+              </Flex>
+            </Flex>
+            <Flex
+              setting={{
+                justify: "center",
+                align: "flex-start",
+                dir: "column",
+              }}
+              style={{ height: "100%" }}
+            >
+              <img
+                src="http://3.37.208.251:8080/api/img/default/deb4ee12-5bbc-4339-a592-a77d07dec1a6"
+                style={{ width: 550, marginLeft: "80px" }}
+              ></img>
+            </Flex>
+          </Container>
         </div>
         <div>
           <Flex
@@ -166,6 +275,21 @@ const HomePresenter = () => {
           </Flex>
         </div>
       </Slider>
+      <Linkto to="/" style={{ width: 300 }}>
+        <Logo src={`${wifi}api/img/default/logo_transparent`} />
+        <Text
+          size={"35px"}
+          weight={"700"}
+          style={{
+            marginLeft: 20,
+            color: `var(--color-text-ver1) `,
+            fontFamily: "Josefin Sans', cursive",
+          }}
+          className="set"
+        >
+          StudyMall
+        </Text>
+      </Linkto>
     </Design>
   );
 };
