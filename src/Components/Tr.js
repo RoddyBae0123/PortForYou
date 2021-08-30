@@ -35,17 +35,16 @@ const DataList = styled.div`
   /* border: 0.2px solid rgba(0, 0, 0, 0.35); */
   height: 100px;
   display: grid;
-  grid-template-columns: 0.1fr 0.7fr 0.3fr 0.1fr;
+  grid-template-columns: 0.35fr 0.35fr 0.2fr 0.1fr;
   column-gap: 10px;
-  width: 90%;
+  width: 100%;
   padding: 20px 0;
-  border-radius: 30px;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
   transition: all 300ms ease-in-out;
-  &:hover {
+  /* &:hover {
     transform: translateY(-5px);
-    box-shadow: 0px 8px 11px rgba(0, 0, 0, 0.24);
-  }
+    box-shadow: 0px 3px 6px var(--color-text-ver2);
+  } */
+  background-color: white;
 `;
 const IntroduceCon = styled.div`
   display: grid;
@@ -86,64 +85,190 @@ const TR = styled.tr`
 
   width: 100%;
 `;
+
+const Flex = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: ${(props) => props.setting.justify};
+  align-items: ${(props) => props.setting.align};
+  flex-direction: ${(props) => props.setting.dir};
+`;
+
+const Text = styled.span`
+  font-size: ${(props) => props.size};
+  font-weight: ${(props) => props.weight};
+  color: rgb(74, 86, 94);
+  display: inline-flex;
+`;
+
+const Img = styled.div`
+  width: ${(props) => props.size.width};
+  height: ${(props) => props.size.height};
+  background-image: url("${(props) => props.src}");
+  background-size: 100% auto;
+  background-position: center center;
+  background-repeat: no-repeat;
+  border-radius: 100%;
+  border: 1.5px solid var(--color-border);
+`;
+
+const PositionGrid = styled.div`
+  display: grid;
+  height: 100%;
+  grid-template-columns: repeat(8, 25px);
+`;
+
 const SexyLink = styled(Link)``;
 const Tr = ({ data, DelResumeBtn }) => {
+  console.log(data);
   return data ? (
-    data.map((e) => (
-      <TR key={`${e.idx}`}>
-        <ResumeOne key={`${e.idx}`} style={{ padding: 0 }}>
-          <DataList>
-            <Document>
-              {" "}
-              <FontAwesomeIcon
-                icon={faFileAlt}
-                size="2x"
-                style={{ color: "RGB(74, 86, 94)" }}
-              />
-            </Document>
-            <IntroduceCon>
-              <Makecenter>
-                <SexyLink to={`resume/${e.idx}`}>
-                  <Title>{e.title}</Title>
-                </SexyLink>
-              </Makecenter>
-              <Makecenter>
-                <h5>{e.content.substring(0, 150)}...</h5>
-              </Makecenter>
-            </IntroduceCon>
-            <IntroduceCon>
-              <Makecenter style={{ fontSize: "10px" }}>
-                {e.tech.map((e) => {
-                  switch (e.name) {
-                    case "Kotlin":
-                      return <FontAwesomeIcon icon={faKorvue} size="2x" />;
-                      break;
-                    case "Java":
-                      return <FontAwesomeIcon icon={faJava} size="2x" />;
-                      break;
-                    case "C":
-                      return <FontAwesomeIcon icon={faCuttlefish} size="2x" />;
-                      break;
-                    default:
-                      break;
+    <>
+      <DataList
+        style={{
+          backgroundColor: "transparent",
+          height: "100%",
+          width: "100%",
+        }}
+      >
+        <Flex
+          setting={{
+            justify: "flex-start",
+            align: "center",
+            dir: "row",
+          }}
+          style={{ marginLeft: "25px" }}
+        >
+          <Text
+            weight={"500"}
+            size={"15px"}
+            style={{ color: "var(--color-text-ver3)", letterSpacing: "1.5px" }}
+          >
+            IMG AND TITLE/CONTENTS
+          </Text>
+        </Flex>
+        <Flex
+          setting={{
+            justify: "flex-start",
+            align: "center",
+            dir: "row",
+          }}
+        >
+          <Text
+            weight={"500"}
+            size={"15px"}
+            style={{ color: "var(--color-text-ver3)", letterSpacing: "1.5px" }}
+          >
+            STACK/POSITION
+          </Text>
+        </Flex>
+        <Flex
+          setting={{
+            justify: "center",
+            align: "center",
+            dir: "row",
+          }}
+        >
+          <Text
+            weight={"500"}
+            size={"15px"}
+            style={{ color: "var(--color-text-ver3)", letterSpacing: "1.5px" }}
+          >
+            DATE
+          </Text>
+        </Flex>
+        <Flex
+          setting={{
+            justify: "center",
+            align: "center",
+            dir: "row",
+          }}
+        >
+          <Text
+            weight={"500"}
+            size={"15px"}
+            style={{ color: "var(--color-text-ver3)", letterSpacing: "1.5px" }}
+          >
+            DELETE
+          </Text>
+        </Flex>
+      </DataList>
+      {data.map((e) => (
+        <TR key={`${e.idx}`}>
+          <ResumeOne key={`${e.idx}`} style={{ padding: 0 }}>
+            <DataList>
+              <Flex
+                setting={{
+                  justify: "flex-start",
+                  align: "center",
+                  dir: "row",
+                }}
+              >
+                <Img
+                  src={
+                    "https://dimg.donga.com/wps/SPORTS/IMAGE/2021/08/30/108821990.1.jpg"
                   }
-                })}
+                  size={{ width: "45px", height: "45px" }}
+                  style={{ margin: "0 25px" }}
+                />
+                <IntroduceCon>
+                  <Makecenter>
+                    <SexyLink to={`resume/${e.idx}`}>
+                      <Title>{e.title}</Title>
+                    </SexyLink>
+                  </Makecenter>
+                  <Makecenter>
+                    <h5>{e.content.substring(0, 150)}...</h5>
+                  </Makecenter>
+                </IntroduceCon>
+              </Flex>
+
+              <IntroduceCon>
+                <PositionGrid>
+                  {e.tech.map((e) => (
+                    <Img
+                      src={`http://3.37.208.251:8080/api/img/default/stack_image_${e.stackIdx}`}
+                      size={{ width: "25px", height: "25px" }}
+                    />
+                  ))}
+                </PositionGrid>
+                <Makecenter>
+                  <h5 style={{ fontWeight: "500", letterSpacing: "50%" }}>
+                    {e.position.name}
+                  </h5>
+                </Makecenter>
+              </IntroduceCon>
+
+              <Flex
+                setting={{
+                  justify: "center",
+                  align: "center",
+                  dir: "row",
+                }}
+              >
+                <Text
+                  weight={"700"}
+                  size={"15px"}
+                  style={{
+                    color: "blue",
+                    letterSpacing: "1.5px",
+                  }}
+                >
+                  {e.regDate.substring(0, 10)}
+                </Text>
+              </Flex>
+
+              <Makecenter
+                style={{ justifyContent: "center", alignItems: "center" }}
+              >
+                <DelEdit id={e.idx} onClick={DelResumeBtn}>
+                  <FontAwesomeIcon id={e.idx} icon={faTrash} size="2x" />
+                </DelEdit>
               </Makecenter>
-              <Makecenter>
-                <h5>{e.position.name}</h5>
-              </Makecenter>
-            </IntroduceCon>
-            <Makecenter
-              style={{ justifyContent: "center", alignItems: "center" }}
-            >
-              <DelEdit id={e.idx} onClick={DelResumeBtn}>
-                <FontAwesomeIcon id={e.idx} icon={faTrash} size="2x" />
-              </DelEdit>
-            </Makecenter>
-          </DataList>
-        </ResumeOne>
-      </TR>
-    ))
+            </DataList>
+          </ResumeOne>
+        </TR>
+      ))}
+    </>
   ) : (
     <div>none</div>
   );

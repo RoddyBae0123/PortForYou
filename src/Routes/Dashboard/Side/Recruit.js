@@ -17,6 +17,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 0 150px;
 `;
 const Title = styled.h1`
   font-size: 35px;

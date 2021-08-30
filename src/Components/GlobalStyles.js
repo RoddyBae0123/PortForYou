@@ -5,6 +5,9 @@ const globalStyles = createGlobalStyle`
     a{
         text-decoration:none;
         color:inherit;
+        &:hover{
+            text-decoration:none;
+        }
     }
     *{
         box-sizing:border-box;
@@ -19,6 +22,10 @@ const globalStyles = createGlobalStyle`
         border:none;
         background-color:transparent;
         cursor:pointer;
+        &:focus{
+            outline:none;
+            border:none;
+        }
     }
 
     html {

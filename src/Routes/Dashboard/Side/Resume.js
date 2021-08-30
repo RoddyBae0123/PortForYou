@@ -43,6 +43,7 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
+  padding: 50px 150px 0 150px;
 `;
 
 // const SearchForm = styled.form`
@@ -96,14 +97,13 @@ const Makecenter = styled.div`
   height: 100vh;
 `;
 const AddBtn = styled.button`
-  width: 70px;
-  height: 30px;
-  border: 2px solid RGB(74, 86, 94);
-  border-radius: 10px;
-  color: RGB(74, 86, 94);
+  width: 120px;
+  height: 35px;
+  border-radius: 5px;
+  color: white;
+  background-color: blue;
   font-weight: 500;
   font-size: 12px;
-  margin-bottom: 20px;
   &:hover {
     color: white;
     background: RGB(74, 86, 94);
@@ -113,6 +113,21 @@ const AddBtn = styled.button`
   justify-content: center;
   align-items: center;
   flex-direction: column;
+`;
+
+const Flex = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: ${(props) => props.setting.justify};
+  align-items: ${(props) => props.setting.align};
+  flex-direction: ${(props) => props.setting.dir};
+`;
+
+const Text = styled.span`
+  font-size: ${(props) => props.size};
+  font-weight: ${(props) => props.weight};
+  color: rgb(74, 86, 94);
+  display: inline-flex;
 `;
 
 const Resume = ({ data, method, setData, DelResumeBtn }) => {
@@ -147,23 +162,45 @@ const Resume = ({ data, method, setData, DelResumeBtn }) => {
       style={{ width: "100%" }}
     >
       <Container>
-        <MdataProcessing
-          title={"Resume"}
-          message={"I like it when money makes a difference"}
-          nav={false}
-        />
-        <div
-          style={{ width: "90%", display: "flex", justifyContent: "flex-end" }}
+        <Flex
+          style={{
+            width: "100%",
+            height: "100px",
+          }}
+          setting={{
+            justify: "space-between",
+            align: "center",
+            dir: "row",
+          }}
         >
+          <Flex
+            setting={{
+              justify: "flex-start",
+              align: "center",
+              dir: "row",
+            }}
+          >
+            <Text size={"35px"} weight={"300"} style={{ color: "black" }}>
+              My Resume List
+            </Text>
+            <Text
+              size={"15px"}
+              weight={"600"}
+              style={{ color: "var(--color-text-ver2)", marginLeft: "10px" }}
+            >
+              {data.data.length} Total
+            </Text>
+          </Flex>
+
           <AddBtn onClick={AddBtnHandler}>
-            <h5>ADD</h5>
+            <h5>+ ADD RESUME</h5>
           </AddBtn>
-        </div>
-        <Table style={{ minWidth: 700 }}>
+        </Flex>
+        <table style={{ minWidth: 700, width: "100%" }}>
           <tbody>
             <Tr data={data && data.data} DelResumeBtn={DelResumeBtn} />
           </tbody>
-        </Table>
+        </table>
       </Container>
     </motion.div>
   ) : (

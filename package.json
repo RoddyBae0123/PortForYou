@@ -115,7 +115,7 @@
     "workbox-webpack-plugin": "5.1.4"
   },
   "scripts": {
-    "start": "node scripts/start.js --host 0.0.0.0 ",
+    "start": "node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js"
   },
@@ -154,7 +154,7 @@
       "<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
     ],
     "testEnvironment": "jsdom",
-    "testRunner": "C:\\Users\\배성연\\Documents\\Project\\First pro\\PortForYou\\one\\node_modules\\jest-circus\\runner.js",
+    "testRunner": "C:\\Users\\배성?��\\Documents\\Project\\First pro\\PortForYou\\one\\node_modules\\jest-circus\\runner.js",
     "transform": {
       "^.+\\.(js|jsx|mjs|cjs|ts|tsx)$": "<rootDir>/config/jest/babelTransform.js",
       "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",

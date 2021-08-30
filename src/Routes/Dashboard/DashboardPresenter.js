@@ -36,7 +36,7 @@ const Left = styled.div`
   position: fixed;
   top: 0px;
   background-color: white;
-  z-index: 20;
+  z-index: 21;
   min-height: 100%;
   display: flex;
   align-items: center;
@@ -102,10 +102,11 @@ const UserProfileEdit = styled.label`
 `;
 const LinkList = styled.ul`
   display: grid;
-  grid-auto-rows: 60px;
+  grid-auto-rows: 50px;
   overflow-x: hidden;
   width: 50px;
   height: 100%;
+  row-gap: 10px;
 `;
 const LinkTitle = styled.h2`
   font-size: 17px;
@@ -141,15 +142,15 @@ const LinkCent = styled.div`
   height: 100%;
 `;
 const Navbar = styled.div`
-  height: 60px;
+  height: 50px;
   background-color: white;
   position: fixed;
-  width: calc(100% - 220px);
-  border-bottom: 1.5px solid lightgray;
+  width: 100%;
   display: grid;
   grid-template-columns: 50% 50%;
-  z-index: 100;
+  z-index: 20;
   color: black;
+  padding: 0 150px;
 `;
 const NabvarCenter = styled.div`
   display: flex;
@@ -270,8 +271,24 @@ const MenuBtn = styled.button`
   height: 25px;
   font-size: 10px;
   padding: 0 3px;
-  margin: 20px 0;
   color: var(--color-text-ver3);
+  outline: none;
+  border: none;
+
+  &:focus {
+    border: none;
+    outline: none;
+  }
+`;
+const Logo = styled.img`
+  width: 50px;
+  height: 50px;
+`;
+
+const Linkto = styled(Link)`
+  display: flex;
+  align-items: center;
+  width: 100%;
 `;
 
 const DashboardPresenter = memo(
@@ -385,11 +402,15 @@ const DashboardPresenter = memo(
                 dir: "column",
               }}
             >
-              <LinkList ref={Lists}>
+              <LinkList ref={Lists} style={{ width: 50 }}>
                 <LinkSexy as={"div"}>
-                  <MenuBtn onClick={setWide}>
-                    <FontAwesomeIcon icon={faBars} size="2x" />
-                  </MenuBtn>
+                  <Flex
+                    setting={{ justify: "center", align: "center", dir: "row" }}
+                  >
+                    <MenuBtn onClick={setWide}>
+                      <FontAwesomeIcon icon={faBars} size="2x" />
+                    </MenuBtn>
+                  </Flex>
                   <Flex
                     setting={{ justify: "center", align: "center", dir: "row" }}
                   >
@@ -540,32 +561,46 @@ const DashboardPresenter = memo(
                 </LinkSexy>
               </LinkList>
             </Flex>
-           
-
-           
           </Left>
           <div></div>
           <Right style={{ minWidth: 1200 }}>
-            {/* <Navbar>
-            <NabvarCenter position={true}>
-                <SearchForm>
-                        <Input type="text"></Input>
-                        <Submit type="submit" value="&#128269;"></Submit>
-                    </SearchForm>
-                </NabvarCenter>
-                <NabvarCenter position={false}>
-                    <UserInfoBtn onClick={userInfoBtnHandler}>
-                        <FontAwesomeIcon icon={faUser} size="2x" />
-                    </UserInfoBtn>
-                    <Link to ="/" style={{fontSize:"10px",margin:"0 10px"}}>
-                        <FontAwesomeIcon icon={faBell} size="2x" />
-                    </Link>
-                    <Link to ="/" style={{fontSize:"10px",margin:"0 10px"}}>
-                        <FontAwesomeIcon icon={faHome} size="2x" />
-                    </Link>
-                </NabvarCenter>
-
-            </Navbar> */}
+            <Navbar>
+              <Flex
+                setting={{
+                  justify: "flex-start",
+                  align: "center",
+                  dir: "column",
+                }}
+                style={{ width: "100%" }}
+              >
+                <Linkto to="/">
+                  <Logo src={`${wifi}api/img/default/logo_transparent`} />
+                  <Text
+                    size={"20px"}
+                    weight={"700"}
+                    style={{
+                      marginLeft: 20,
+                      color: `var(--color-text-ver1) `,
+                      fontFamily: "Josefin Sans', cursive",
+                    }}
+                    className="set"
+                  >
+                    StudyMall
+                  </Text>
+                </Linkto>
+              </Flex>
+              <NabvarCenter position={false}>
+                <UserInfoBtn onClick={userInfoBtnHandler}>
+                  <FontAwesomeIcon icon={faUser} size="2x" />
+                </UserInfoBtn>
+                <Link to="/" style={{ fontSize: "10px", margin: "0 10px" }}>
+                  <FontAwesomeIcon icon={faBell} size="2x" />
+                </Link>
+                <Link to="/" style={{ fontSize: "10px", margin: "0 10px" }}>
+                  <FontAwesomeIcon icon={faHome} size="2x" />
+                </Link>
+              </NabvarCenter>
+            </Navbar>
             <AnimatePresence>
               <Switch>
                 <Route
