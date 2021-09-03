@@ -24,7 +24,6 @@ const globalStyles = createGlobalStyle`
         cursor:pointer;
         &:focus{
             outline:none;
-            border:none;
         }
     }
 
@@ -47,7 +46,7 @@ const globalStyles = createGlobalStyle`
     --color-text-ver1:#2E384D;
     --color-text-ver2:#8798AD;
     --color-text-ver3:#B0BAC9;
-    
+    --color-text-ver4:#F2F4F7;
   }
 
 `;

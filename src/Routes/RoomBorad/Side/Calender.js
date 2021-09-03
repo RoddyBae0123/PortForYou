@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, memo } from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -129,7 +129,7 @@ const MyEdit = styled.div`
   }
 `;
 
-const Calender = ({ match, data, getData }) => {
+const Calender = memo(({ match, data, getData }) => {
   const {
     params: { studyIdx },
   } = match;
@@ -143,7 +143,6 @@ const Calender = ({ match, data, getData }) => {
   dayjs.extend(weekday);
   dayjs.extend(isoWeek);
   dayjs.extend(weekOfYear);
-  data && console.log(data);
   const today = dayjs();
   const [viewDate, setViewDate] = useState(dayjs());
   const [selectDate, setSelectDate] = useState(dayjs());
@@ -163,17 +162,15 @@ const Calender = ({ match, data, getData }) => {
 
   useEffect(() => {
     calendarList && setCalendarList();
+    console.log("update calendar");
   }, [calendar]);
-
-  useEffect(() => {
-    console.log(content);
-  }, [content]);
 
   useEffect(() => {
     if (!createPopup) {
       setSend({});
       setContent("");
     }
+    console.log("update Popup");
   }, [createPopup]);
 
   const changeCalendar = () => {
@@ -188,15 +185,12 @@ const Calender = ({ match, data, getData }) => {
     );
   };
 
-  console.log(calendar);
-
   const setCalendarList = () => {
     Array.from(calendarList).map((e) => {
       e.innerHTML = "";
       const found = calendar.filter(
         (element) => element.fromDate.substring(0, 10) === e.id
       );
-      console.log(found);
 
       if (found.length) {
         found.map((element) => {
@@ -206,6 +200,7 @@ const Calender = ({ match, data, getData }) => {
               ? element.title
               : element.title.substring(0, 6) + "...";
           div.classList.add("calendarOne");
+          div.classList.add("korean");
           e.append(div);
           div.addEventListener("click", () => {
             setCreatePopup(true);
@@ -349,122 +344,129 @@ const Calender = ({ match, data, getData }) => {
   const popupContents = () => {
     // console.log(inputFocus.current);
     // inputFocus.current && inputFocus.current.focus();
-    return (
-      <Flex setting={{ justify: "flex-start", align: "center", dir: "column" }}>
-        <Flex
-          setting={{ justify: "center", align: "flex-start", dir: "column" }}
-          style={{ width: "80%", marginTop: "40px" }}
-        >
-          <Title>
-            <Flex
-              setting={{
-                justify: "center",
-                align: "flex-start",
-                dir: "column",
-              }}
-            >
-              <Text
-                size={"35px"}
-                weight={"500"}
-                as={"input"}
-                type={"text"}
-                placeholder="Non-title"
-                style={{
-                  border: "none",
-                  outline: "none",
-                  marginBottom: "10px",
-                  padding: 0,
-                }}
-                value={send.title}
-                autoFocus
-                onChange={(e) => setSend({ ...send, title: e.target.value })}
-              />
-              <Text
-                size={"15px"}
-                weight={"500"}
-                style={{
-                  color: "var(--color-text-ver2)",
-                  letterSpacing: "0.7px",
-                }}
-              >
-                DATE:{date.year}/{date.month}/{date.day}
-              </Text>
-            </Flex>
-            <Flex
-              setting={{
-                justify: "flex-end",
-                align: "flex-end",
-                dir: "row",
-              }}
-            >
-              <Button
-                setting={{
-                  color: "var(--color-text-ver2)",
-                  backColor: "var(--color-background-focus)",
-                }}
-                style={{ marginRight: 10 }}
-                onClick={() =>
-                  submitHandler({
-                    fromDate: `${date.year}-${date.month}-${date.day}T00:00:00`,
-                    toDate: `${date.year}-${date.month}-${date.day}T01:00:00`,
-                    idx: send.idx && send.idx,
-                  })
-                }
-              >
-                <FontAwesomeIcon icon={faEdit} />
-              </Button>
-              <Button
-                setting={{
-                  color: "var(--color-warning)",
-                  backColor: "var(--color-warningBack)",
-                }}
-                onClick={() => deleteCalendar(send.idx)}
-              >
-                <FontAwesomeIcon icon={faTrashAlt} />
-              </Button>
-            </Flex>
-          </Title>
-          <MyEdit>
-            <ReactSummernote
-              value={content}
-              options={{
-                lang: "ru-RU",
-                dialogsInBody: true,
-                fontNamesIgnoreCheck: ["Roboto"],
-                fontNames: [
-                  "Roboto",
-                  "Arial",
-                  "Arial Black",
-                  "Comic Sans MS",
-                  "Courier New",
-                  "Helvetica Neue",
-                  "Helvetica",
-                  "Impact",
-                  "Lucida Grande",
-                  "Tahoma",
-                  "Times New Roman",
-                  "Verdana",
-                ],
 
-                toolbar: [
-                  ["style", ["style"]],
-                  ["font", ["bold", "underline", "clear"]],
-                  ["fontsize", ["fontsize"]],
-                  ["fontname", ["fontname"]],
-                  ["color", ["color"]],
-                  ["para", ["ul", "ol", "paragraph"]],
-                  ["table", ["table"]],
-                  ["insert", ["link", "picture", "video"]],
-                  ["view", ["fullscreen", "codeview"]],
-                ],
-              }}
-              onChange={(content) => setContent(content)}
-              // onChange={this.onChange}
-              onImageUpload={onImageUpload}
-            />
-          </MyEdit>
+    return (
+      <>
+        <Flex
+          setting={{ justify: "flex-start", align: "center", dir: "column" }}
+        >
+          <Flex
+            setting={{ justify: "center", align: "flex-start", dir: "column" }}
+            style={{ width: "80%", marginTop: "40px" }}
+          >
+            <Title>
+              <Flex
+                setting={{
+                  justify: "center",
+                  align: "flex-start",
+                  dir: "column",
+                }}
+              >
+                <Text
+                  size={"35px"}
+                  weight={"500"}
+                  as={"input"}
+                  type={"text"}
+                  placeholder="Non-title"
+                  style={{
+                    border: "none",
+                    outline: "none",
+                    marginBottom: "10px",
+                    padding: 0,
+                  }}
+                  value={send.title}
+                  autoFocus
+                  onChange={(e) => setSend({ ...send, title: e.target.value })}
+                />
+                <Text
+                  size={"15px"}
+                  weight={"500"}
+                  style={{
+                    color: "var(--color-text-ver2)",
+                    letterSpacing: "0.7px",
+                  }}
+                >
+                  DATE:{date.year}/{date.month}/{date.day}
+                </Text>
+              </Flex>
+              <Flex
+                setting={{
+                  justify: "flex-end",
+                  align: "flex-end",
+                  dir: "row",
+                }}
+              >
+                <Button
+                  setting={{
+                    color: "var(--color-text-ver2)",
+                    backColor: "var(--color-background-focus)",
+                  }}
+                  style={{ marginRight: 10 }}
+                  onClick={() =>
+                    submitHandler({
+                      fromDate: `${date.year}-${date.month}-${date.day}T00:00:00`,
+                      toDate: `${date.year}-${date.month}-${date.day}T01:00:00`,
+                      idx: send.idx && send.idx,
+                    })
+                  }
+                >
+                  <FontAwesomeIcon icon={faEdit} />
+                </Button>
+                <Button
+                  setting={{
+                    color: "var(--color-warning)",
+                    backColor: "var(--color-warningBack)",
+                  }}
+                  onClick={() => deleteCalendar(send.idx)}
+                >
+                  <FontAwesomeIcon icon={faTrashAlt} />
+                </Button>
+              </Flex>
+            </Title>
+            <MyEdit>
+              <>
+                <ReactSummernote
+                  value={content}
+                  options={{
+                    lang: "ru-RU",
+                    dialogsInBody: true,
+                    fontNamesIgnoreCheck: ["Roboto"],
+                    fontNames: [
+                      "Roboto",
+                      "Arial",
+                      "Arial Black",
+                      "Comic Sans MS",
+                      "Courier New",
+                      "Helvetica Neue",
+                      "Helvetica",
+                      "Impact",
+                      "Lucida Grande",
+                      "Tahoma",
+                      "Times New Roman",
+                      "Verdana",
+                    ],
+
+                    toolbar: [
+                      ["style", ["style"]],
+                      ["font", ["bold", "underline", "clear"]],
+                      ["fontsize", ["fontsize"]],
+                      ["fontname", ["fontname"]],
+                      ["color", ["color"]],
+                      ["para", ["ul", "ol", "paragraph"]],
+                      ["table", ["table"]],
+                      ["insert", ["link", "picture", "video"]],
+                      ["view", ["fullscreen", "codeview"]],
+                    ],
+                  }}
+                  onChange={(content) => setContent(content)}
+                  // onChange={this.onChange}
+                  onImageUpload={onImageUpload}
+                />
+              </>
+            </MyEdit>
+          </Flex>
         </Flex>
-      </Flex>
+      </>
     );
   };
 
@@ -598,7 +600,7 @@ const Calender = ({ match, data, getData }) => {
       {returnCreating(createPopup)}
     </Flex>
   );
-};
+});
 const getCurrentState = (state, ownProps) => {
   return state;
 };
@@ -649,7 +651,7 @@ const StyledBody = styled.div`
     border-radius: 5px;
     color: blue;
     font-size: 10px;
-    font-weight: 500;
+    font-weight: 1000;
   }
   .calendarOne:not(:first-child) {
     margin-top: 5px;

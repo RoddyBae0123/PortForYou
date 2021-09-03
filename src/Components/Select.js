@@ -1,18 +1,15 @@
 import { useEffect, memo } from "react";
 import styled from "styled-components";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
 const Container = styled.div`
-  width: 80%;
-  border: 3.5px solid #d4d4d4;
+  width: 100%;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-auto-rows: 1fr;
-  padding: 10px;
   border-radius: 20px;
   position: relative;
-  margin-bottom: 150px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  grid-gap: 15px;
 `;
 const Makecenter = styled.div`
   display: flex;
@@ -22,13 +19,34 @@ const Makecenter = styled.div`
 `;
 
 const Button = styled.button`
-  background-color: #ededed;
-  width: 85%;
-  height: 60px;
-  border-radius: 20px;
-  margin: 10px;
-  opacity: ${(props) => (props.select ? "1" : "0.34")};
+  background-color: white;
+  width: 100%;
+  height: 70px;
+  border-radius: 10px;
+  font-size: 20px;
+  font-weight: 400;
+  color: ${(props) => (props.select ? "blue" : "var(--color-border)")};
+  border: ${(props) => (props.select ? "2px" : "1px")} solid
+    ${(props) => (props.select ? "blue" : "var(--color-border)")};
+  position: relative;
 `;
+
+const CheckCircle = styled.div`
+  width: 15px;
+  height: 15px;
+  position: absolute;
+  top: -7.5px;
+  right: -7.5px;
+  border-radius: 100%;
+  background-color: blue;
+  opacity: ${(props) => (props.select ? "1" : "0")};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 10px;
+  color: white;
+`;
+
 const SubTitle = styled.h1`
   background-color: white;
   position: absolute;
@@ -53,30 +71,31 @@ const Select = ({ data, positionData, detail, setDetail }) => {
     return;
   }, []);
 
-  const selectBtnHandler = (event) => {
-    const selectedId = event.target.id;
-    const value = event.target.innerHTML;
-
+  const selectBtnHandler = (idx, name) => {
     setDetail({
-      idx: parseInt(selectedId),
-      name: value,
+      idx: parseInt(idx),
+      name,
     });
   };
+  console.log(detail);
 
   return (
     <Container>
-      <SubTitle>Select your Position</SubTitle>
       {detail &&
         positionData &&
         positionData.map((e) => (
           <Makecenter key={e.idx}>
             <Button
-              onClick={selectBtnHandler}
+              onClick={() => selectBtnHandler(e.idx, e.name)}
               select={detail.name === e.name}
               data-select={detail.name === e.name}
               type="button"
               id={e.idx}
+              className="basic"
             >
+              <CheckCircle select={detail.name === e.name}>
+                <FontAwesomeIcon icon={faCheck} />
+              </CheckCircle>
               {e.name}
             </Button>
           </Makecenter>

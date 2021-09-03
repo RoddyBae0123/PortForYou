@@ -1,74 +1,94 @@
-import { useEffect } from 'react';
-import styled from 'styled-components';
-
+import { useEffect } from "react";
+import styled from "styled-components";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
 const Container = styled.div`
-    width:80%;
-    border:3.5px solid #D4D4D4;
-    display:grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-auto-rows:1fr;
-    padding:10px;
-    border-radius: 20px;
-    position:relative;
-    margin-bottom:150px;
-    box-shadow:  0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -1px rgba(0,0,0,0.06);
-`
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-auto-rows: 1fr;
+  border-radius: 20px;
+  position: relative;
+  grid-gap: 15px;
+`;
 const Makecenter = styled.div`
-    display:flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
 
 const Button = styled.button`
-    background-color: #EDEDED;
-    width:85%;
-    height:60px;
-    border-radius: 20px;
-    margin:10px;
-    opacity:${props=> props.select ? "1":"0.34"};
+  background-color: white;
+  width: 100%;
+  height: 70px;
+  border-radius: 10px;
+  font-size: 20px;
+  font-weight: 500;
+  color: ${(props) => (props.select ? "blue" : "var(--color-border)")};
+  border: ${(props) => (props.select ? "2px" : "1px")} solid
+    ${(props) => (props.select ? "blue" : "var(--color-border)")};
+  position: relative;
+`;
 
-`
-const SubTitle = styled.h1`
-    background-color:white;
-    position: absolute;
-    top:-0.5rem;
-    left:3.5rem;
-    padding:0 7px;
-    font-weight: 500;
-`
+const CheckCircle = styled.div`
+  width: 15px;
+  height: 15px;
+  position: absolute;
+  top: -7.5px;
+  right: -7.5px;
+  border-radius: 100%;
+  background-color: blue;
+  opacity: ${(props) => (props.select ? "1" : "0")};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 10px;
+  color: white;
+`;
 
-const Education = ({data,educationData,detail,setDetail}) => 
-    {   
-        useEffect(()=>{
-            {setDetail({
-                idx:data.idx,
-                name:data.name,
-            
-            })}
-            
-            return
-        },[])
-
-        const selectBtnHandler = (event) => {
-            const selectedId = event.target.id;
-            const value = event.target.innerHTML;
-            
-                setDetail({
-                    idx:parseInt(selectedId),
-                    name:value
-                })
-
-            }
-            
-
-        return(
-        <Container>
-            <SubTitle>Select your Education</SubTitle>
-            {detail&&educationData&& educationData.map(e=><Makecenter key={e.idx}><Button onClick={selectBtnHandler} select={detail.name===e.name}
-            data-select={detail.name===e.name}type="button" id={e.idx}>{e.name}</Button></Makecenter>)}
-            </Container>
-        )
+const Education = ({ data, educationData, detail, setDetail }) => {
+  useEffect(() => {
+    {
+      setDetail({
+        idx: data.idx,
+        name: data.name,
+      });
     }
+
+    return;
+  }, []);
+
+  const selectBtnHandler = (idx, name) => {
+    setDetail({
+      idx: parseInt(idx),
+      name,
+    });
+  };
+
+  return (
+    <Container>
+      {detail &&
+        educationData &&
+        educationData.map((e) => (
+          <Makecenter key={e.idx}>
+            <Button
+              onClick={() => selectBtnHandler(e.idx, e.name)}
+              select={detail.name === e.name}
+              data-select={detail.name === e.name}
+              type="button"
+              id={e.idx}
+              className="korean"
+            >
+              <CheckCircle select={detail.name === e.name}>
+                <FontAwesomeIcon icon={faCheck} />
+              </CheckCircle>
+              {e.name}
+            </Button>
+          </Makecenter>
+        ))}
+    </Container>
+  );
+};
 
 export default Education;

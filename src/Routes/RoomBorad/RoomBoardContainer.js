@@ -248,7 +248,6 @@ const RoomBoardContainer = (props) => {
   );
 };
 const getCurrentState = (state, ownProps) => {
-  console.log(state, ownProps);
 
   return state;
 };

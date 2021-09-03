@@ -123,75 +123,92 @@ const Tr = ({ data, DelResumeBtn }) => {
   console.log(data);
   return data ? (
     <>
-      <DataList
-        style={{
-          backgroundColor: "transparent",
-          height: "100%",
-          width: "100%",
-        }}
-      >
-        <Flex
-          setting={{
-            justify: "flex-start",
-            align: "center",
-            dir: "row",
-          }}
-          style={{ marginLeft: "25px" }}
-        >
-          <Text
-            weight={"500"}
-            size={"15px"}
-            style={{ color: "var(--color-text-ver3)", letterSpacing: "1.5px" }}
+      <TR>
+        <ResumeOne style={{ padding: 0 }}>
+          <DataList
+            style={{
+              backgroundColor: "transparent",
+              height: "100%",
+              width: "100%",
+            }}
           >
-            IMG AND TITLE/CONTENTS
-          </Text>
-        </Flex>
-        <Flex
-          setting={{
-            justify: "flex-start",
-            align: "center",
-            dir: "row",
-          }}
-        >
-          <Text
-            weight={"500"}
-            size={"15px"}
-            style={{ color: "var(--color-text-ver3)", letterSpacing: "1.5px" }}
-          >
-            STACK/POSITION
-          </Text>
-        </Flex>
-        <Flex
-          setting={{
-            justify: "center",
-            align: "center",
-            dir: "row",
-          }}
-        >
-          <Text
-            weight={"500"}
-            size={"15px"}
-            style={{ color: "var(--color-text-ver3)", letterSpacing: "1.5px" }}
-          >
-            DATE
-          </Text>
-        </Flex>
-        <Flex
-          setting={{
-            justify: "center",
-            align: "center",
-            dir: "row",
-          }}
-        >
-          <Text
-            weight={"500"}
-            size={"15px"}
-            style={{ color: "var(--color-text-ver3)", letterSpacing: "1.5px" }}
-          >
-            DELETE
-          </Text>
-        </Flex>
-      </DataList>
+            <Flex
+              setting={{
+                justify: "flex-start",
+                align: "center",
+                dir: "row",
+              }}
+              style={{ marginLeft: "25px" }}
+            >
+              <Text
+                weight={"500"}
+                size={"15px"}
+                style={{
+                  color: "var(--color-text-ver3)",
+                  letterSpacing: "1.5px",
+                }}
+              >
+                IMG AND TITLE/CONTENTS
+              </Text>
+            </Flex>
+            <Flex
+              setting={{
+                justify: "flex-start",
+                align: "center",
+                dir: "row",
+              }}
+            >
+              <Text
+                weight={"500"}
+                size={"15px"}
+                style={{
+                  color: "var(--color-text-ver3)",
+                  letterSpacing: "1.5px",
+                }}
+              >
+                STACK/POSITION
+              </Text>
+            </Flex>
+            <Flex
+              setting={{
+                justify: "center",
+                align: "center",
+                dir: "row",
+              }}
+            >
+              <Text
+                weight={"500"}
+                size={"15px"}
+                style={{
+                  color: "var(--color-text-ver3)",
+                  letterSpacing: "1.5px",
+                }}
+              >
+                DATE
+              </Text>
+            </Flex>
+            <Flex
+              setting={{
+                justify: "center",
+                align: "center",
+                dir: "row",
+              }}
+            >
+              <Text
+                weight={"500"}
+                size={"15px"}
+                style={{
+                  color: "var(--color-text-ver3)",
+                  letterSpacing: "1.5px",
+                }}
+              >
+                DELETE
+              </Text>
+            </Flex>
+          </DataList>
+        </ResumeOne>
+      </TR>
+
       {data.map((e) => (
         <TR key={`${e.idx}`}>
           <ResumeOne key={`${e.idx}`} style={{ padding: 0 }}>
@@ -226,6 +243,7 @@ const Tr = ({ data, DelResumeBtn }) => {
                 <PositionGrid>
                   {e.tech.map((e) => (
                     <Img
+                      key={e.idx}
                       src={`http://3.37.208.251:8080/api/img/default/stack_image_${e.stackIdx}`}
                       size={{ width: "25px", height: "25px" }}
                     />

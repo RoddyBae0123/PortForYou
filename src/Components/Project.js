@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState, useRef } from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -6,19 +6,20 @@ import {
   faTrashAlt,
   faTrashRestore,
 } from "@fortawesome/free-solid-svg-icons";
+import { portFolioApi } from "../Api";
+import { connect } from "react-redux";
+import { actionCreators } from "../store";
 
 const Container = styled.div`
-  width: 80%;
-  border: 3.5px solid #d4d4d4;
+  width: 100%;
+  border: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  border-radius: 20px;
+  border-radius: 10px;
   position: relative;
+  margin-bottom: 30px;
   padding: 30px;
-  margin-bottom: 35px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
-    0 2px 4px -1px rgba(0, 0, 0, 0.06);
 `;
 const Makecenter = styled.div`
   display: flex;
@@ -31,9 +32,10 @@ const SubTitle = styled.h1`
   background-color: white;
   position: absolute;
   top: -0.5rem;
-  left: 3.5rem;
-  padding: 0 7px;
+  left: 6.5rem;
+  padding: 0 14px;
   font-weight: 500;
+  color: var(--color-text-ver2);
 `;
 
 const Section = styled.h1`
@@ -43,19 +45,78 @@ const Section = styled.h1`
 `;
 
 const Input = styled.input`
-  border: none;
-  border-radius: 10px;
-  width: 100%;
-  height: 50px;
   outline: none;
-  background-color: white;
-  padding: 10px;
-  font-size: 20px;
-  color: black;
-  font-weight: 500;
+  border: 1px solid var(--color-border);
+  width: 100%;
+  height: 60px;
+  border-radius: 10px;
+  font-size: 25px;
+  font-weight: 400;
   margin-bottom: 20px;
-  text-align: start;
-  border: 3.5px solid #d4d4d4;
+  background-color: var(--color-background);
+  transition: border 300ms ease-out;
+  padding: 0 20px;
+  .search-wrap {
+    width: 100%;
+    border-radius: 0.25rem;
+    box-shadow: 0 0.5rem 0.75rem rgb(20 20 94 / 6%),
+      0 1.25rem 1.25rem -0.125rem rgb(20 20 94 / 12%),
+      0 1.5rem 2.125rem -0.125rem rgb(20 20 94 / 6%),
+      0 2rem 2.5rem -2rem rgb(20 20 94 / 5%);
+    overflow: hidden;
+    position: absolute;
+    z-index: 2000;
+    left: 0;
+  }
+  .search-list {
+    width: 100%;
+    max-height: 13.125rem;
+    background-color: white;
+    overflow-y: auto;
+    cursor: pointer;
+    &::-webkit-scrollbar {
+      width: 12px;
+      background-color: var(--color-background);
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: var(--color-text-ver3);
+    }
+  }
+  .search-item {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 0.5rem 1rem !important;
+    border-bottom: 1px solid #dee2e6;
+    &:hover {
+      background: var(--color-button);
+    }
+  }
+  .search-footer {
+    width: 100%;
+    height: 3.75rem;
+    color: #98a8b9;
+    background-color: #f7f7fb;
+    border-top: 1px solid #dee2e6;
+    padding: 1rem !important;
+    cursor: pointer;
+  }
+`;
+
+const ContentInput = styled.textarea`
+  outline: none;
+  border: 1px solid var(--color-border);
+  width: 100%;
+  height: 180px;
+  border-radius: 10px;
+  font-size: 25px;
+  font-weight: 400;
+  margin-bottom: 20px;
+  background-color: var(--color-background);
+  transition: border 300ms ease-out;
+  padding: 20px;
+  resize: none;
 `;
 
 const Stacks = styled.div`
@@ -81,46 +142,121 @@ const DeleteButton = styled.button`
   width: 50px;
   height: 20px;
   border-radius: 10px;
-  background-color: RGB(255, 140, 148);
-  font-size: 15px;
+  background-color: var(--color-button);
+  font-size: 12px;
+  color: white;
 `;
 
 const AddBtn = styled.button`
-  width: 230px;
+  width: 240px;
   height: 60px;
-  border-radius: 20px;
+  border-radius: 10px;
   font-weight: 600;
   font-size: 20px;
-  background-color: white;
+  color: white;
+  background-color: blue;
   &:hover {
     background-color: RGB(255, 140, 148);
   }
   transition: all 300ms ease;
-  border: 3.5px solid RGB(255, 140, 148);
-  margin-bottom: 150px;
+  margin: 20px 0;
 `;
 
-const Project = ({ data, setDetail, detail, stackData }) => {
+const Text = styled.span`
+  font-size: ${(props) => props.size};
+  font-weight: ${(props) => props.weight};
+  color: ${(props) => props.color};
+  display: inline-flex;
+`;
+
+const FormControl = styled.div`
+  height: 50px;
+  min-height: 2.5rem;
+  height: 100%;
+  display: flex;
+  .select-list {
+    width: 100%;
+    padding: 0 0.5rem;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+    margin: 0 -0.25rem !important;
+  }
+  .select-item {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+    margin: 0 2.5px;
+    padding: 3px 8px;
+    border: 0;
+    border-radius: 0.25rem;
+    color: #263747;
+    overflow: hidden;
+    background-color: #d7e2eb;
+    box-shadow: none;
+    list-style: none;
+  }
+  .select-list .input {
+    height: 1.25rem;
+    background-color: transparent;
+    display: inline-flex;
+    padding-left: 0.125rem;
+  }
+  .search-input {
+    width: 100%;
+    color: #263747;
+    font-size: 1rem;
+    border: none;
+    background-color: transparent;
+    padding: 0;
+    outline: none;
+  }
+`;
+
+const Project = ({ setDetail, detail, data, getData, addToDo }) => {
   const clonedeep = require("lodash.clonedeep");
 
-  var someStack = [];
-  const deliVery = [];
+  const [nowStack, setNowStack] = useState();
+  const [send, setSend] = useState({});
+  const inputValue = useRef([]);
+
+  console.log(data);
+  useEffect(() => {
+    data && setNowStack(data.stackList);
+  }, [data]);
+
+  console.log(detail);
 
   useEffect(() => {
-    data.map((e, idx) => {
-      deliVery.unshift({
-        idx: e.idx,
-        content: e.content,
-        stack: e.stack,
-        title: e.title,
-        id: idx,
-      });
-    });
+    let copyDetail = clonedeep(detail);
+    if (nowStack && copyDetail) {
+      for (const [key, value] of Object.entries(nowStack)) {
+        if (copyDetail[key]) {
+          copyDetail[key].nowStack = value.data;
+        }
+      }
+      setDetail(copyDetail);
+    }
 
-    setDetail(deliVery);
+    console.log(nowStack);
+  }, [nowStack]);
 
-    return;
-  }, []);
+  // useEffect(() => {
+  //   data.map((e, idx) => {
+  //     deliVery.unshift({
+  //       idx: e.idx,
+  //       content: e.content,
+  //       stack: e.stack,
+  //       title: e.title,
+  //       id: idx,
+  //     });
+  //   });
+
+  //   setDetail(deliVery);
+
+  //   return;
+  // }, []);
 
   const onChange = (event) => {
     const { value, name, id } = event.target;
@@ -140,7 +276,7 @@ const Project = ({ data, setDetail, detail, stackData }) => {
     const selectedId = event.target.id;
     const value = event.target.innerHTML;
     let copyDetail = [...clonedeep(detail)];
-    console.log(copyDetail);
+
     if (selected != "true") {
       // copyDetail[grandFather].stack.push({
       // });
@@ -169,17 +305,15 @@ const Project = ({ data, setDetail, detail, stackData }) => {
   };
   const DeleteBtnHandler = (e) => {
     const DelId = e.target.parentElement.id;
-    console.log(DelId);
 
     let copyDetail = [...clonedeep(detail)];
     copyDetail = copyDetail.filter((e, idx) => idx != DelId);
-    console.log(copyDetail);
 
     setDetail(copyDetail);
   };
 
   const AddBtnHandler = (e) => {
-    let copyDetail = [...clonedeep(detail)];
+    let copyDetail = clonedeep(detail);
     copyDetail.push({
       title: "",
       content: "",
@@ -190,22 +324,123 @@ const Project = ({ data, setDetail, detail, stackData }) => {
           content: "etc",
         },
       ],
+      nowStack: [],
       id: copyDetail.length > 0 ? copyDetail.length : 0,
     });
+
     setDetail(copyDetail);
-    console.log(detail);
+  };
+
+  const searchStack = (idx, name) => {
+    if (name.length === 0) {
+      let copyNowStack = clonedeep(nowStack);
+      // copyNowStack[idx] = {};
+      if (copyNowStack[idx]) {
+        copyNowStack[idx].data = [];
+      }
+      addToDo("data", "stackList", []);
+      setNowStack(copyNowStack);
+    } else {
+      let copyDetail = clonedeep(detail);
+
+      data && data.stackList
+        ? getData.getStackList({ name, idx, nowStack, type: "project" })
+        : getData.getStackList({ name, idx, type: "project" });
+      if (nowStack && nowStack[idx]) {
+        copyDetail[idx].nowStack = nowStack[idx].data;
+        setDetail(copyDetail);
+      }
+      // setNowStack((prevState) => [...prevState, { [idx]: data.stackList }]);
+    }
+  };
+
+  const addStack = (idx, stackIdx, name, inputValue) => {
+    let overlap = false;
+
+    for (let i = 0; i < detail[idx].stack.length; i++) {
+      if (detail[idx].stack[i].idx == stackIdx) {
+        overlap = true;
+        break;
+      }
+    }
+    let copyDetail = clonedeep(detail);
+
+    if (!overlap) {
+      copyDetail[idx].stack = [
+        ...copyDetail[idx].stack,
+        { idx: stackIdx, name: name, content: stackIdx },
+      ];
+    }
+    copyDetail[idx].nowStack = [];
+    addToDo("data", "stackList", []);
+
+    inputValue.value = "";
+    setDetail(copyDetail);
+  };
+
+  const delStack = (idx, stackIdx) => {
+    let copyDetail = clonedeep(detail);
+    console.log(stackIdx);
+    copyDetail[idx].stack = copyDetail[idx].stack.filter(
+      (e) => e.idx != stackIdx
+    );
+    console.log(copyDetail);
+    setDetail(copyDetail);
+  };
+
+  const selectedStack = (idx) => {
+    return (
+      <>
+        {detail[idx].stack.map((e) => (
+          <li className="select-item" key={e.idx}>
+            <Text
+              weight={"500"}
+              className="basic"
+              color={"black"}
+              size={"12px"}
+            >
+              {e.name}
+            </Text>
+            <Text
+              weight={"500"}
+              className="basic"
+              color={"var(--color-text-ver3)"}
+              size={"15px"}
+              as={"button"}
+              type="button"
+              style={{ padding: "0 0 0 10px" }}
+              onClick={() => delStack(idx, e.idx)}
+            >
+              X
+            </Text>
+          </li>
+        ))}
+      </>
+    );
   };
   return (
     <>
-      {stackData &&
-        detail &&
+      {detail &&
         detail.map((e, idx) => (
-          <Container key={e.idx} id={idx}>
-            <SubTitle>Project{idx + 1}</SubTitle>
-            <DeleteButton id={idx} onClick={DeleteBtnHandler} type="button">
-              <FontAwesomeIcon id={idx} icon={faTrash}></FontAwesomeIcon>
+          <Container key={idx} id={idx}>
+            <SubTitle className="basic">PROJECT {idx + 1}</SubTitle>
+            <DeleteButton
+              id={idx}
+              onClick={DeleteBtnHandler}
+              type="button"
+              className="basic"
+            >
+              DEL
             </DeleteButton>
-            <Section>Title</Section>
+            <Text
+              weight={"500"}
+              className="basic"
+              color={"var(--color-text-ver3)"}
+              size={"14px"}
+              style={{ letterSpacing: "1.5px", marginBottom: "15px" }}
+            >
+              TITLE
+            </Text>
             <Input
               placeholder="Please enter Title of Project"
               value={e.title}
@@ -213,18 +448,76 @@ const Project = ({ data, setDetail, detail, stackData }) => {
               name="P_TITLE"
               id={idx}
               onChange={onChange}
+              className="basic"
             />
-            <Section>Description</Section>
-            <Input
+            <Text
+              weight={"500"}
+              className="basic"
+              color={"var(--color-text-ver3)"}
+              size={"14px"}
+              style={{ letterSpacing: "1.5px", marginBottom: "15px" }}
+            >
+              DESCRIPTION
+            </Text>
+            <ContentInput
               placeholder="Please enter Description of Project"
               value={e.content}
               type="text"
               name="P_DESCRIPTION"
               id={idx}
               onChange={onChange}
-            ></Input>
-            <Section>Stack</Section>
-            <Stacks id={idx}>
+              className="basic"
+            ></ContentInput>
+            <Text
+              weight={"500"}
+              className="basic"
+              color={"var(--color-text-ver3)"}
+              size={"14px"}
+              style={{ letterSpacing: "1.5px", marginBottom: "15px" }}
+            >
+              STACK
+            </Text>
+            <Input
+              name="P_DESCRIPTION"
+              className="basic"
+              as={"div"}
+              style={{ position: "relative" }}
+            >
+              <FormControl>
+                <ul className="select-list">
+                  {selectedStack(idx)}
+                  <li className="select-item input">
+                    <input
+                      type="text"
+                      autoFocus
+                      placeholder="Enter Stack"
+                      className="search-input"
+                      onChange={(e) => searchStack(idx, e.target.value)}
+                      ref={(elem) => (inputValue.current[idx] = elem)}
+                    />
+                  </li>
+                </ul>
+              </FormControl>
+              {e.nowStack && e.nowStack.length ? (
+                <div className="search-wrap">
+                  <ul className="search-list">
+                    {e.nowStack.map((e) => (
+                      <li
+                        className="search-item"
+                        key={e.idx}
+                        onClick={() => {
+                          addStack(idx, e.idx, e.name, inputValue.current[idx]);
+                          setNowStack(undefined);
+                        }}
+                      >
+                        {e.name}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
+            </Input>
+            {/* <Stacks id={idx}>
               {
                 ((someStack = []),
                 e.stack.map((e) => {
@@ -245,14 +538,22 @@ const Project = ({ data, setDetail, detail, stackData }) => {
                     </Button>
                   </Makecenter>
                 ))}
-            </Stacks>
+            </Stacks> */}
           </Container>
         ))}
-      <AddBtn type="button" onClick={AddBtnHandler}>
-        Add Project
+      <AddBtn type="button" onClick={AddBtnHandler} className="basic">
+        ADD PROJECT
       </AddBtn>
     </>
   );
 };
-
-export default Project;
+const getCurrentState = (state, ownProps) => {
+  return state;
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addToDo: (dataType, dataName, data) =>
+      dispatch(actionCreators.addToDo(dataType, dataName, data)),
+  };
+};
+export default connect(getCurrentState, mapDispatchToProps)(Project);
