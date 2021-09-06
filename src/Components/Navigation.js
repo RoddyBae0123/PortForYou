@@ -2,13 +2,16 @@ import { useState, memo } from "react";
 import styled from "styled-components";
 
 const Container = styled.div`
-  width: 85%;
+  width: 1200px;
 `;
 
 const Navbar = styled.div`
-  border-bottom: 1px solid lightgray;
+  /* border-bottom: 1px solid lightgray; */
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 75% 25%;
+  background-color: white;
+  height: 80px;
+  border-radius: 15px;
 `;
 
 const AddZone = styled.div`
@@ -19,23 +22,26 @@ const AddZone = styled.div`
 
 const Ul = styled.ul`
   display: grid;
-  height: 50px;
+  height: 100%;
   transform: translateY(-1%);
   grid-template-columns: repeat(auto-fill, 100px);
   list-style: none;
+  padding: 0 30px;
 `;
 
 const Li = styled.li`
   display: flex;
   justify-content: center;
   align-items: center;
-  border-bottom: ${(props) => (props.checked ? "1.5px solid black" : "none")};
-  opacity: ${(props) => (props.checked ? 1 : 0.1)};
+  border-bottom: ${(props) =>
+    props.checked ? "2px solid var( --color-text-ver5)" : "none"};
+  opacity: ${(props) => (props.checked ? 1 : 0.5)};
 `;
 
 const Change = styled.button`
   border: none;
   background-color: transparent;
+  color: var(--color-text-ver5);
 `;
 
 const Contents = styled.div`
@@ -51,7 +57,7 @@ const Page = styled.div`
 const PageUl = styled.ul`
   display: grid;
   grid-template-columns: repeat(auto-fill, 50px);
-  height: 50px;
+  height: 100%;
   list-style: none;
 `;
 
@@ -123,6 +129,7 @@ const Navigation = ({ navbar, change, data, additup }) => {
                 data-value={data.name}
                 checked={data.pno == e + 1}
                 onClick={changePage}
+                className="basic"
               >
                 {e + 1}
               </PageBtn>
@@ -140,7 +147,11 @@ const Navigation = ({ navbar, change, data, additup }) => {
             <Ul>
               {navbar.map((e, idx) => (
                 <Li key={e.idx} id={idx} checked={st[idx].checked}>
-                  <Change id={idx} onClick={() => setChecked(idx)}>
+                  <Change
+                    id={idx}
+                    onClick={() => setChecked(idx)}
+                    className="basic"
+                  >
                     {e.name}
                   </Change>
                 </Li>

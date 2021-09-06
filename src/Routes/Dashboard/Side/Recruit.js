@@ -12,12 +12,10 @@ import Popup from "../../../Components/Popup";
 import Navigation from "../../../Components/Navigation";
 import Section from "../../../Components/Section";
 const Container = styled.div`
-  height: 100%;
-  width: 100%;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  padding: 0 150px;
+  flex-direction: column;
+  padding: 50px 0 0 0;
 `;
 const Title = styled.h1`
   font-size: 35px;
@@ -60,19 +58,32 @@ const SearchForm = styled.form`
   border-radius: 4px;
 `;
 const Input = styled.input`
-  border: 1px solid lightgray;
+  border: 1px solid var(--color-border);
   outline: none;
-  background-color: white;
   font-size: 20px;
   border-radius: 10px 0 0 10px;
   border-right: none;
-  box-shadow: 1px 1px 5px lightgray;
+  background-color: var(--color-background);
 `;
 const Submit = styled.input`
-  border: 1px solid lightgray;
+  border: 1px solid var(--color-border);
   border-radius: 0 10px 10px 0;
-  background-color: white;
-  box-shadow: 1px 1px 5px lightgray;
+  background-color: var(--color-background);
+`;
+
+const Flex = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: ${(props) => props.setting.justify};
+  align-items: ${(props) => props.setting.align};
+  flex-direction: ${(props) => props.setting.dir};
+`;
+
+const Text = styled.span`
+  font-size: ${(props) => props.size};
+  font-weight: ${(props) => props.weight};
+  color: ${(props) => props.color};
+  display: inline-flex;
 `;
 
 const Recruit = ({
@@ -205,19 +216,9 @@ const Recruit = ({
       component: (state) =>
         state ? (
           <>
-            <ListWrapper
-              status={true}
-              annList={otherAnnList.announcements.slice(0, 3)}
-              kind={"RecruitOne"}
-              setRecruitIdx={setRecruitIdx}
-              setPopup={setPopup}
-              getAnn={getAnn}
-              setResult={setResult}
-              getAnnList={getOtherAnnList}
-            />
-            <NewCgry>
+            {/* <NewCgry>
               <Title2 status={true}>Recommend</Title2>
-            </NewCgry>
+            </NewCgry> */}
             <ListWrapper
               status={false}
               annList={otherAnnList.announcements}
@@ -241,19 +242,9 @@ const Recruit = ({
       component: (state) =>
         state ? (
           <>
-            <ListWrapper
-              status={true}
-              annList={otherAnnList.announcements.slice(0, 3)}
-              kind={"RecruitOne"}
-              setRecruitIdx={setRecruitIdx}
-              setPopup={setPopup}
-              getAnn={getAnn}
-              setResult={setResult}
-              getAnnList={getOtherAnnList}
-            />
-            <NewCgry>
+            {/* <NewCgry>
               <Title2 status={true}>New</Title2>
-            </NewCgry>
+            </NewCgry> */}
             <ListWrapper
               status={false}
               annList={otherAnnList.announcements}
@@ -277,19 +268,9 @@ const Recruit = ({
       component: (state) =>
         state ? (
           <>
-            <ListWrapper
-              status={true}
-              annList={otherAnnList.announcements.slice(0, 3)}
-              kind={"RecruitOne"}
-              setRecruitIdx={setRecruitIdx}
-              setPopup={setPopup}
-              getAnn={getAnn}
-              setResult={setResult}
-              getAnnList={getOtherAnnList}
-            />
-            <NewCgry>
+            {/* <NewCgry>
               <Title2 status={true}>Imminent</Title2>
-            </NewCgry>
+            </NewCgry> */}
             <ListWrapper
               status={false}
               annList={otherAnnList.announcements}
@@ -313,9 +294,9 @@ const Recruit = ({
       component: (state) =>
         state ? (
           <>
-            <NewCgry>
+            {/* <NewCgry>
               <Title2 status={true}>Search</Title2>
-            </NewCgry>
+            </NewCgry> */}
             <ListWrapper
               status={false}
               annList={otherAnnList.announcements}
@@ -338,18 +319,42 @@ const Recruit = ({
   ];
 
   return (
-    <motion.div
-      exit={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      initial={{ opacity: 0 }}
-      style={{ width: "100%" }}
-    >
+    <>
       <Container>
-        <Section
-          title={"Recruit"}
-          message={"Let's team up and make your dreams come true."}
-          nav={false}
-        />
+        <Flex
+          style={{
+            width: "80%",
+            height: "100px",
+          }}
+          setting={{
+            justify: "space-between",
+            align: "center",
+            dir: "row",
+          }}
+        >
+          <Flex
+            setting={{
+              justify: "flex-start",
+              align: "center",
+              dir: "row",
+            }}
+          >
+            <Text size={"35px"} weight={"300"} style={{ color: "black" }}>
+              Recruit List
+            </Text>
+            <Text
+              size={"15px"}
+              weight={"600"}
+              style={{ color: "var(--color-text-ver2)", marginLeft: "10px" }}
+            >
+              123 Total
+            </Text>
+          </Flex>
+
+          {/* <AddBtn>
+            <h5>+ ADD RESUME</h5>
+          </AddBtn> */}
+        </Flex>
         {otherAnnList && (
           <Navigation
             navbar={navbar}
@@ -361,7 +366,7 @@ const Recruit = ({
       </Container>
       {returnDetail(popup)}
       {popup == false && result ? returnPopup(popup) : null}
-    </motion.div>
+    </>
   );
 };
 

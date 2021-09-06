@@ -10,14 +10,13 @@ import Loader from "react-loader-spinner";
 
 const Container = styled.div`
   display: grid;
-  grid-template-columns: repeat(auto-fill, 33.3%);
-  background-color: white;
+  grid-template-columns: 0.25fr 0.25fr 0.25fr 0.25fr;
+  grid-gap: 20px;
   border-radius: 50px;
   width: 100%;
   border: ${(props) => (props.status ? "1px solid lightgray" : "none")};
   position: relative;
-  padding: 10px 10px;
-  margin-top: 45px;
+  margin: 45px 0;
 `;
 
 const Title = styled.div`

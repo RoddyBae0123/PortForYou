@@ -15,8 +15,9 @@ export const portFolioApi = {
   getEducationList: () => api.get("api/resource/educations"),
   getPortFolioList: () => api.get("api/user/portfolios"),
   getPortFolio: (idx) => api.get(`api/user/portfolio/${idx}`),
-  savePorFolio: (data) =>
-    api.post("api/user/portfolio", {
+  savePorFolio: (data) => {
+    console.log([...data.project], [...data.tech]);
+    return api.post("api/user/portfolio", {
       idx: data.idx,
       title: data.title,
       content: data.content,
@@ -28,7 +29,8 @@ export const portFolioApi = {
       education: {
         idx: data.educationIdx,
       },
-    }),
+    });
+  },
   deletePortFolio: (idx) => api.delete(`api/user/portfolio/${idx}`),
 };
 

@@ -315,7 +315,6 @@ function ResumeDetail({ match, history, addToDo }) {
 
   const setResumeList = async () => {
     try {
-      console.log([...project]);
       const result = await portFolioApi.savePorFolio({
         idx: Idx,
         title: main.title,

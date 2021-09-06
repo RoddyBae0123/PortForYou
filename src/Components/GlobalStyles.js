@@ -47,6 +47,7 @@ const globalStyles = createGlobalStyle`
     --color-text-ver2:#8798AD;
     --color-text-ver3:#B0BAC9;
     --color-text-ver4:#F2F4F7;
+    --color-text-ver5:#96A5FF;
   }
 
 `;
